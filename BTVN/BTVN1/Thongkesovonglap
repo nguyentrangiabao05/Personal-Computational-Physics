@@ -1,0 +1,39 @@
+Thong ke so vong lap theo tung phuong phap va do chinh xac cho tung loai ham so
+####################################################################################################
+                   Ham so  Do chinh xac                Phuong phap   So vong lap
+                   hamso1     1.000e-05       Chia doi khoang cach            20
+      hamso1_ppdiemcodinh     1.000e-05               Diem co dinh            13
+                   hamso1     1.000e-05             Newton-Raphson             6
+                   hamso1     1.000e-05                     Secant             6
+                   hamso1     1.000e-10       Chia doi khoang cach            39
+      hamso1_ppdiemcodinh     1.000e-10               Diem co dinh            24
+                   hamso1     1.000e-10             Newton-Raphson             7
+                   hamso1     1.000e-10                     Secant             7
+                   hamso1     1.000e-15       Chia doi khoang cach            48
+      hamso1_ppdiemcodinh     1.000e-15               Diem co dinh            35
+                   hamso1     1.000e-15             Newton-Raphson             8
+                   hamso1     1.000e-15                     Secant             8
+                   hamso2     1.000e-05       Chia doi khoang cach            23
+      hamso2_ppdiemcodinh     1.000e-05               Diem co dinh            12
+                   hamso2     1.000e-05             Newton-Raphson             8
+                   hamso2     1.000e-05                     Secant             7
+                   hamso2     1.000e-10       Chia doi khoang cach            39
+      hamso2_ppdiemcodinh     1.000e-10               Diem co dinh            22
+                   hamso2     1.000e-10             Newton-Raphson             9
+                   hamso2     1.000e-10                     Secant             8
+                   hamso2     1.000e-15       Chia doi khoang cach            54
+      hamso2_ppdiemcodinh     1.000e-15               Diem co dinh            33
+                   hamso2     1.000e-15             Newton-Raphson            10
+                   hamso2     1.000e-15                     Secant             9
+                   hamso3     1.000e-05       Chia doi khoang cach            21
+      hamso3_ppdiemcodinh     1.000e-05               Diem co dinh            10
+                   hamso3     1.000e-05             Newton-Raphson             8
+                   hamso3     1.000e-05                     Secant             6
+                   hamso3     1.000e-10       Chia doi khoang cach            39
+      hamso3_ppdiemcodinh     1.000e-10               Diem co dinh            17
+                   hamso3     1.000e-10             Newton-Raphson             9
+                   hamso3     1.000e-10                     Secant             7
+                   hamso3     1.000e-15       Chia doi khoang cach            53
+      hamso3_ppdiemcodinh     1.000e-15               Diem co dinh            24
+                   hamso3     1.000e-15             Newton-Raphson            10
+                   hamso3     1.000e-15                     Secant             8
