@@ -1,0 +1,4 @@
+Ket qua tinh tich phan MC cho truong hop nD
+################################################################################
+
+       N_D            N          ket_qua           sai_so
