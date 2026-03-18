@@ -1,0 +1,12 @@
+Ket qua tinh tich phan bang phuong phap Monte Carlo va tong Riemann
+################################################################################
+
+Ket qua tinh tich phan bang tong Riemann la: 18.171296298989
+Thoi gian chay bang tong Riemann la: 39.061605482000 s
+Sai so so voi nghiem giai tich bang tong Riemann la: 7.662037034344
+
+################################################################################
+
+Ket qua tinh tich phan bang Monte Carlo la: 25.880780693346
+Thoi gian chay bang Monte Carlo la: 0.337083387000 s
+Sai so so voi nghiem giai tich bang Monte Carlo la: 0.047447360013

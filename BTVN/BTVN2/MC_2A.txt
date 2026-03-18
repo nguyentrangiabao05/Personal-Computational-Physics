@@ -1,0 +1,6 @@
+Ket qua tinh tich phan bang phuong phap Monte Carlo
+################################################################################
+
+So luong diem ngau nhien la:  1000000
+Ket qua tinh tich phan bang Monte Carlo la: 1.000189365043
+Sai so so uoc luong Monte Carlo la: 0.000516962992

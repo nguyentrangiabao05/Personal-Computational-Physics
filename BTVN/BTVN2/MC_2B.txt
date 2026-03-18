@@ -1,0 +1,5 @@
+Ket qua tinh the tich bang tich phan theo phuong phap Monte Carlo
+################################################################################
+
+So luong diem ngau nhien la:  1000000
+Ket qua cua the tich giao diem la: 1.471008000
