@@ -1,21 +1,21 @@
 Ket qua tinh tich phan MC va thoi gian tinh cho truong hop nD
 ################################################################################
 
-Ket qua chay tinh tich phan 3D la: 0.999019692487
+Ket qua chay tinh tich phan 3D la: 0.997244431212
 
-Thoi gian chay tinh bang Monte Carlo la: 15.367670874000 s
-
-################################################################################
-
-Ket qua chay tinh tich phan 4D la: 1.332944497497
-
-Thoi gian chay tinh bang Monte Carlo la: 19.368983513999 s
+Thoi gian chay tinh bang Monte Carlo la: 0.698860675000 s
 
 ################################################################################
 
-Ket qua chay tinh tich phan 10D la: 3.333908441127
+Ket qua chay tinh tich phan 4D la: 1.335399096229
 
-Thoi gian chay tinh bang Monte Carlo la: 46.963117374000 s
+Thoi gian chay tinh bang Monte Carlo la: 0.887010646001 s
+
+################################################################################
+
+Ket qua chay tinh tich phan 10D la: 3.335553799490
+
+Thoi gian chay tinh bang Monte Carlo la: 2.087481138000 s
 
 ################################################################################
 
