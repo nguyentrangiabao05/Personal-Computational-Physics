@@ -1,4 +1,4 @@
-base_name = "ketqua_bai1_beta_0.63"
+base_name = "ketqua_bai1_co_friction_kappa_0.01_beta_0.90.txt"
 input_file = base_name . ".txt"
 output_file = base_name . ".png"
 
