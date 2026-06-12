@@ -1,0 +1,12 @@
+
+filename = 'SBE-ketqua-SBE_thamso_macdinh.txt'
+
+set xlabel "Nang luong Epsilon (meV)"
+set ylabel "Thoi gian t (fs)"
+set zlabel "Mat do hat"
+
+set view 60, 30, 1.0, 1.0
+
+set grid xtics ytics ztics
+
+splot filename u 2:3:4 with lines 
