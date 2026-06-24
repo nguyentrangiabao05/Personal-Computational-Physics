@@ -1,0 +1,16 @@
+1. Kill sạch kernel đang treo
+Trong terminal:
+
+pkill -f ipykernel
+
+pkill -f jupyter
+
+
+Rồi trong VS Code bấm:
+
+Ctrl + Shift + P
+
+Developer: Reload Window
+
+
+Sau đó mở lại notebook và chọn kernel lại.
