@@ -1,0 +1,974 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{vietnam}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage[left=2.5cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{fancyhdr}
+\setlength{\headheight}{15.2807pt}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{indentfirst}
+\usepackage{microtype}
+\captionsetup[figure]{justification=centering}
+
+\usepackage{minted}
+\setminted{style=friendly}
+
+% ===== Code block style (tcolorbox + minted) =====
+\usepackage{tcolorbox}
+\tcbuselibrary{minted,breakable,xparse,skins}
+
+\definecolor{bg}{gray}{0.95}
+\DeclareTCBListing{mintedbox}{O{}m!O{}}{%
+  breakable=true,
+  listing engine=minted,
+  listing only,
+  minted language=#2,
+  minted style=friendly,
+  minted options={%
+    linenos,
+    gobble=0,
+    breaklines=true,
+    breakafter=,,
+    fontsize=\small,
+    numbersep=8pt,
+    #1},
+  boxsep=0pt,
+  left skip=0pt,
+  right skip=0pt,
+  left=25pt,
+  right=0pt,
+  top=3pt,
+  bottom=3pt,
+  arc=5pt,
+  leftrule=0pt,
+  rightrule=0pt,
+  bottomrule=2pt,
+  toprule=2pt,
+  colback=bg,
+  colframe=orange!70,
+  enhanced,
+  overlay={%
+    \begin{tcbclipinterior}
+    \fill[orange!20!white] (frame.south west) rectangle ([xshift=20pt]frame.north west);
+    \end{tcbclipinterior}},
+  #3}
+
+% ===== Hyperlink =====
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    filecolor=magenta,
+    urlcolor=cyan,
+    citecolor=red!70!black
+}
+
+% ===== Header / Footer =====
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textbf{Báo cáo Vật lý tính toán}}
+\rhead{\textit{TDSE -- DTD Leapfrog}}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% ===== Section formatting =====
+\titleformat{\section}{\Large\bfseries\color{blue!80!black}}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\large\bfseries\color{blue!70!black}}{\thesubsection.}{0.5em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{blue!60!black}}{\thesubsubsection.}{0.5em}{}
+
+% ===== Graphics fallback: report still compiles if figures are absent =====
+\newcommand{\safeincludegraphics}[2][]{%
+    \IfFileExists{#2}{%
+        \includegraphics[#1]{#2}%
+    }{%
+        \fbox{\parbox[c][5.2cm][c]{0.88\linewidth}{%
+            \centering
+            \textbf{Chưa tìm thấy hình trong thư mục biên dịch}\\[4pt]
+            \nolinkurl{#2}\\[4pt]
+            Hình sẽ tự động xuất hiện khi tập tin được đặt cùng thư mục với file \texttt{.tex}.}}
+    }%
+}
+
+\begin{document}
+
+% ================= TRANG BÌA =================
+\begin{titlepage}
+    \centering
+    \vspace*{1.6cm}
+
+    \rule{\textwidth}{1pt} \\[0.5cm]
+    {\huge \textbf{BÁO CÁO PHƯƠNG TRÌNH SCHRÖDINGER}} \\[0.35cm]
+    {\Large \textbf{PHỤ THUỘC THỜI GIAN}} \\[0.35cm]
+    {\large \textbf{PHƯƠNG PHÁP DIRECT TIME DISCRETISATION -- LEAPFROG}} \\[0.2cm]
+    {\large \textbf{SAI PHÂN KHÔNG GIAN BẬC 2 VÀ BẬC 4}} \\[0.2cm]
+    \rule{\textwidth}{1pt}
+
+    \vspace{2cm}
+
+    {\large
+    \begin{tabular}{rl}
+        \textbf{Họ và tên:}  & Nguyễn Trần Gia Bảo \\[4pt]
+        \textbf{MSSV:}       & 23137003 \\[4pt]
+        \textbf{Môn học:}    & Vật lý tính toán (PHY10532) \\[4pt]
+        \textbf{Giảng viên:} & TS.\@ Vũ Quang Tuyên \\
+    \end{tabular}
+    }
+
+    \vfill
+    {\large \today}
+\end{titlepage}
+
+% ================= MỤC LỤC =================
+\newpage
+\tableofcontents
+\newpage
+
+% =============================================================
+\section{Giới thiệu và nội dung tính toán}
+% =============================================================
+
+Nghiệm số của phương trình Schrödinger phụ thuộc thời gian một chiều được giải bằng phương pháp \textit{Direct Time Discretisation} (DTD) dạng Leapfrog. Đạo hàm theo thời gian được thay bằng sai phân trung tâm, trong khi đạo hàm bậc hai theo không gian được tính theo hai bậc sai phân: sai phân trung tâm bậc 2 và sai phân trung tâm bậc 4.
+
+Chương trình Python sẽ chạy các bước tính toán như sau:
+\begin{enumerate}
+    \item Khởi tạo bó sóng Gauss chuẩn hóa tại $x_0=5$ với độ rộng $\sigma_0$ và số sóng trung tâm $k_0$.
+    \item Xây dựng lưới đều theo $x$ và $t$, kiểm tra điều kiện Courant-Friedrichs-Lewy (CFL) trước khi giải.
+    \item Giải TDSE bằng Leapfrog với sai phân không gian bậc 2 và bậc 4.
+    \item Ghi $\operatorname{Re}\psi$, $\operatorname{Im}\psi$, $|\psi|$ và $|\psi|^2$ ra file data.
+    \item Tính chuẩn xác suất $N(t)=\int |\psi(x,t)|^2\,dx$ bằng quy tắc hình thang.
+    \item So sánh kết quả bậc 2 và bậc 4 tại $\sigma_0=0.5$, $k_0=8$.
+    \item Khảo sát chiều truyền, vận tốc nhóm và phản xạ của bó sóng khi thay đổi $k_0$; chương trình đồng thời quét $\sigma_0\in\{0.5,1,2\}$ và $k_0\in\{2,8,10,-2,-8,-10\}$.
+\end{enumerate}
+
+% =============================================================
+\section{Cơ sở lý thuyết}
+% =============================================================
+
+\subsection{Phương trình Schrödinger phụ thuộc thời gian}
+
+Trong một chiều, phương trình Schrödinger phụ thuộc thời gian có dạng
+\begin{equation}
+    i\hbar\frac{\partial \psi(x,t)}{\partial t}
+    = \hat H\psi(x,t)
+    = \left[-\frac{\hbar^2}{2m}\frac{\partial^2}{\partial x^2}+V(x,t)\right]\psi(x,t).
+    \label{eq:tdse}
+\end{equation}
+Mật độ xác suất được xác định bởi
+\begin{equation}
+    \rho(x,t)=|\psi(x,t)|^2,
+\end{equation}
+và điều kiện chuẩn hóa là
+\begin{equation}
+    N(t)=\int_{-\infty}^{+\infty}|\psi(x,t)|^2\,dx=1.
+    \label{eq:norm}
+\end{equation}
+Trong mô phỏng hữu hạn, tích phân được lấy trên miền $[x_{\min},x_{\max}]$.
+
+\subsection{Bó sóng Gauss ban đầu}
+
+Bó sóng chuẩn hóa được sử dụng trong bài toán này
+\begin{equation}
+    \psi(x,0)=\frac{1}{(\pi\sigma_0^2)^{1/4}}
+    \exp\left[-\frac{1}{2}\left(\frac{x-x_0}{\sigma_0}\right)^2\right]
+    \exp(ik_0x).
+    \label{eq:gaussian}
+\end{equation}
+Hệ số $(\pi\sigma_0^2)^{-1/4}$ làm cho bó sóng được chuẩn hóa trên toàn trục số. Với $x_0=5$ và $\sigma_0=0.5$, phần đuôi của bó sóng tại hai biên $x=0$ và $x=15$ ban đầu rất nhỏ, nên tích phân trên miền mô phỏng xấp xỉ 1.
+
+Nếu $V$ không phụ thuộc $x$ trong miền chuyển động, quan hệ tán sắc liên tục là
+\begin{equation}
+    E(k)=\frac{\hbar^2k^2}{2m}+V,
+\end{equation}
+và vận tốc nhóm của tâm bó sóng là
+\begin{equation}
+    v_g=\frac{1}{\hbar}\frac{dE}{dk}=\frac{\hbar k_0}{m}.
+    \label{eq:vg}
+\end{equation}
+Với quy ước $\hbar=m=1$ trong chương trình, $v_g=k_0$. Vì vậy dấu của $k_0$ xác định chiều truyền, còn độ lớn $|k_0|$ xác định tốc độ chuyển động của tâm bó sóng trước khi phản xạ ở biên.
+
+\subsection{Lưới sai phân}
+
+Miền được rời rạc hóa theo
+\begin{equation}
+    x_j=x_{\min}+j\Delta x,\qquad
+    t_n=t_{\min}+n\Delta t,\qquad
+    \psi_j^n=\psi(x_j,t_n).
+\end{equation}
+Đạo hàm thời gian trong công thức Leapfrog được lấy theo sai phân trung tâm
+\begin{equation}
+    \left.\frac{\partial\psi}{\partial t}\right|_j^n
+    =\frac{\psi_j^{n+1}-\psi_j^{n-1}}{2\Delta t}
+    +\mathcal O(\Delta t^2).
+    \label{eq:time_center}
+\end{equation}
+Do công thức sử dụng đồng thời $n-1$, $n$ và $n+1$, bước $\psi^1$ phải được tính riêng từ $\psi^0$ bằng Euler tiến.
+
+\subsection{Leapfrog với sai phân không gian bậc 2}
+
+Đạo hàm không gian bậc hai được xấp xỉ bởi
+\begin{equation}
+    \left.\frac{\partial^2\psi}{\partial x^2}\right|_j^n
+    =\frac{\psi_{j+1}^n-2\psi_j^n+\psi_{j-1}^n}{\Delta x^2}
+    +\mathcal O(\Delta x^2).
+    \label{eq:space2}
+\end{equation}
+Đặt
+\begin{equation}
+    g_j=-\frac{2i\Delta t}{\hbar}
+    \left(\frac{\hbar^2}{m\Delta x^2}+V_j\right),
+    \qquad
+    a=\frac{i\hbar\Delta t}{m\Delta x^2},
+    \label{eq:ga2}
+\end{equation}
+ta thu được công thức cập nhật
+\begin{equation}
+    \boxed{
+    \psi_j^{n+1}=g_j\psi_j^n
+    +a\left(\psi_{j+1}^n+\psi_{j-1}^n\right)
+    +\psi_j^{n-1}.}
+    \label{eq:leapfrog2}
+\end{equation}
+Bước thời gian đầu được tính bởi
+\begin{equation}
+    \boxed{
+    \psi_j^1=\psi_j^0+\frac{1}{2}g_j\psi_j^0
+    +\frac{1}{2}a\left(\psi_{j+1}^0+\psi_{j-1}^0\right).}
+    \label{eq:first2}
+\end{equation}
+
+\subsection{Leapfrog với sai phân không gian bậc 4}
+
+Sai phân năm điểm cho đạo hàm bậc hai là
+\begin{equation}
+    \left.\frac{\partial^2\psi}{\partial x^2}\right|_j^n
+    =\frac{-\psi_{j+2}^n+16\psi_{j+1}^n-30\psi_j^n
+    +16\psi_{j-1}^n-\psi_{j-2}^n}{12\Delta x^2}
+    +\mathcal O(\Delta x^4).
+    \label{eq:space4}
+\end{equation}
+Đặt
+\begin{equation}
+    g_j=-\frac{2i\Delta t}{\hbar}
+    \left(\frac{5\hbar^2}{4m\Delta x^2}+V_j\right),
+    \qquad
+    a=\frac{i\hbar\Delta t}{12m\Delta x^2},
+    \label{eq:ga4}
+\end{equation}
+công thức Leapfrog trở thành
+\begin{equation}
+    \boxed{
+    \psi_j^{n+1}=g_j\psi_j^n
+    +16a\left(\psi_{j+1}^n+\psi_{j-1}^n\right)
+    -a\left(\psi_{j+2}^n+\psi_{j-2}^n\right)
+    +\psi_j^{n-1}.}
+    \label{eq:leapfrog4}
+\end{equation}
+Bước đầu tương ứng là
+\begin{equation}
+    \boxed{
+    \psi_j^1=\psi_j^0+\frac{1}{2}g_j\psi_j^0
+    +8a\left(\psi_{j+1}^0+\psi_{j-1}^0\right)
+    -\frac{1}{2}a\left(\psi_{j+2}^0+\psi_{j-2}^0\right).}
+    \label{eq:first4}
+\end{equation}
+
+\subsection{Sai số tán sắc không gian}
+
+Khi tác dụng hai điểm sai phân lên mode phẳng $e^{ikx}$, ta có các khai triển
+\begin{align}
+    D_{xx}^{(2)}e^{ikx}
+    &=\left[-k^2+\frac{k^4\Delta x^2}{12}
+    +\mathcal O(\Delta x^4)\right]e^{ikx},\\
+    D_{xx}^{(4)}e^{ikx}
+    &=\left[-k^2+\frac{k^6\Delta x^4}{90}
+    +\mathcal O(\Delta x^6)\right]e^{ikx}.
+\end{align}
+Hai mô phỏng sử dụng cùng sai phân thời gian bậc 2; khác biệt chính trong miền nội đến từ biểu diễn rời rạc của động năng. Với $k_0=8$ và $\Delta x=0.05$, đại lượng $k_0\Delta x=0.4$ chưa quá lớn nhưng đủ để sai khác pha tích lũy theo thời gian và trở nên rõ hơn khi bó sóng tiến gần biên.
+
+\subsection{Điều kiện Courant-Friedrichs-Lewy (CFL)}
+
+Phương pháp tường minh chỉ ổn định (hàm sóng không bị vô hạn) nếu thỏa mãn
+điều kiện Courant-Friedrichs-Lewy (CFL):
+\begin{equation}
+    \Delta t\leq \frac{1}{2/\Delta x^2+V_{\max}},
+    \label{eq:cflcode}
+\end{equation}
+ứng với $\hbar=m=1$. Với
+\[
+    \Delta x=0.05,\qquad
+    \Delta t=\frac{1}{4}\Delta x^2=6.25\times10^{-4},\qquad
+    V_{\max}=500,
+\]
+giới hạn trong code là
+\begin{equation}
+    \Delta t_{\max}=\frac{1}{2/(0.05)^2+500}
+    =7.6923\times10^{-4}.
+\end{equation}
+Do $\Delta t<\Delta t_{\max}$ nên điều kiện CFL được thỏa mãn.
+
+% =============================================================
+\section{Tham số và mô hình rời rạc trong code}
+% =============================================================
+
+\subsection{Tham số bài toán}
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Đại lượng} & \textbf{Giá trị} \\
+\midrule
+$x_{\min},x_{\max}$ & $0,15$ \\
+$t_{\min},t_{\max}$ & $0,1.2$ \\
+$\Delta x$ & $0.05$ \\
+$\Delta t$ & $0.25\Delta x^2=0.000625$ \\
+$N_x$ & $301$ \\
+$N_t$ & $1921$ \\
+$x_0$ & $5$ \\
+$\sigma_0$ trong phép so sánh chính & $0.5$ \\
+$k_0$ trong phép so sánh chính & $8$ \\
+$\hbar,m$ & $1,1$ \\
+$V_{\max}$ & $500$ \\
+Chu kỳ ghi dữ liệu theo thời gian & $100$ bước, tương ứng $\Delta t_{\mathrm{save}}=0.0625$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Thế năng và điều kiện biên}
+
+Hàm thế năng được đặt như sau:
+\begin{mintedbox}{python}
+    def thenang(x):
+        global V_max
+    
+        if 0 <= x <= 15:
+            return 0
+        else:
+            return V_max
+\end{mintedbox}
+
+Hàm trên mô tả thế năng
+\begin{equation}
+    V(x)=
+    \begin{cases}
+        0, & 0\leq x\leq 15,\\
+        V_{\max}, & x<0\ \text{hoặc}\ x>15.
+    \end{cases}
+    \label{eq:potentialcode}
+\end{equation}
+
+Trong chương trình, lưới không gian chỉ được xây dựng trên miền
+$0\leq x\leq15$. Vì vậy, tại mọi điểm lưới được sử dụng trong phép tính,
+hàm \texttt{thenang(x)} đều trả về $V(x)=0$. Giá trị $V_{\max}$ chỉ được
+gán cho vùng nằm ngoài miền mô phỏng và không trực tiếp xuất hiện trong
+phương trình cập nhật hàm sóng.
+
+Hai biên của miền được xem như các giếng thế vuông, tương ứng với điều kiện
+Dirichlet
+\begin{equation}
+    \psi(0,t)=\psi(15,t)=0.
+    \label{eq:dirichlet}
+\end{equation}
+
+Điều kiện này được thực hiện bằng cách khởi tạo toàn bộ mảng nghiệm bằng
+không và chỉ cập nhật các điểm nằm bên trong miền. Đối với phương pháp
+Leapfrog bậc 2, vòng lặp có dạng
+\begin{mintedbox}{python}
+    for j in range(1, N_x-1):
+        ...
+\end{mintedbox}
+nên hai điểm biên $j=0$ và $j=N_x-1$ không được cập nhật và luôn giữ giá
+trị $\psi=0$.
+
+Đối với phương pháp Leapfrog bậc 4, đạo hàm không gian sử dụng khuôn sai
+phân năm điểm, gồm các nút $j-2$, $j-1$, $j$, $j+1$ và $j+2$. Vì vậy,
+chương trình chỉ cập nhật các điểm
+\begin{mintedbox}{python}
+    for j in range(2, N_x-2):
+        ...
+\end{mintedbox}
+để tránh truy cập ra ngoài mảng. Hai lớp điểm ở mỗi phía,
+$j=0,1$ và $j=N_x-2,N_x-1$, được giữ bằng không.
+
+Do cách xử lý này, miền động lực học thực sự của công thức bậc 4 ngắn hơn
+một khoảng lưới ở mỗi phía so với công thức bậc 2. Vì vậy, sai khác giữa
+hai kết quả gần thời điểm bó sóng phản xạ không chỉ do bậc chính xác của
+xấp xỉ đạo hàm không gian, mà còn chịu ảnh hưởng của cách áp đặt điều kiện
+biên cho khuôn sai phân ba điểm và năm điểm.
+
+
+% =============================================================
+\section{Phân tích chương trình Python}
+% =============================================================
+
+\subsection{Gọi thư viện và khởi tạo bó sóng Gauss}
+
+\begin{mintedbox}{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+def khoitao_psi0(x):
+    global sigma_0, k_0, x_0
+    psi_0 = np.exp(-1/2 * ((x-x_0)/sigma_0)**2 )*np.exp(1j*k_0*x) * (np.pi*sigma_0**2)**(-1/4)
+    return psi_0
+\end{mintedbox}
+
+Hai thư viện được nạp ngay đầu chương trình. \texttt{NumPy} cung cấp mảng số phức, hàm mũ, phép lấy modulus, tích phân hình thang và đọc dữ liệu; \texttt{Matplotlib} được dùng ở phần vẽ chuẩn xác suất.
+
+Hàm \texttt{khoitao\_psi0(x)} nhận toàn bộ lưới không gian dưới dạng một mảng NumPy. Các phép toán trong biểu thức đều được thực hiện theo từng phần tử, nên kết quả \texttt{psi\_0} là một vector phức có cùng kích thước với \texttt{x}. Thừa số
+\[
+\exp\!\left[-\frac12\left(\frac{x-x_0}{\sigma_0}\right)^2\right]
+\]
+tạo đường bao Gauss, \texttt{np.exp(1j*k\_0*x)} tạo pha sóng phẳng, còn \path{(np.pi*sigma_0**2)**(-1/4)} là hệ số chuẩn hóa. Ba đại lượng \texttt{sigma\_0}, \texttt{k\_0} và \texttt{x\_0} được lấy từ phạm vi toàn cục; vì vậy mỗi lần vòng quét thay \texttt{sigma\_0} hoặc \texttt{k\_0}, hàm tự động tạo bó sóng mới theo bộ tham số hiện hành.
+
+\subsection{Tạo lưới không gian và thời gian}
+
+\begin{mintedbox}{python}
+def khoitao_x_t(x_min, x_max, t_min, t_max, dx, dt):
+    N_x = int(round((x_max - x_min) / dx)) + 1
+    N_t = int(round((t_max - t_min) / dt)) + 1
+    x = np.linspace(x_min, x_max, N_x)
+    t = np.linspace(t_min, t_max, N_t)
+    return x, t, N_x, N_t
+\end{mintedbox}
+
+Số nút được tính từ độ dài miền và bước lưới. Phép \texttt{round} dùng để làm tròn, còn phép cộng 1 bảo đảm tính cả hai đầu mút. Sau đó \texttt{np.linspace} tạo các mảng \texttt{x} và \texttt{t} chứa chính xác $N_x$ và $N_t$ phần tử. Hàm trả đồng thời bốn đối tượng để các bộ giải có thể dùng trực tiếp lưới và kích thước mảng. Với bộ tham số chính, kết quả là $N_x=301$ và $N_t=1921$.
+
+\subsection{Kiểm tra điều kiện CFL}
+
+\begin{mintedbox}{python}
+def kiemtra_CFL(dt, dx, V_max):
+    dieu_kien = 1 / (2 / dx**2 + V_max)
+    if dt <= dieu_kien:
+        print("Dieu kien CFL duoc thoa man.")
+        return True
+    else:
+        print("Khong the hoi tu do vi pham dieu kien CFL.")
+        return False
+\end{mintedbox}
+
+Biến \texttt{dieu\_kien} chứa giới hạn
+\[
+\Delta t_{\max}=\frac{1}{2/\Delta x^2+V_{\max}}.
+\]
+Hàm so sánh \texttt{dt} với giới hạn này, in thông báo tương ứng và trả về \texttt{True} hoặc \texttt{False}. Với $\Delta x=0.05$, $V_{\max}=500$ và $\Delta t=0.000625$, nhánh \texttt{True} được thực hiện.
+
+\subsection{Tạo các hệ số Leapfrog bậc 2}
+
+\begin{mintedbox}{python}
+def khoitao_matran_g_frog_2():
+    global N_x, N_t, x_min, dx, dt, hbar, m
+    g = np.zeros(N_x, dtype=complex)
+    for i in range(N_x):
+        x_i = x_min + i*dx
+        V = thenang(x_i)
+        g[i] = -2j*dt/hbar * (hbar**2/(m*dx**2)+ V) #phu thuoc vao x
+    a = 1j*hbar*dt/(m*dx**2)
+    return g, a
+\end{mintedbox}
+
+Mảng \texttt{g} có $N_x$ phần tử phức. Vòng lặp xây dựng tọa độ $x_i=x_{\min}+i\Delta x$, gọi \texttt{thenang(x\_i)} và gán
+\[
+ g_i=-\frac{2i\Delta t}{\hbar}\left(\frac{\hbar^2}{m\Delta x^2}+V_i\right).
+\]
+Trong khi $g_i$ có thể thay đổi theo vị trí, \texttt{a} là một hệ số phức dùng chung cho toàn lưới:
+\[
+ a=\frac{i\hbar\Delta t}{m\Delta x^2}.
+\]
+Tên hàm có từ \texttt{matran}, nhưng code không tạo ma trận hai chiều; cấu trúc được lưu dưới dạng một vector $g$ và một số $a$, phù hợp với cách cập nhật trực tiếp từng nút.
+
+\subsection{Giải TDSE bằng Leapfrog bậc 2}
+
+\begin{mintedbox}{python}
+def giai_leapfrog_bac2():
+    global x_min, x_max, t_min, t_max, dx, dt, x, t, N_x, N_t
+    psi_t_x = np.zeros([N_t,N_x], dtype=np.complex128)
+    psi_0 = khoitao_psi0(x)
+
+    g, a = khoitao_matran_g_frog_2()
+
+    psi_t_x[0] = psi_0
+
+    for j in range(1, N_x-1):
+        psi_t_x[1,j] = psi_t_x[0,j] + 0.5*g[j]*psi_t_x[0,j] + 0.5*a*(psi_t_x[0,j+1]+psi_t_x[0,j-1])
+
+    for n in range(1,N_t-1):
+        for j in range(1,N_x-1):
+            psi_t_x[n+1,j] = g[j]*psi_t_x[n,j] + a*(psi_t_x[n,j+1]+psi_t_x[n,j-1]) + psi_t_x[n-1,j]
+
+    return psi_t_x
+\end{mintedbox}
+
+Mảng \texttt{psi\_t\_x} có dạng \texttt{[N\_t, N\_x]}, nghĩa là chỉ số thứ nhất biểu diễn thời gian và chỉ số thứ hai biểu diễn không gian. Định dạng \texttt{np.complex128} được dùng vì hàm sóng có cả phần thực và phần ảo. Hàng đầu tiên \texttt{psi\_t\_x[0]} được gán bằng bó Gauss từ \texttt{khoitao\_psi0(x)}.
+
+Vòng lặp thứ nhất tính $\psi_j^1$ cho $j=1,\ldots,N_x-2$ bằng công thức Euler tiến đã viết dưới dạng các hệ số $g_j/2$ và $a/2$. Hai nút biên không được gán lại nên tiếp tục bằng 0 từ lúc khởi tạo mảng. Vòng lặp kép tiếp theo thực hiện quan hệ ba mức thời gian:
+\[
+\psi_j^{n+1}=g_j\psi_j^n+a(\psi_{j+1}^n+\psi_{j-1}^n)+\psi_j^{n-1}.
+\]
+Sau khi hoàn tất, hàm trả lại toàn bộ lịch sử của hàm sóng thay vì chỉ trả lát thời gian cuối.
+
+\subsection{Tạo các hệ số Leapfrog bậc 4}
+
+\begin{mintedbox}{python}
+def khoitao_matran_g_frog_4():
+    global N_x, N_t, x_min, dx, dt, hbar, m
+    g = np.zeros(N_x, dtype=complex)
+    for i in range(N_x):
+        x_i = x_min + i*dx
+        V = thenang(x_i)
+        g[i] = -2j*dt/hbar * (5*hbar**2/(4*m*dx**2)+ V) #phu thuoc vao x
+    a = 1j*hbar*dt/(12*m*dx**2)
+    return g, a
+\end{mintedbox}
+
+Cấu trúc hàm giống trường hợp bậc 2, nhưng phần động năng trong $g_i$ và hệ số $a$ được thay theo sai phân năm điểm:
+\[
+ g_i=-\frac{2i\Delta t}{\hbar}\left(\frac{5\hbar^2}{4m\Delta x^2}+V_i\right),
+ \qquad
+ a=\frac{i\hbar\Delta t}{12m\Delta x^2}.
+\]
+Mảng $g$ vẫn được tính tại mọi nút để cùng chỉ số với mảng hàm sóng.
+\subsection{Giải TDSE bằng Leapfrog bậc 4}
+
+\begin{mintedbox}{python}
+def giai_leapfrog_bac4():
+    global x_min, x_max, t_min, t_max, dx, dt, x, t, N_x, N_t
+    psi_t_x = np.zeros([N_t,N_x], dtype=np.complex128)
+    psi_0 = khoitao_psi0(x)
+
+    g, a = khoitao_matran_g_frog_4()
+
+    psi_t_x[0] = psi_0
+
+    for j in range(2, N_x-2):
+        psi_t_x[1,j] = psi_t_x[0,j] + 0.5*g[j]*psi_t_x[0,j] +8*a*(psi_t_x[0,j+1]+psi_t_x[0,j-1]) - 0.5*a*(psi_t_x[0,j+2]+psi_t_x[0,j-2])
+
+    for n in range(1,N_t-1):
+        for j in range(2,N_x-2):
+            psi_t_x[n+1,j] = g[j]*psi_t_x[n,j] + 16*a*(psi_t_x[n,j+1]+psi_t_x[n,j-1]) - a*(psi_t_x[n,j+2]+psi_t_x[n,j-2])+ psi_t_x[n-1,j]
+
+    return psi_t_x
+\end{mintedbox}
+
+Do stencil bậc 4 sử dụng $j\pm1$ và $j\pm2$, vòng lặp không gian bắt đầu từ \texttt{j=2} và dừng trước \texttt{N\_x-2}. Hai lớp nút ở mỗi phía vì thế giữ giá trị 0. Ở bước thời gian đầu, các hệ số \texttt{8*a} và \texttt{-0.5*a} chính là một nửa của các hệ số \texttt{16*a} và \texttt{-a} trong công thức Leapfrog đầy đủ. Từ $n=1$ trở đi, câu lệnh cập nhật tương ứng với
+\[
+\psi_j^{n+1}=g_j\psi_j^n
++16a(\psi_{j+1}^n+\psi_{j-1}^n)
+-a(\psi_{j+2}^n+\psi_{j-2}^n)
++\psi_j^{n-1}.
+\]
+Đầu ra có cùng cấu trúc \texttt{[thời gian, không gian]} như bộ giải bậc 2, nên hai kết quả có thể được xử lý bằng cùng các hàm ghi tập tin.
+
+\subsection{Ghi hàm sóng ra tập tin văn bản}
+
+\begin{mintedbox}{python}
+def luu_ketqua_psi(output_name, x, t, y, save_every_time=1, save_every_x = 1):
+    global N_x, N_t, dx, dt, sigma_0, k_0, x_min, x_max, t_min, t_max
+    filename = f"TDSE-ketqua-{output_name}.txt"
+
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write("# KET QUA GIAI PHUONG TRINH SCHRODINGER PHU THUOC THOI GIAN\n\n")
+
+        f.write("#" * 150 + "\n")
+        f.write("# THAM SO DAU VAO\n")
+        f.write("#" * 150 + "\n\n")
+
+        f.write(f"# N_x        = {N_x}\n")
+        f.write(f"# N_t        = {N_t}\n")
+        f.write(f"# x_min      = {x_min}\n")
+        f.write(f"# x_max      = {x_max}\n")
+        f.write(f"# t_min      = {t_min}\n")
+        f.write(f"# t_max      = {t_max}\n")
+        f.write(f"# dx         = {dx}\n")
+        f.write(f"# dt         = {dt}\n")
+        f.write(f"# sigma_0    = {sigma_0}\n")
+        f.write(f"# k_0        = {k_0}\n")
+        f.write(f"# cach_deu_time = {save_every_time}\n")
+
+        f.write("\n" + "#" * 150 + "\n\n")
+
+        f.write(f"#{'t':>15s} {'x':>15s} {'Re_psi':>15s} {'Im_psi':>15s} {'|psi|':>15s} {'|psi|^2':>15s}\n")
+
+        for n in range(0, len(t), save_every_time):
+            for i in range(0, len(x), save_every_x):
+                psi = y[n, i]
+
+                f.write(f" {t[n]:>15.6e} "
+                        f"{x[i]:>15.6e} "
+                        f"{psi.real:>15.6e} "
+                        f"{psi.imag:>15.6e} "
+                        f"{np.abs(psi):>15.6e} "
+                        f"{np.abs(psi)**2:>15.6e}\n")
+
+            f.write("\n")
+\end{mintedbox}
+
+Tên tập tin được ghép từ chuỗi \texttt{TDSE-ketqua-}, tham số \texttt{output\_name} và đuôi \texttt{.txt}. Phần đầu tập tin lưu lại kích thước lưới, miền tính, bước lưới và tham số bó sóng; nhờ đó mỗi tập dữ liệu vẫn mang thông tin về phép chạy đã tạo ra nó.
+
+Dòng tiêu đề gồm sáu cột: $t$, $x$, $\operatorname{Re}\psi$, $\operatorname{Im}\psi$, $|\psi|$ và $|\psi|^2$. Vòng ngoài duyệt thời gian với bước \texttt{save\_every\_time}, còn vòng trong duyệt không gian với bước \texttt{save\_every\_x}. Biến \texttt{psi=y[n,i]} lấy một phần tử phức rồi tách các đại lượng cần ghi. Định dạng \texttt{15.6e} lưu số theo ký hiệu khoa học với sáu chữ số sau dấu thập phân. Dòng trống sau mỗi bước thời gian phân tách các khối dữ liệu, thuận tiện cho lệnh vẽ mặt bằng gnuplot.
+
+\subsection{Tính và ghi chuẩn xác suất}
+
+\begin{mintedbox}{python}
+def luu_file_xac_xuat(output_name, x, t, y, save_every_time=1):
+    global N_x, N_t, dx, dt, sigma_0, k_0, x_min, x_max, t_min, t_max
+    filename = f"TDSE-ketqua-{output_name}-xacxuat.txt"
+
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write("# KET QUA GIAI PHUONG TRINH SCHRODINGER PHU THUOC THOI GIAN\n\n")
+
+        f.write("#" * 150 + "\n")
+        f.write("# THAM SO DAU VAO\n")
+        f.write("#" * 150 + "\n\n")
+
+        f.write(f"# N_x        = {N_x}\n")
+        f.write(f"# N_t        = {N_t}\n")
+        f.write(f"# x_min      = {x_min}\n")
+        f.write(f"# x_max      = {x_max}\n")
+        f.write(f"# t_min      = {t_min}\n")
+        f.write(f"# t_max      = {t_max}\n")
+        f.write(f"# dx         = {dx}\n")
+        f.write(f"# dt         = {dt}\n")
+        f.write(f"# sigma_0    = {sigma_0}\n")
+        f.write(f"# k_0        = {k_0}\n")
+        f.write(f"# cach_deu_time = {save_every_time}\n")
+
+        f.write("\n" + "#" * 150 + "\n\n")
+
+        f.write(f"#{'t':>15s} {'Integral_|psi|^2_dx':>25s}\n")
+
+        for n in range(0, len(t), save_every_time):
+
+            prob_x = np.abs(y[n, :])**2
+            tong_xac_xuat = np.trapz(prob_x, x)
+
+            f.write(f" {t[n]:>15.6e} "
+                    f"{tong_xac_xuat:>25.6e}\n")
+\end{mintedbox}
+
+Hàm thứ hai tạo tập tin có hậu tố \texttt{-xacxuat.txt}. Tại mỗi thời điểm được chọn, câu lệnh \texttt{np.abs(y[n,:])**2} tạo mật độ xác suất trên toàn bộ lưới. \texttt{np.trapz(prob\_x,x)} thực hiện tích phân hình thang
+\[
+N(t_n)\approx\int_{x_{\min}}^{x_{\max}}|\psi(x,t_n)|^2\,dx.
+\]
+
+\subsection{Gán tham số, chạy hàm giải và lưu kết quả}
+
+\begin{mintedbox}{python}
+sigma_0 = 0.5
+dx = 0.05
+dt = 1/4*dx**2
+k_0 = 8
+x_0 = 5
+
+hbar = 1
+m = 1
+
+t_min = 0
+t_max = 1.2
+
+x_min = 0
+x_max = 15
+
+V_max = 500
+kiemtra_CFL(dt, dx, V_max)
+
+x, t, N_x, N_t = khoitao_x_t(x_min, x_max, t_min, t_max, dx, dt)
+psi_t_x_bac_2 = giai_leapfrog_bac2()
+psi_t_x_bac_4 = giai_leapfrog_bac4()
+luu_ketqua_psi("Leapfrog_Bac2", x, t, y=psi_t_x_bac_2, save_every_time=100)
+luu_file_xac_xuat("Leapfrog_Bac2", x, t, y=psi_t_x_bac_2, save_every_time=100)
+luu_ketqua_psi("Leapfrog_Bac4", x, t, y=psi_t_x_bac_4, save_every_time=100)
+luu_file_xac_xuat("Leapfrog_Bac4", x, t, y=psi_t_x_bac_4, save_every_time=100)
+\end{mintedbox}
+
+Khối lệnh này xác lập cấu hình mô phỏng chính: $\sigma_0=0.5$, $k_0=8$, $x_0=5$, $\Delta x=0.05$, $\Delta t=\Delta x^2/4$, $\hbar=m=1$, miền $x\in[0,15]$, miền $t\in[0,1.2]$ và $V_{\max}=500$.
+
+Sau lệnh kiểm tra CFL, lưới được tạo một lần rồi dùng chung cho cả hai bộ giải. Hai biến \texttt{psi\_t\_x\_bac\_2} và \texttt{psi\_t\_x\_bac\_4} chứa toàn bộ nghiệm số. 
+\subsection{Đọc dữ liệu để vẽ hình}
+
+\begin{mintedbox}{python}
+import matplotlib.pyplot as plt
+plt.style.use('sci.mplstyle')
+t_xacsuat_bac2, N_bac2 = np.loadtxt("TDSE-ketqua-Leapfrog_Bac2-xacxuat.txt", unpack = True, comments = "#")
+t_xacsuat_bac4, N_bac4 = np.loadtxt("TDSE-ketqua-Leapfrog_Bac4-xacxuat.txt", unpack = True, comments = "#")
+
+x_bac2, t_bac2, psi_bac2 = np.loadtxt("TDSE-ketqua-Leapfrog_Bac2.txt", unpack = True, comments = "#", usecols=(0,1,4))
+x_bac4, t_bac4, psi_bac4 = np.loadtxt("TDSE-ketqua-Leapfrog_Bac4.txt", unpack = True, comments = "#", usecols=(0,1,4))
+plt.figure(figsize=(7, 6))
+
+fig, ax = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
+\end{mintedbox}
+
+\subsection{Vẽ và lưu đồ thị bảo toàn xác suất}
+
+\begin{mintedbox}{python}
+ax[0].plot(t_xacsuat_bac2, N_bac2, linewidth = 3)
+ax[0].set_xlabel(r"$t$")
+ax[0].set_ylabel(r"$N(t)$")
+ax[0].set_title("Leapfrog bac 2")
+ax[0].grid(True, alpha=0.3)
+
+ax[1].plot(t_xacsuat_bac4, N_bac4, linewidth = 3)
+ax[1].set_xlabel(r"$t$")
+ax[1].set_title("Leapfrog bac 4")
+ax[1].grid(True, alpha=0.3)
+
+ax[0].set_ylim(0,2)
+
+ax[0].set_xlim(0,1)
+ax[1].set_xlim(0,1)
+
+plt.tight_layout()
+plt.savefig("baotoan_xacsuat.pdf", bbox_inches="tight")
+plt.show()
+\end{mintedbox}
+
+\subsection{Tạo các giá trị $\sigma_0$ và $k_0$}
+
+\begin{mintedbox}{python}
+sigma_0_list = [0.5, 1, 2]
+k_0_list = [2, 8, 10, -2, -8, -10]
+
+for sigma_value in sigma_0_list:
+    for k_value in k_0_list:
+        sigma_0 = sigma_value
+        k_0 = k_value
+        filename = (f"Leapfrog_Bac4_sigma={sigma_0}_k0={k_0}")
+
+        psi_t_x_bac_4 = giai_leapfrog_bac4()
+
+        luu_ketqua_psi(
+            filename,
+            x,
+            t,
+            y=psi_t_x_bac_4,
+            save_every_time=100
+        )
+
+        luu_file_xac_xuat(
+            filename,
+            x,
+            t,
+            y=psi_t_x_bac_4,
+            save_every_time=100
+        )
+\end{mintedbox}
+
+Hai danh sách tạo $3\times6=18$ tổ hợp tham số. Ở mỗi vòng lặp, các biến toàn cục \texttt{sigma\_0} và \texttt{k\_0} được cập nhật trước khi gọi \texttt{giai\_leapfrog\_bac4()}, nên hàm \texttt{khoitao\_psi0} bên trong bộ giải tạo đúng bó sóng mới. Lưới, bước thời gian, thế năng và các hằng số vật lý vẫn giữ nguyên.
+
+% =============================================================
+\section{Kết quả và thảo luận}
+% =============================================================
+
+\subsection{So sánh Leapfrog bậc 2 và bậc 4}
+
+Hai hình dưới đây được tạo với cùng bộ tham số $\sigma_0=0.5$, $k_0=8$, $x_0=5$, $\Delta x=0.05$ và $\Delta t=0.000625$.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{TDSE-ketqua-Leapfrog_Bac2.png}
+        \caption{Leapfrog với sai phân không gian bậc 2.}
+        \label{fig:bac2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{TDSE-ketqua-Leapfrog_Bac4.png}
+        \caption{Leapfrog với sai phân không gian bậc 4.}
+        \label{fig:bac4}
+    \end{subfigure}
+    \caption{Sự tiến hóa của $|\psi(x,t)|$ khi $\sigma_0=0.5$ và $k_0=8$.}
+    \label{fig:compare24}
+\end{figure}
+
+Ở cả hai kết quả, bó sóng xuất phát từ $x_0=5$, truyền theo chiều $+x$ với vận tốc nhóm $v_g=8$ và giãn rộng theo thời gian. Phần đuôi bó sóng chạm tường $x=15$ trước tâm, sau đó phản xạ ngược lại và giao thoa với sóng tới, tạo thành các vân gần biên. Sai khác giữa Hình~\ref{fig:bac2} và Hình~\ref{fig:bac4} chủ yếu do sai số pha rời rạc và cách xử lý nút biên khác nhau của phương pháp bậc 2 và bậc 4.
+
+
+\subsection{Bảo toàn xác suất}
+
+\begin{figure}[H]
+    \centering
+    \safeincludegraphics[width=0.9\textwidth]{baotoan_xacsuat.pdf}
+    \caption{Chuẩn xác suất $N(t)$ của Leapfrog bậc 2 và bậc 4. Hai ô dùng chung giới hạn trục tung.}
+    \label{fig:norm}
+\end{figure}
+
+Tại $t=0$, hệ số chuẩn hóa của bó Gauss cho $N(0)\simeq1$. Các giá trị thu được xấp xỉ:
+
+\begin{center}
+\begin{tabular}{@{}ccc@{}}
+\toprule
+$t$ & $N_{\text{bậc 2}}(t)$ & $N_{\text{bậc 4}}(t)$ \\
+\midrule
+$0$ & $1.000000$ & $1.000000$ \\
+$0.0625$ & $1.059575$ & $1.059116$ \\
+$0.5000$ & $1.062325$ & $1.062457$ \\
+$1.0000$ & $1.062325$ & $1.062448$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Sau giai đoạn đầu, $N(t)$ gần như không đổi đối với cả hai phương pháp. Điều này cho thấy xác suất được bảo toàn theo thời gian.
+
+\subsection{Sóng truyền ngược khi $k_0=-10$}
+
+\begin{figure}[H]
+    \centering
+    \safeincludegraphics[width=0.88\textwidth]{TDSE-ketqua-Leapfrog_Bac4_sigma=0.5_k0=-10.png}
+    \caption{Leapfrog bậc 4 với $\sigma_0=0.5$ và $k_0=-10$: bó sóng truyền về phía $-x$, phản xạ ở biên trái rồi đổi chiều.}
+    \label{fig:kminus10}
+\end{figure}
+
+Với $k_0=-10$, vận tốc nhóm ban đầu là $v_g=-10$. Tâm bó sóng cách biên trái một đoạn $5$, nên thời điểm va chạm ước lượng là
+\begin{equation}
+    t_{\mathrm{}}\approx\frac{5}{10}=0.5.
+\end{equation}
+Trước thời điểm này, đỉnh xác suất dịch về trái. Khi thành phần tới chồng lên thành phần phản xạ, $|\psi|$ xuất hiện hiện tượng giao thoa. Sau khi phản xạ hoàn tất, bó sóng chuyển động về phía $+x$.
+
+\subsection{Ảnh hưởng của độ lớn $k_0$ đến vận tốc và phản xạ}
+\begin{figure}[H]
+    \centering
+
+    \begin{subfigure}[t]{0.6\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]
+        {TDSE-ketqua-Leapfrog_Bac4_sigma=0.5_k0=2.png}
+        \caption{$k_0=2$.}
+        \label{fig:k2}
+    \end{subfigure}
+
+    \vspace{0.2cm}
+
+    \begin{subfigure}[t]{0.6\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]
+        {TDSE-ketqua-Leapfrog_Bac4_sigma=0.5_k0=8.png}
+        \caption{$k_0=8$.}
+        \label{fig:k8}
+    \end{subfigure}
+
+    \vspace{0.2cm}
+
+    \begin{subfigure}[t]{0.6\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]
+        {TDSE-ketqua-Leapfrog_Bac4_sigma=0.5_k0=10.png}
+        \caption{$k_0=10$.}
+        \label{fig:k10}
+    \end{subfigure}
+
+    \caption{Sóng truyền về phía $+x$ với cùng $\sigma_0=0.5$
+    và ba giá trị số sóng trung tâm.}
+    \label{fig:kpositive}
+\end{figure}
+
+
+
+Các thời điểm để tâm bó sóng đi từ $x_0=5$ đến biên phải $x=15$ theo vận tốc nhóm liên tục là
+\begin{equation}
+    t_{\mathrm{}}\approx\frac{15-5}{k_0}.
+\end{equation}
+Suy ra:
+\begin{center}
+\begin{tabular}{@{}ccc@{}}
+\toprule
+$k_0$ & $v_g$ & $t_{\mathrm{}}$ ước lượng \\
+\midrule
+$2$ & $2$ & $5.0$ \\
+$8$ & $8$ & $1.25$ \\
+$10$ & $10$ & $1.0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Với $k_0=2$, thời gian mô phỏng $1.2$ ngắn hơn nhiều so với thời gian chạm biên. Hình~\ref{fig:k2} vì vậy chủ yếu thể hiện chuyển động tịnh tiến và sự giãn rộng của bó sóng, chưa hình thành phản xạ rõ rệt.
+
+Với $k_0=8$, tâm bó sóng chưa hoàn toàn đạt biên phải tại $t=1.2$, nhưng phần đuôi đã tương tác với vùng tường. Hình~\ref{fig:k8} cho phép quan sát giai đoạn bắt đầu chồng chập giữa sóng tới và sóng phản xạ.
+
+Với $k_0=10$, tâm bó sóng đạt biên vào khoảng $t=1$. Khoảng thời gian còn lại đủ để thành phần phản xạ quay trở lại miền trong. Trong vùng hai thành phần cùng tồn tại, mật độ xác suất có các cực đại và cực tiểu liên tiếp. Đây là các vân giao thoa do tổng biên độ
+\begin{equation}
+    \psi(x,t)=\psi_{\text{tới}}(x,t)+\psi_{\text{phản xạ}}(x,t)
+\end{equation}
+thỏa
+\begin{equation}
+    |\psi|^2=|\psi_{\text{tới}}|^2+|\psi_{\text{phản xạ}}|^2
+    +2\operatorname{Re}\!\left(\psi_{\text{tới}}^*\psi_{\text{phản xạ}}\right).
+\end{equation}
+Số vân tăng khi $|k_0|$ lớn vì bước sóng de Broglie $\lambda=2\pi/|k_0|$ giảm.
+
+\subsection{Ảnh hưởng của độ rộng ban đầu $\sigma_0$}
+
+Để khảo sát riêng ảnh hưởng của độ rộng bó sóng, số sóng trung tâm được giữ cố định tại
+$k_0=8$, trong khi $\sigma_0$ lần lượt nhận các giá trị $0.5$, $1$ và $2$.
+Kết quả mô phỏng bằng phương pháp Leapfrog bậc 4 được trình bày trong
+Hình~\ref{fig:sigma_comparison}.
+
+\begin{figure}[H]
+    \centering
+
+    \begin{subfigure}[t]{0.60\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]
+        {TDSE-ketqua-Leapfrog_Bac4_sigma=0.5_k0=8.png}
+        \caption{$\sigma_0=0.5$.}
+        \label{fig:sigma05}
+    \end{subfigure}
+
+    \vspace{0.4cm}
+
+    \begin{subfigure}[t]{0.60\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]
+        {TDSE-ketqua-Leapfrog_Bac4_sigma=1_k0=8.png}
+        \caption{$\sigma_0=1$.}
+        \label{fig:sigma1}
+    \end{subfigure}
+
+    \vspace{0.4cm}
+
+    \begin{subfigure}[t]{0.60\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]
+        {TDSE-ketqua-Leapfrog_Bac4_sigma=2_k0=8.png}
+        \caption{$\sigma_0=2$.}
+        \label{fig:sigma2}
+    \end{subfigure}
+
+    \caption{Sự tiến hóa của bó sóng khi giữ cố định $k_0=8$ và thay đổi
+    độ rộng ban đầu $\sigma_0$.}
+    \label{fig:sigma_comparison}
+\end{figure}
+
+
+Theo Phương trình~\eqref{eq:gaussian}, $\sigma_0$ xác định độ rộng ban đầu của bó sóng. Khi $\sigma_0$ tăng, bó sóng rộng hơn trong không gian nhưng phân bố số sóng hẹp hơn, nên mức độ giãn theo thời gian giảm.
+
+Với $\sigma_0=0.5$ trong Hình~\ref{fig:sigma05}, bó sóng hẹp và giãn rõ nhất. Khi $\sigma_0=1$ trong Hình~\ref{fig:sigma1}, bó sóng rộng hơn và giãn ít hơn. Với $\sigma_0=2$ trong Hình~\ref{fig:sigma2}, bó sóng rộng ngay từ đầu và giãn ít nhất, nhưng phần đuôi có thể chạm biên sớm hơn.
+
+Do $k_0=8$ được giữ cố định trong cả ba trường hợp, vận tốc nhóm và quỹ đạo của tâm bó sóng gần như không đổi. Sau khi gặp biên, sóng phản xạ chồng chập với sóng tới và tạo thành các vân giao thoa.
+
+
+
+% =============================================================
+\section{Kết luận}
+% =============================================================
+
+Trong bài này, phương pháp DTD--Leapfrog được sử dụng với hai dạng sai phân không gian bậc 2 và bậc 4. Bước đầu tiên được tính bằng Euler tiến, sau đó nghiệm được cập nhật bằng công thức ba mức thời gian.
+
+Với $\sigma_0=0.5$ và $k_0=8$, cả hai phương pháp đều cho thấy bó sóng truyền sang phải, giãn rộng và phản xạ tại biên. Chuẩn xác suất tăng từ 1 lên khoảng $1.062$ ở bước đầu, sau đó gần như được bảo toàn.
+
+Các kết quả với $k_0=-10,2,8,10$ cho thấy dấu của $k_0$ quyết định hướng truyền, còn $|k_0|$ càng lớn thì bó sóng chạm biên và xuất hiện giao thoa càng sớm.
+
+% =============================================================
+\end{document}

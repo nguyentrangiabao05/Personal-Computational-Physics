@@ -1,0 +1,36 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{luu\PYGZus{}file\PYGZus{}xac\PYGZus{}xuat}\PYG{p}{(}\PYG{n}{output\PYGZus{}name}\PYG{p}{,} \PYG{n}{x}\PYG{p}{,} \PYG{n}{t}\PYG{p}{,} \PYG{n}{y}\PYG{p}{,} \PYG{n}{save\PYGZus{}every\PYGZus{}time}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{):}
+    \PYG{k}{global} \PYG{n}{N\PYGZus{}x}\PYG{p}{,} \PYG{n}{N\PYGZus{}t}\PYG{p}{,} \PYG{n}{dx}\PYG{p}{,} \PYG{n}{dt}\PYG{p}{,} \PYG{n}{sigma\PYGZus{}0}\PYG{p}{,} \PYG{n}{k\PYGZus{}0}\PYG{p}{,} \PYG{n}{x\PYGZus{}min}\PYG{p}{,} \PYG{n}{x\PYGZus{}max}\PYG{p}{,} \PYG{n}{t\PYGZus{}min}\PYG{p}{,} \PYG{n}{t\PYGZus{}max}
+    \PYG{n}{filename} \PYG{o}{=} \PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}TDSE\PYGZhy{}ketqua\PYGZhy{}}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{output\PYGZus{}name}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZhy{}xacxuat.txt\PYGZdq{}}
+
+    \PYG{k}{with} \PYG{n+nb}{open}\PYG{p}{(}\PYG{n}{filename}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}w\PYGZdq{}}\PYG{p}{,} \PYG{n}{encoding}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}utf\PYGZhy{}8\PYGZdq{}}\PYG{p}{)} \PYG{k}{as} \PYG{n}{f}\PYG{p}{:}
+        \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}\PYGZsh{} KET QUA GIAI PHUONG TRINH SCHRODINGER PHU THUOC THOI GIAN}\PYG{l+s+se}{\PYGZbs{}n\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+
+        \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}\PYGZsh{}\PYGZdq{}} \PYG{o}{*} \PYG{l+m+mi}{150} \PYG{o}{+} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+        \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}\PYGZsh{} THAM SO DAU VAO}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+        \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}\PYGZsh{}\PYGZdq{}} \PYG{o}{*} \PYG{l+m+mi}{150} \PYG{o}{+} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+
+        \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}\PYGZsh{} N\PYGZus{}x        = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{N\PYGZus{}x}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+        \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}\PYGZsh{} N\PYGZus{}t        = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{N\PYGZus{}t}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+        \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}\PYGZsh{} x\PYGZus{}min      = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{x\PYGZus{}min}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+        \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}\PYGZsh{} x\PYGZus{}max      = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{x\PYGZus{}max}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+        \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}\PYGZsh{} t\PYGZus{}min      = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{t\PYGZus{}min}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+        \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}\PYGZsh{} t\PYGZus{}max      = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{t\PYGZus{}max}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+        \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}\PYGZsh{} dx         = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{dx}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+        \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}\PYGZsh{} dt         = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{dt}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+        \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}\PYGZsh{} sigma\PYGZus{}0    = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{sigma\PYGZus{}0}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+        \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}\PYGZsh{} k\PYGZus{}0        = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{k\PYGZus{}0}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+        \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}\PYGZsh{} cach\PYGZus{}deu\PYGZus{}time = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{save\PYGZus{}every\PYGZus{}time}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+
+        \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}} \PYG{o}{+} \PYG{l+s+s2}{\PYGZdq{}\PYGZsh{}\PYGZdq{}} \PYG{o}{*} \PYG{l+m+mi}{150} \PYG{o}{+} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+
+        \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}\PYGZsh{}}\PYG{l+s+si}{\PYGZob{}}\PYG{l+s+s1}{\PYGZsq{}t\PYGZsq{}}\PYG{l+s+si}{:}\PYG{l+s+s2}{\PYGZgt{}15s}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ }\PYG{l+s+si}{\PYGZob{}}\PYG{l+s+s1}{\PYGZsq{}Integral\PYGZus{}|psi|\PYGZca{}2\PYGZus{}dx\PYGZsq{}}\PYG{l+s+si}{:}\PYG{l+s+s2}{\PYGZgt{}25s}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+
+        \PYG{k}{for} \PYG{n}{n} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{t}\PYG{p}{),} \PYG{n}{save\PYGZus{}every\PYGZus{}time}\PYG{p}{):}
+
+            \PYG{n}{prob\PYGZus{}x} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{y}\PYG{p}{[}\PYG{n}{n}\PYG{p}{,} \PYG{p}{:])}\PYG{o}{**}\PYG{l+m+mi}{2}
+            \PYG{n}{tong\PYGZus{}xac\PYGZus{}xuat} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{trapz}\PYG{p}{(}\PYG{n}{prob\PYGZus{}x}\PYG{p}{,} \PYG{n}{x}\PYG{p}{)}
+
+            \PYG{n}{f}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{} }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{t}\PYG{p}{[}\PYG{n}{n}\PYG{p}{]}\PYG{l+s+si}{:}\PYG{l+s+s2}{\PYGZgt{}15.6e}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ \PYGZdq{}}
+                    \PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{tong\PYGZus{}xac\PYGZus{}xuat}\PYG{l+s+si}{:}\PYG{l+s+s2}{\PYGZgt{}25.6e}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+\end{Verbatim}

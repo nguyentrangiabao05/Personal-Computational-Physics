@@ -1,0 +1,251 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{vietnam}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{graphicx}
+\usepackage{tabularray}
+\usepackage{tabularx}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage[left=2.5cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{fancyhdr}
+\setlength{\headheight}{15.2807pt}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{indentfirst}
+\captionsetup[figure]{justification=centering}
+\usepackage{minted}
+\setminted{style=friendly}
+
+% ===== Code block style (tcolorbox + minted) =====
+\usepackage{tcolorbox}
+\tcbuselibrary{minted,breakable,xparse,skins}
+\definecolor{bg}{gray}{0.95}
+\DeclareTCBListing{mintedbox}{O{}m!O{}}{%
+  breakable=true,
+  listing engine=minted,
+  listing only,
+  minted language=#2,
+  minted style=friendly,
+  minted options={%
+    linenos,
+    gobble=0,
+    breaklines=true,
+    breakafter=,,
+    fontsize=\small,
+    numbersep=8pt,
+    #1},
+  boxsep=0pt,
+  left skip=0pt,
+  right skip=0pt,
+  left=25pt,
+  right=0pt,
+  top=3pt,
+  bottom=3pt,
+  arc=5pt,
+  leftrule=0pt,
+  rightrule=0pt,
+  bottomrule=2pt,
+  toprule=2pt,
+  colback=bg,
+  colframe=orange!70,
+  enhanced,
+  overlay={%
+    \begin{tcbclipinterior}
+    \fill[orange!20!white] (frame.south west) rectangle ([xshift=20pt]frame.north west);
+    \end{tcbclipinterior}},
+  #3}
+
+% ===== Hyperlink =====
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    filecolor=magenta,
+    urlcolor=cyan,
+    citecolor=red!70!black
+}
+
+% ===== Header / Footer =====
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textbf{Báo cáo BTVN -- Vật lý tính toán}}
+\rhead{\textit{TDSE -- Euler tiến}}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% ===== Section formatting =====
+\titleformat{\section}{\Large\bfseries\color{blue!80!black}}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\large\bfseries\color{blue!70!black}}{\thesubsection.}{0.5em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{blue!60!black}}{\thesubsubsection.}{0.5em}{}
+
+\begin{document}
+
+% ================= TRANG BÌA =================
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    \rule{\textwidth}{1pt} \\[0.5cm]
+    {\huge \textbf{BÁO CÁO BÀI TẬP VỀ NHÀ}} \\[0.4cm]
+    {\large \textbf{GIẢI PHƯƠNG TRÌNH SCHRÖDINGER PHỤ THUỘC THỜI GIAN}} \\[0.2cm]
+    {\large \textbf{BẰNG PHƯƠNG PHÁP SAI PHÂN HỮU HẠN HIỆN (EULER TIẾN)}} \\[0.2cm]
+    \rule{\textwidth}{1pt}
+
+    \vspace{2cm}
+
+   {\large
+    \begin{tabular}{rl}
+        \textbf{Họ và tên:}  & Nguyễn Trần Gia Bảo \\[4pt]
+        \textbf{MSSV:}       & 23137003 \\[4pt]
+        \textbf{Môn học:}    & Vật lý tính toán (PHY10532) \\[4pt]
+        \textbf{Giảng viên:} & TS.\@ Vũ Quang Tuyên \\
+    \end{tabular}
+    }
+
+    \vfill
+    {\large \today}
+\end{titlepage}
+
+% ================= MỤC LỤC =================
+\newpage
+\tableofcontents
+\newpage
+
+% =============================================================
+\section{Cơ sở lý thuyết}
+
+\subsection{Phương trình Schrödinger phụ thuộc thời gian}
+
+Phương trình Schrödinger phụ thuộc thời gian (TDSE) một chiều cho hàm sóng $\psi(x,t)$ trong thế năng $V(x)$:
+\begin{equation}
+i\hbar\,\frac{\partial \psi(x,t)}{\partial t} = -\frac{\hbar^2}{2m}\,\frac{\partial^2 \psi(x,t)}{\partial x^2} + V(x)\,\psi(x,t).
+\label{eq:tdse}
+\end{equation}
+Trong đơn vị tự nhiên $\hbar=m=1$ dùng trong bài, đại lượng được bảo toàn theo thời gian là điều kiện chuẩn hóa
+\begin{equation}
+N(t) = \int_{-\infty}^{\infty} |\psi(x,t)|^2\,dx = \text{const}.
+\label{eq:norm}
+\end{equation}
+
+\subsection{Sai phân hữu hạn hiện (Euler tiến / FTCS)}
+
+Rời rạc hóa miền không gian--thời gian với bước lưới $h=\Delta x$, $k=\Delta t$, $\psi^n_j \equiv \psi(x_j,t_n)$. Đạo hàm thời gian được xấp xỉ bằng sai phân tiến (Euler tiến), đạo hàm không gian bằng sai phân trung tâm bậc hai:
+\begin{equation}
+\frac{\partial \psi}{\partial t}\bigg|_{j}^{n} \approx \frac{\psi^{n+1}_j-\psi^{n}_j}{k}, \qquad
+\frac{\partial^2 \psi}{\partial x^2}\bigg|_{j}^{n} \approx \frac{\psi^{n}_{j+1}-2\psi^{n}_j+\psi^{n}_{j-1}}{h^2}.
+\end{equation}
+Thay vào \eqref{eq:tdse} và giải $\psi^{n+1}_j$ ta được công thức cập nhật \emph{hiện} (explicit, FTCS):
+\begin{equation}
+\psi^{n+1}_j = \underbrace{\left[1 - i\frac{k}{\hbar}V_j - i\frac{\hbar k}{m h^2}\right]}_{g_j}\psi^{n}_j
++ \underbrace{i\frac{\hbar k}{2mh^2}}_{a}\left(\psi^{n}_{j+1}+\psi^{n}_{j-1}\right).
+\label{eq:euler-update}
+\end{equation}
+Công thức này được đặt trong hàm \texttt{euler\_giai\_psi}, với $a$ và $g_j$ (biến \texttt{g\_x}) như trong \eqref{eq:euler-update}.
+
+% =============================================================
+\section{Thực hành 1 -- Mô phỏng bó sóng Gauss bằng Euler tiến}
+
+\subsection{Thiết lập bài toán}
+
+Điều kiện đầu là một gói sóng Gauss có động lượng trung bình $k_0$:
+\begin{equation}
+\psi(x,0) = \exp\!\left[-\frac{1}{2}\left(\frac{x-5}{\sigma_0}\right)^2\right] e^{ik_0 x}, \qquad \sigma_0=0.5,\quad k_0 = 17\pi.
+\end{equation}
+Chuẩn hóa ban đầu có thể tính giải tích: $N(0)=\int |\psi(x,0)|^2\,dx = \sigma_0\sqrt{\pi} \approx 0.8862$, đúng với giá trị đầu tiên trong bảng kết quả (Bảng~\ref{tab:norm}).
+
+Thế năng $V(x)$ được khai báo bằng giá trị $V_0=0$ trên toàn bộ khoảng $[0,15]$ và $V=100$ chỉ tại đúng hai điểm biên $x=0,\,15$:
+\begin{equation}
+V(x) =
+\begin{cases}
+0, & 0 \le x \le 15,\\
+100, & x < 0 \text{ hoặc } x > 15.
+\end{cases}
+\end{equation}
+
+Tham số lưới: $\Delta x = 0.02$, $\Delta t = \tfrac{1}{2}\Delta x^2 = 2\times10^{-4}$ (giống điều kiện Courant của bài toán truyền nhiệt), $t\in[0,\,0.5]$.
+
+\subsection{Phương pháp Euler tiến}
+
+\begin{mintedbox}{python}
+def khoitao_psi0(x):
+    global sigma_0, k_0
+    psi_0 = np.exp(-1/2 * ((x-5)/sigma_0)**2 )*np.exp(1j*k_0*x)
+    return psi_0
+
+def thenang(x):
+    N_x = len(x)
+    V = np.zeros(N_x)
+    for i in range(N_x):
+        if x[i] <= 0 or x[i] >= 15:
+            V[i] = 0
+        else:
+            V[i] = 100
+    return V
+
+def euler_giai_psi(x, t):
+    global hbar, m, dx, dt, N_x, N_t
+    psi_t_x = np.zeros([N_t,N_x], dtype=np.complex128)
+    psi_0 = khoitao_psi0(x)
+    V = thenang(x)
+
+    a = 1j * hbar * dt / (2*m*dx**2)
+    g_x = 1 - 1j*dt/hbar * V - 1j*hbar*dt/(m*dx**2)
+
+    psi_t_x[0] = psi_0
+    for n in range(0, N_t-1):
+        for j in range(1, N_x-1):
+            psi_t_x[n+1,j] = g_x[j] * psi_t_x[n,j] + a*(psi_t_x[n,j+1]+psi_t_x[n,j-1])
+
+    return psi_t_x
+\end{mintedbox}
+
+Hàm \texttt{luu\_file\_xac\_xuat} tính chuẩn hóa $N(t)=\int |\psi(x,t)|^2\,dx$ bằng quy tắc hình thang (\texttt{np.trapz}) tại mỗi mốc thời gian được lưu (\texttt{save\_every=50}, tức mỗi $\Delta t \times 50 = 0.01$).
+
+\subsection{Kết quả: chuẩn hóa $N(t)$ theo thời gian}
+
+\begin{table}[H]
+\centering
+\caption{Chuẩn hóa $N(t)=\int|\psi(x,t)|^2\,dx$ theo thời gian (trích các mốc tiêu biểu từ \texttt{TDSE-ketqua-euler-xacxuat.txt}).}
+\label{tab:norm}
+\begin{tabular}{cc}
+\toprule
+$t$ & $N(t)=\int|\psi|^2\,dx$ \\
+\midrule
+$0.00$ & $8.8623\times 10^{-1}$ \\
+$0.01$ & $4.0103\times 10^{1}$ \\
+$0.02$ & $2.0957\times 10^{3}$ \\
+$0.03$ & $1.8708\times 10^{17}$ \\
+$0.05$ & $1.4118\times 10^{48}$ \\
+$0.10$ & $2.7022\times 10^{125}$ \\
+$0.15$ & $5.6924\times 10^{202}$ \\
+$0.20$ & $1.2521\times 10^{280}$ \\
+$0.21$ & $3.6957\times 10^{295}$ \\
+$0.22$ & $\texttt{inf}$ (tràn số) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{BTVN11/chuanhoa_phatphan.pdf}
+    \caption{$\log_{10}N(t)$ theo thời gian. Chuẩn hóa tăng từ $\sim 0.886$ lên hơn $10^{295}$ chỉ trong $0.21$ đơn vị thời gian, và tràn số (\texttt{inf}) tại $t=0.22$.}
+    \label{fig:divergence}
+\end{figure}
+
+% =============================================================
+\section{Kết luận}
+
+\begin{itemize}[leftmargin=*]
+\item Phương pháp Euler tiến cho phương trình Schrödinger phụ thuộc thời gian là \textbf{bất ổn định}.
+\item Kết quả số cho thấy chuẩn hóa $N(t)$ tăng rất nhanh, từ khoảng $0.886$ lên hơn $10^{295}$ và xảy ra tràn số tại $t\approx 0.22$.
+\item Vì vậy, Euler tiến \textbf{không phù hợp} để giải TDSE; nên sử dụng Crank--Nicolson hoặc phương pháp split-step Fourier.
+
+\end{itemize}
+
+\end{document}

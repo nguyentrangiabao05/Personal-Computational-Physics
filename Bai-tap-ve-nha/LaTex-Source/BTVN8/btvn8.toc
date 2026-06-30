@@ -1,0 +1,20 @@
+\contentsline {section}{\numberline {1}Cơ sở lý thuyết}{2}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Phương trình sóng 1D}{2}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Sai phân hữu hạn hiện (FTCS)}{2}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Điều kiện đầu, điều kiện biên}{2}{subsection.1.3}%
+\contentsline {section}{\numberline {2}Thực hành 1 -- Phương trình sóng không và có ma sát}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Hàm khởi tạo và sai phân hiện}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Bài toán gốc -- gảy dây tại $x=0.8L$}{3}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Điều kiện đầu dạng mode đơn $\sin (\pi x/L)$}{4}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Mở rộng -- thêm ma sát}{4}{subsection.2.4}%
+\contentsline {section}{\numberline {3}Thực hành 2 -- Các yêu cầu 3--7 (sách Landau, 2015)}{5}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Yêu cầu 3 -- So sánh nghiệm giải tích và nghiệm số}{5}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Yêu cầu 4 -- Ước lượng vận tốc truyền sóng $c$}{6}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Yêu cầu 5 -- Mode chuẩn cho ra sóng dừng}{7}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Yêu cầu 6 -- Hiện tượng phách (beating)}{7}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Yêu cầu 7 -- Gảy chính giữa dây}{8}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Thực hành 3 -- Cải tiến điều kiện đầu cho dây có ma sát}{9}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Công thức cải tiến}{9}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Cài đặt}{9}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}So sánh trước và sau cải tiến}{9}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Kết luận}{10}{section.5}%

@@ -1,0 +1,31 @@
+\contentsline {section}{\numberline {1}Giới thiệu và nội dung tính toán}{2}{section.1}%
+\contentsline {section}{\numberline {2}Cơ sở lý thuyết}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Phương trình Schrödinger phụ thuộc thời gian}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Bó sóng Gauss ban đầu}{3}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Lưới sai phân và sai phân không gian bậc 4}{3}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Dạng ma trận của TDSE}{3}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Phương pháp Runge-Kutta bậc 4}{4}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Điều kiện Courant-Friedrichs-Lewy (CFL)}{5}{subsection.2.6}%
+\contentsline {section}{\numberline {3}Tham số và mô hình rời rạc trong code}{5}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Tham số bài toán}{5}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Thế năng và điều kiện biên}{5}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Phân tích chương trình Python}{6}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Gọi thư viện và khởi tạo bó sóng Gauss}{6}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Tạo lưới không gian và thời gian}{7}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Kiểm tra điều kiện CFL}{7}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Xây dựng ma trận tiến hóa $M$}{7}{subsection.4.4}%
+\contentsline {paragraph}{Giải thích chi tiết lệnh \texttt {np.diag}.}{8}{paragraph*.1}%
+\contentsline {subsection}{\numberline {4.5}Giải TDSE bằng RK4}{9}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Ghi hàm sóng ra tập tin văn bản}{10}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Tính và ghi chuẩn xác suất}{11}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}Gán tham số, chạy hàm giải và lưu kết quả}{12}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}Đọc dữ liệu để vẽ hình}{12}{subsection.4.9}%
+\contentsline {subsection}{\numberline {4.10}Vẽ và lưu đồ thị bảo toàn xác suất}{13}{subsection.4.10}%
+\contentsline {subsection}{\numberline {4.11}Tạo các giá trị $\sigma _0$ và $k_0$}{14}{subsection.4.11}%
+\contentsline {section}{\numberline {5}Kết quả và thảo luận}{14}{section.5}%
+\contentsline {subsection}{\numberline {5.1}So sánh Leapfrog bậc 4 và RK4}{14}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Bảo toàn xác suất}{15}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Sóng truyền ngược khi $k_0=-10$}{16}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Ảnh hưởng của độ lớn $k_0$ đến vận tốc và phản xạ}{17}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Ảnh hưởng của độ rộng ban đầu $\sigma _0$}{18}{subsection.5.5}%
+\contentsline {section}{\numberline {6}Kết luận}{20}{section.6}%

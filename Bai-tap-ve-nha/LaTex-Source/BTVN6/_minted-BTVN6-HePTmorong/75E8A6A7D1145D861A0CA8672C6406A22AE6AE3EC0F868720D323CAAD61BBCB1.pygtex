@@ -1,0 +1,12 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{spectral\PYGZus{}radius}\PYG{p}{(}\PYG{n}{A}\PYG{p}{):}
+    \PYG{n}{eigenvalues} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{linalg}\PYG{o}{.}\PYG{n}{eigvals}\PYG{p}{(}\PYG{n}{A}\PYG{p}{)}
+    \PYG{n}{bankinhpho} \PYG{o}{=} \PYG{n+nb}{max}\PYG{p}{(}\PYG{n+nb}{abs}\PYG{p}{(}\PYG{n}{eigenvalues}\PYG{p}{))}
+    \PYG{k}{if} \PYG{n}{bankinhpho} \PYG{o}{\PYGZlt{}} \PYG{l+m+mi}{1}\PYG{p}{:}
+        \PYG{n}{ondinh} \PYG{o}{=} \PYG{k+kc}{True}
+        \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}He on dinh\PYGZdq{}}\PYG{p}{)}
+    \PYG{k}{else}\PYG{p}{:}
+        \PYG{n}{ondinh} \PYG{o}{=} \PYG{k+kc}{False}
+        \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}He khong on dinh\PYGZdq{}}\PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{bankinhpho}\PYG{p}{,} \PYG{n}{ondinh}
+\end{Verbatim}

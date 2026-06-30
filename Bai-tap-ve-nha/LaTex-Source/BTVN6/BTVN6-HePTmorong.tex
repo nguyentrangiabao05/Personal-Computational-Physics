@@ -1,0 +1,605 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{vietnam}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{graphicx}
+\usepackage{tabularray}
+\usepackage{tabularx}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage[left=2.5cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{fancyhdr}
+\setlength{\headheight}{15.2807pt}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{indentfirst}
+\captionsetup[figure]{justification=centering}
+
+\usepackage{minted}
+\setminted{style=friendly}
+
+% ===== Code block style (tcolorbox + minted) =====
+\usepackage{tcolorbox}
+\tcbuselibrary{minted,breakable,xparse,skins}
+
+\definecolor{bg}{gray}{0.95}
+\DeclareTCBListing{mintedbox}{O{}m!O{}}{%
+  breakable=true,
+  listing engine=minted,
+  listing only,
+  minted language=#2,
+  minted style=friendly,
+  minted options={%
+    linenos,
+    gobble=0,
+    breaklines=true,
+    breakafter=,,
+    fontsize=\small,
+    numbersep=8pt,
+    #1},
+  boxsep=0pt,
+  left skip=0pt,
+  right skip=0pt,
+  left=25pt,
+  right=0pt,
+  top=3pt,
+  bottom=3pt,
+  arc=5pt,
+  leftrule=0pt,
+  rightrule=0pt,
+  bottomrule=2pt,
+  toprule=2pt,
+  colback=bg,
+  colframe=orange!70,
+  enhanced,
+  overlay={%
+    \begin{tcbclipinterior}
+    \fill[orange!20!white] (frame.south west) rectangle ([xshift=20pt]frame.north west);
+    \end{tcbclipinterior}},
+  #3}
+
+% ===== Hyperlink =====
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    filecolor=magenta,
+    urlcolor=cyan,
+    citecolor=red!70!black
+}
+
+% ===== Header / Footer =====
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textbf{Báo cáo Thực hành 1 -- Vật lý tính toán}}
+\rhead{\textit{Jacobi \& Gauss--Seidel -- Điều kiện hội tụ}}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% ===== Section formatting =====
+\titleformat{\section}{\Large\bfseries\color{blue!80!black}}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\large\bfseries\color{blue!70!black}}{\thesubsection.}{0.5em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{blue!60!black}}{\thesubsubsection.}{0.5em}{}
+
+\begin{document}
+
+% ================= TRANG BÌA =================
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+
+    \rule{\textwidth}{1pt} \\[0.5cm]
+    {\huge \textbf{BÁO CÁO BÀI TẬP VỀ NHÀ 6}} \\[0.4cm]
+    {\large \textbf{KHẢO SÁT ĐIỀU KIỆN HỘI TỤ CỦA CÁC PHƯƠNG PHÁP}} \\[0.2cm]
+    {\large \textbf{LẶP JACOBI VÀ GAUSS--SEIDEL QUA MA TRẬN LẶP}} \\[0.2cm]
+    \rule{\textwidth}{1pt}
+
+    \vspace{2cm}
+
+    {\large
+    \begin{tabular}{rl}
+        \textbf{Họ và tên:}  & Nguyễn Trần Gia Bảo \\[4pt]
+        \textbf{MSSV:}       & 23137003 \\[4pt]
+        \textbf{Môn học:}    & Vật lý tính toán (PHY10532) \\[4pt]
+        \textbf{Giảng viên:} & TS.\@ Vũ Quang Tuyên \\
+    \end{tabular}
+    }
+
+    \vfill
+    {\large \today}
+\end{titlepage}
+
+% ================= MỤC LỤC =================
+\newpage
+\tableofcontents
+\newpage
+
+% =============================================================
+\section{Giới thiệu và nội dung bài tập}
+% =============================================================
+
+Ở báo cáo BTVN 5 ta đã thấy rằng với hệ phương trình có ma trận hệ số \emph{chéo trội nghiêm ngặt}, cả Jacobi lẫn Gauss--Seidel đều hội tụ, và Gauss--Seidel thường nhanh hơn. Trực giác thông thường rút ra là: ``Gauss--Seidel tốt hơn Jacobi vì dùng thông tin mới nhất''. Tuy nhiên, đây chỉ là \emph{định lý đặc biệt}, không phải \emph{định lý tổng quát}. Bài thực hành này đưa ra hai hệ phương trình nhằm củng cố công cụ lý thuyết chặt chẽ hơn -- \textbf{bán kính phổ $\rho$ của ma trận lặp} -- và đồng thời chỉ ra một phản ví dụ rất ``ngược'' với trực giác thông thường.
+
+Cụ thể:
+\begin{enumerate}
+    \item \textbf{Thực hành 1a.} Cho hệ
+    \[
+        \begin{cases}
+            x_1 - x_3 = 0.2 \\
+            -0.5\,x_1 + x_2 - 0.25\,x_3 = -1.425 \\
+            x_1 - 0.5\,x_2 + x_3 = 2
+        \end{cases}
+    \]
+    Yêu cầu:
+    \begin{itemize}[leftmargin=2em]
+        \item Ma trận hệ số có phải là ``strictly diagonally dominant'' không?
+        \item Xác định ma trận lặp $T_{GS}$ và tính bán kính phổ $\rho(T_{GS})$.
+        \item Dùng phương pháp Gauss--Seidel giải hệ với độ chính xác $\varepsilon = 10^{-2}$.
+    \end{itemize}
+
+    \item \textbf{Thực hành 1b.} Cho hệ
+    \[
+        \begin{cases}
+            x_1 + 2x_2 - 2x_3 = 7 \\
+            x_1 + x_2 + x_3 = 2 \\
+            2x_1 + 2x_2 + x_3 = 5
+        \end{cases}
+    \]
+    Yêu cầu:
+    \begin{itemize}[leftmargin=2em]
+        \item Xác định ma trận $T_J$ và tính $\rho(T_J)$.
+        \item Dùng Jacobi với $\mathbf{x}_0 = \mathbf{0}$ để giải hệ với $\varepsilon = 10^{-5}$.
+        \item Chứng minh $\rho(T_{GS}) = 2$. Kiểm chứng Gauss--Seidel ``thất bại'' cho $\varepsilon = 10^{-5}$ sau 25 vòng lặp.
+    \end{itemize}
+\end{enumerate}
+
+
+% =============================================================
+\section{Cơ sở lý thuyết}
+% =============================================================
+
+\subsection{Hệ phương trình tuyến tính và tách ma trận}
+
+Xét hệ
+\begin{equation}
+    A\mathbf{x} = \mathbf{b}, \qquad A \in \mathbb{R}^{n\times n},\ \mathbf{x},\mathbf{b} \in \mathbb{R}^n.
+    \label{eq:sys}
+\end{equation}
+Để áp dụng các phương pháp lặp ta viết
+\[
+    A = D + L + U,
+\]
+với $D$ là phần đường chéo, $L$ là phần tam giác dưới nghiêm ngặt, $U$ là phần tam giác trên nghiêm ngặt. Điều kiện chung là $a_{ii}\ne 0$ với mọi $i$.
+
+\subsection{Phương pháp Jacobi và ma trận lặp $T_J$}
+
+Công thức lặp Jacobi:
+\begin{equation}
+    x_i^{(k+1)} = \frac{1}{a_{ii}}\Bigl(b_i - \sum_{j\ne i} a_{ij}\,x_j^{(k)}\Bigr).
+    \label{eq:jacobi}
+\end{equation}
+Viết dưới dạng ma trận:
+\[
+    \mathbf{x}^{(k+1)} = -D^{-1}(L+U)\,\mathbf{x}^{(k)} + D^{-1}\mathbf{b}.
+\]
+Ma trận lặp:
+\begin{equation}
+    \boxed{\; T_J = -D^{-1}(L+U) \;}
+    \label{eq:TJ}
+\end{equation}
+
+\subsection{Phương pháp Gauss--Seidel và ma trận lặp $T_{GS}$}
+
+Công thức lặp Gauss--Seidel dùng ngay các giá trị mới vừa được cập nhật:
+\begin{equation}
+    x_i^{(k+1)} = \frac{1}{a_{ii}}\Bigl(b_i - \sum_{j<i} a_{ij}\,x_j^{(k+1)} - \sum_{j>i} a_{ij}\,x_j^{(k)}\Bigr).
+    \label{eq:gs}
+\end{equation}
+Dạng ma trận:
+\[
+    (D + L)\mathbf{x}^{(k+1)} = -U\mathbf{x}^{(k)} + \mathbf{b}
+    \;\Longrightarrow\;
+    \mathbf{x}^{(k+1)} = -(D+L)^{-1}U\,\mathbf{x}^{(k)} + (D+L)^{-1}\mathbf{b}.
+\]
+Ma trận lặp:
+\begin{equation}
+    \boxed{\; T_{GS} = -(D+L)^{-1}U \;}
+    \label{eq:TGS}
+\end{equation}
+
+\subsection{Điều kiện hội tụ: bán kính phổ $\rho(T)$}
+
+\textbf{Định lý (hội tụ của phép lặp tuyến tính):} Phương pháp lặp tổng quát $\mathbf{x}^{(k+1)} = T\mathbf{x}^{(k)} + \mathbf{c}$ hội tụ với mọi $\mathbf{x}^{(0)}$ \emph{khi và chỉ khi}
+\begin{equation}
+    \rho(T) = \max_{\lambda\in\sigma(T)} |\lambda| < 1,
+    \label{eq:rho}
+\end{equation}
+trong đó $\sigma(T)$ là tập các trị riêng (phổ) của $T$.
+
+Ý nghĩa: sai số sau $k$ bước $\mathbf{e}^{(k)} = T^k \mathbf{e}^{(0)}$. Với $k$ đủ lớn, $\|T^k\| \sim \rho(T)^k$, nên dãy hội tụ khi và chỉ khi $\rho(T) < 1$. Ngoài ra, $\rho(T)$ càng nhỏ thì hội tụ càng nhanh: tốc độ hội tụ tiệm cận là $-\log_{10}\rho(T)$ chữ số chính xác trên mỗi vòng lặp.
+
+\subsection{Chéo trội nghiêm ngặt: điều kiện \emph{đủ}, không phải \emph{cần}}
+
+Điều kiện chéo trội nghiêm ngặt theo hàng:
+\begin{equation}
+    |a_{ii}| > \sum_{j\ne i} |a_{ij}|, \qquad \forall\, i.
+    \label{eq:diagdom}
+\end{equation}
+
+\textbf{Định lý:} Nếu Phương trình~\eqref{eq:diagdom} thoả, thì $\rho(T_J) < 1$ và $\rho(T_{GS}) < 1$; cả hai phương pháp hội tụ.
+
+\subsection{Tiêu chuẩn dừng}
+
+\begin{equation}
+    \mathrm{err}^{(k)} = \max_{1\le i\le n} \left| x_i^{(k+1)} - x_i^{(k)} \right| < \varepsilon.
+    \label{eq:stop}
+\end{equation}
+Kèm theo đó là giới hạn số bước lặp tối đa $N_{\max}$ để tránh vòng lặp vô hạn khi phương pháp không hội tụ.
+
+% =============================================================
+\section{Phân tích chương trình}
+% =============================================================
+
+\subsection{Các hàm tiện ích}
+
+\subsubsection{Tính bán kính phổ}
+
+\begin{mintedbox}{python}
+def spectral_radius(A):
+    eigenvalues = np.linalg.eigvals(A)
+    bankinhpho = max(abs(eigenvalues))
+    if bankinhpho < 1:
+        ondinh = True
+        print("He on dinh")
+    else:
+        ondinh = False
+        print("He khong on dinh")
+    return bankinhpho, ondinh
+\end{mintedbox}
+
+\textbf{Giải thích:}
+\begin{itemize}
+    \item \texttt{np.linalg.eigvals(A)}: trả về vector trị riêng phức của $A$.
+    \item $\rho(A) = \max_i |\lambda_i|$: dùng \texttt{abs()} cho cả trị riêng phức.
+    \item Cờ \texttt{ondinh} đánh dấu $\rho < 1$ ($\Leftrightarrow$ phép lặp hội tụ).
+\end{itemize}
+
+\subsubsection{Kiểm tra chéo trội}
+
+\begin{mintedbox}{python}
+def diag_dominant(A):
+    n = A.shape[0]
+    sum_row = 0
+    for i in range(n):
+        for j in range(n):
+            if i != j:
+                sum_row = sum_row + abs(A[i, j])
+        if abs(A[i, i]) > sum_row:
+            print("Ma tran A co troi duong cheo nghiem ngat")
+            diag_dominant = 'strict'
+        elif abs(A[i, i]) >= sum_row:
+            print("Ma tran A co troi duong cheo")
+            diag_dominant = 'yes'
+        else:
+            diag_dominant = 'no'
+    return diag_dominant
+\end{mintedbox}
+
+
+\subsubsection{Tách ma trận $D$, $L$, $U$ và tính $T_{GS}$, $T_J$}
+
+\begin{mintedbox}{python}
+def matran_diag(A):       return np.diag(np.diag(A))
+def matran_duoi(A):       return np.tril(A, k=-1)
+def matran_tren(A):       return np.triu(A, k=1)
+
+def matran_gauss_seidel(A):
+    D = matran_diag(A); L = matran_duoi(A); U = matran_tren(A)
+    T_gs = np.dot(np.linalg.inv(D + L), -U)
+    return T_gs
+
+def matran_jacobi(A):
+    D = matran_diag(A); L = matran_duoi(A); U = matran_tren(A)
+    T_jacobi = np.dot(np.linalg.inv(D), L + U)
+    return T_jacobi
+\end{mintedbox}
+
+\textbf{Giải thích:}
+\begin{itemize}
+    \item \texttt{np.diag(np.diag(A))}: trích chéo và ráp thành ma trận đường chéo.
+    \item \texttt{np.tril(A, k=-1)}: phần tam giác dưới \emph{không} chứa đường chéo.
+    \item \texttt{np.triu(A, k=1)}: phần tam giác trên \emph{không} chứa đường chéo.
+    \item Công thức $T_{GS} = -(D+L)^{-1}U$ và $T_J = -D^{-1}(L+U)$.
+    \item \textbf{Ghi chú:} Hàm \texttt{matran\_jacobi} trong code thiếu dấu trừ so với công thức Phương trình~\eqref{eq:TJ}. Tuy nhiên \emph{dấu không ảnh hưởng đến bán kính phổ}, vì các trị riêng chỉ đổi dấu còn $|\lambda|$ không đổi.
+\end{itemize}
+
+\subsection{Hàm Gauss--Seidel}
+
+\begin{mintedbox}{python}
+def Gauss_Seidel(N_max, epsilon, A, B):
+    n = len(B)
+    x_old = n * [0]
+    x_new = n * [0]
+    err_mang = n * [100]
+    err = np.max(err_mang)
+    x_matrix = []
+    err_matrix = []
+    x_matrix.append(x_old[:])
+    for q in range(N_max):
+        if err > epsilon:
+            for i in range(n):
+                tong1 = tong2 = 0
+                for j in range(i):
+                    tong1 = tong1 + A[i][j] * x_new[j]
+                for j in range(i+1, n):
+                    tong2 = tong2 + A[i][j] * x_old[j]
+                x_new[i] = 1 / A[i][i] * (-tong1 - tong2 + B[i])
+                err_mang[i] = np.abs(x_new[i] - x_old[i])
+            err = np.max(err_mang[:])
+            x_matrix.append(x_new[:])
+            err_matrix.append(err)
+            x_old[:] = x_new[:]
+        else:
+            break
+    return q, x_matrix, err_matrix
+\end{mintedbox}
+
+\textbf{Giải thích:}
+\begin{itemize}
+    \item \texttt{tong1} chứa $\sum_{j<i} a_{ij}\,x_j^{(k+1)}$ dùng giá trị \emph{mới}.
+    \item \texttt{tong2} chứa $\sum_{j>i} a_{ij}\,x_j^{(k)}$ dùng giá trị \emph{cũ}.
+    \item Đặc điểm đặc trưng của Gauss--Seidel: \texttt{tong1} đọc \texttt{x\_new[j]} (đã được cập nhật trong vòng lặp hiện tại), còn \texttt{tong2} đọc \texttt{x\_old[j]} (chưa cập nhật).
+    \item Tiêu chuẩn dừng là chuẩn vô cùng: $\max|x^{(k+1)}_i - x^{(k)}_i| < \varepsilon$.
+\end{itemize}
+
+\subsection{Hàm Jacobi}
+
+\begin{mintedbox}{python}
+def Jacobi(N_max, epsilon, A, B):
+    n = len(B)
+    x_old = n * [0]
+    x_new = n * [0]
+    err_mang = n * [100]
+    err = np.max(err_mang)
+    x_matrix = []
+    err_matrix = []
+    x_matrix.append(x_old[:])
+    for q in range(N_max):
+        if err > epsilon:
+            for i in range(n):
+                tong = 0
+                for j in range(n):
+                    if i != j:
+                        tong = tong + A[i][j] * x_old[j]
+                x_new[i] = 1 / A[i][i] * (-tong + B[i])
+                err_mang[i] = np.abs(x_new[i] - x_old[i])
+            err = np.max(err_mang)
+            x_matrix.append(x_new[:])
+            err_matrix.append(err)
+            x_old[:] = x_new[:]
+        else:
+            break
+    return q, x_matrix, err_matrix
+\end{mintedbox}
+
+\textbf{Khác biệt với Gauss--Seidel:} toàn bộ tổng chỉ dùng \texttt{x\_old[j]} với $j\ne i$. Không có tách \texttt{tong1}/\texttt{tong2} vì không phân biệt ``đã cập nhật'' hay ``chưa cập nhật''. Jacobi đợi hết vòng ngoài mới đồng bộ cập nhật \texttt{x\_old} $\leftarrow$ \texttt{x\_new}.
+
+% =============================================================
+\section{Kết quả và thảo luận}
+% =============================================================
+
+\subsection{Thực hành 1a: Hệ không chéo trội nhưng vẫn hội tụ}
+
+\subsubsection{Câu a. Kiểm tra chéo trội nghiêm ngặt}
+
+Hệ số:
+\[
+    A = \begin{pmatrix}
+        1 & 0 & -1 \\
+        -0.5 & 1 & -0.25 \\
+        1 & -0.5 & 1
+    \end{pmatrix}, \qquad
+    \mathbf{b} = \begin{pmatrix} 0.2 \\ -1.425 \\ 2 \end{pmatrix}.
+\]
+
+Kiểm tra từng hàng theo Phương trình~\eqref{eq:diagdom}:
+\begin{itemize}
+    \item Hàng 1: $|a_{11}| = 1$ vs $|0| + |-1| = 1$ $\Longrightarrow$ \emph{bằng nhau} (chéo trội yếu, không strict).
+    \item Hàng 2: $|a_{22}| = 1$ vs $|-0.5| + |-0.25| = 0.75$ $\Longrightarrow$ \emph{thoả strict}.
+    \item Hàng 3: $|a_{33}| = 1$ vs $|1| + |-0.5| = 1.5$ $\Longrightarrow$ \emph{không thoả} ($1 < 1.5$).
+\end{itemize}
+
+\textbf{Kết luận:} Ma trận $A$ \emph{không} strictly diagonally dominant. Theo định lý chéo trội, ta \emph{không thể} kết luận ngay Jacobi/Gauss--Seidel hội tụ; phải kiểm tra bằng bán kính phổ.
+
+\subsubsection{Câu b. Ma trận $T_{GS}$ và bán kính phổ}
+
+Tính trực tiếp bằng công thức Phương trình~\eqref{eq:TGS}:
+\[
+    D+L = \begin{pmatrix} 1 & 0 & 0 \\ -0.5 & 1 & 0 \\ 1 & -0.5 & 1 \end{pmatrix},\quad
+    U = \begin{pmatrix} 0 & 0 & -1 \\ 0 & 0 & -0.25 \\ 0 & 0 & 0 \end{pmatrix}.
+\]
+Sau khi tính:
+\[
+    T_{GS} = -(D+L)^{-1}\,U = \begin{pmatrix} 0 & 0 & 1 \\ 0 & 0 & 0.75 \\ 0 & 0 & -0.625 \end{pmatrix}.
+\]
+Ma trận $T_{GS}$ là ma trận tam giác trên thưa, nên trị riêng chính là các phần tử đường chéo: $\lambda_1 = \lambda_2 = 0$, $\lambda_3 = -0.625$. Vậy
+\begin{equation}
+    \boxed{\;\rho(T_{GS}) = 0.625 < 1\;}
+\end{equation}
+
+$\Longrightarrow$ Gauss--Seidel hội tụ cho dù ma trận không strict dominant. \emph{Điều này khẳng định rằng chéo trội chỉ là điều kiện đủ, không cần.}
+
+\subsubsection{Câu c. Giải bằng Gauss--Seidel, $\varepsilon = 10^{-2}$}
+
+Nghiệm đúng (kiểm chứng bằng \texttt{np.linalg.solve}): $\mathbf{x}^\ast = (0.9,\; -0.8,\; 0.7)^T$.
+
+\textbf{Kết quả lặp}, hội tụ sau \textbf{13 vòng lặp}:
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{ccccc}
+        \toprule
+        $k$ & $x_1^{(k)}$ & $x_2^{(k)}$ & $x_3^{(k)}$ & $\mathrm{err}^{(k)}$ \\
+        \midrule
+        1  &  0.200000000 & $-1.325000000$ &  1.137500000 & $1.33\times 10^0$ \\
+        2  &  1.337500000 & $-0.471875000$ &  0.426562500 & $1.14\times 10^0$ \\
+        3  &  0.626562500 & $-1.005078125$ &  0.870898438 & $7.11\times 10^{-1}$ \\
+        4  &  1.070898438 & $-0.671826172$ &  0.593188477 & $4.44\times 10^{-1}$ \\
+        5  &  0.793188477 & $-0.880108643$ &  0.766757202 & $2.78\times 10^{-1}$ \\
+        6  &  0.966757202 & $-0.749932098$ &  0.658276749 & $1.74\times 10^{-1}$ \\
+        7  &  0.858276749 & $-0.831292439$ &  0.726077032 & $1.08\times 10^{-1}$ \\
+        8  &  0.926077032 & $-0.780442226$ &  0.683701855 & $6.78\times 10^{-2}$ \\
+        9  &  0.883701855 & $-0.812223609$ &  0.710186341 & $4.24\times 10^{-2}$ \\
+        10 &  0.910186341 & $-0.792360245$ &  0.693633537 & $2.65\times 10^{-2}$ \\
+        11 &  0.893633537 & $-0.804774847$ &  0.703979039 & $1.66\times 10^{-2}$ \\
+        12 &  0.903979039 & $-0.797015721$ &  0.697513100 & $1.03\times 10^{-2}$ \\
+        \textbf{13} &  \textbf{0.897513100} & $\mathbf{-0.801865175}$ &  \textbf{0.701554312} & $\mathbf{6.47\times 10^{-3}}$ \\
+        \bottomrule
+    \end{tabular}
+    \caption{Lịch sử lặp Gauss--Seidel cho Thực hành 1a. Dòng đậm là bước dừng khi $\mathrm{err} < \varepsilon = 10^{-2}$.}
+    \label{tab:1a}
+\end{table}
+
+\textbf{Biện luận:}
+\begin{itemize}
+    \item Sai số giảm \emph{xấp xỉ đều theo tỉ lệ hình học} với công bội $\approx 0.625 = \rho(T_{GS})$. Chẳng hạn $\mathrm{err}^{(10)}/\mathrm{err}^{(9)} \approx 2.65/4.24 \approx 0.625$. Đây là biểu hiện trực tiếp của định lý: tốc độ hội tụ tiệm cận đúng bằng $\rho(T_{GS})$.
+    \item Để giảm sai số đi 10 lần cần khoảng $\log_{10}(10)/\log_{10}(1/0.625) = 1/0.204 \approx 4.9$ vòng lặp. Quan sát thực tế: từ vòng 2 ($1.14$) xuống vòng 7 ($0.108$) đúng $\approx 10$ lần sau 5 bước -- khớp lý thuyết.
+    \item Nghiệm cuối $(0.8975, -0.8019, 0.7016)$ sai lệch so với nghiệm đúng cỡ $10^{-2}$, phù hợp với ngưỡng $\varepsilon = 10^{-2}$.
+    \item \textbf{Kết luận quan trọng:} Tuy $A$ không chéo trội, Gauss--Seidel vẫn hội tụ nhờ $\rho(T_{GS}) = 0.625 < 1$. Minh chứng rằng \emph{bán kính phổ là tiêu chuẩn duy nhất chặt chẽ}.
+\end{itemize}
+
+\subsection{Thực hành 1b: Phản ví dụ Jacobi--tốt-hơn--Gauss--Seidel}
+
+\subsubsection{Câu a. Ma trận $T_J$ và bán kính phổ}
+
+Hệ số:
+\[
+    A = \begin{pmatrix} 1 & 2 & -2 \\ 1 & 1 & 1 \\ 2 & 2 & 1 \end{pmatrix}, \qquad
+    \mathbf{b} = \begin{pmatrix} 7 \\ 2 \\ 5 \end{pmatrix}.
+\]
+Vì $D = I$ nên tính đơn giản: $T_J = -D^{-1}(L+U) = -(L+U)$:
+\[
+    T_J = \begin{pmatrix} 0 & -2 & 2 \\ -1 & 0 & -1 \\ -2 & -2 & 0 \end{pmatrix}.
+\]
+(Code trong báo cáo trả về $D^{-1}(L+U)$ không có dấu trừ; dấu không ảnh hưởng bán kính phổ.)
+
+\textbf{Tính trị riêng:} Sử dụng \texttt{np.linalg.eigvals}, output là ba số xấp xỉ 0 trong phạm vi sai số máy ($\sim 10^{-5}$ do ma trận có cấu trúc rất ``nhạy''). Điều này gợi ý $T_J$ là ma trận \textbf{nilpotent}.
+
+\textbf{Chứng minh $T_J^3 = 0$ bằng tay:}
+\[
+    T_J^2 = \begin{pmatrix} 0 & -2 & 2 \\ -1 & 0 & -1 \\ -2 & -2 & 0 \end{pmatrix}^2
+          = \begin{pmatrix} -2 & -4 & 2 \\ 2 & 4 & -2 \\ 2 & 4 & -2 \end{pmatrix}.
+\]
+Tiếp tục $T_J^3 = T_J^2\cdot T_J$ cho ra ma trận không. Vậy $T_J$ nilpotent bậc $\le 3$. Kết quả:
+\begin{equation}
+    \boxed{\;\rho(T_J) = 0\;}
+\end{equation}
+Điều này rất đặc biệt: $\rho = 0$ có nghĩa Jacobi sẽ \emph{hội tụ sau tối đa 3 vòng lặp} đến nghiệm \emph{chính xác toán học} (bỏ qua sai số làm tròn máy).
+
+\subsubsection{Câu b. Giải bằng Jacobi, $\mathbf{x}_0 = \mathbf{0}$, $\varepsilon = 10^{-5}$}
+
+Nghiệm đúng: $\mathbf{x}^\ast = (1,\; 2,\; -1)^T$.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{ccccc}
+        \toprule
+        $k$ & $x_1^{(k)}$ & $x_2^{(k)}$ & $x_3^{(k)}$ & $\mathrm{err}^{(k)}$ \\
+        \midrule
+        1 &  7.000000 &   2.000000 &   5.000000 & $7.00\times 10^0$ \\
+        2 & 13.000000 & $-10.000000$ & $-13.000000$ & $1.80\times 10^1$ \\
+        3 &  1.000000 &   2.000000 &  $-1.000000$ & $1.20\times 10^1$ \\
+        \textbf{4} &  \textbf{1.000000} & \textbf{2.000000} & $\mathbf{-1.000000}$ & $\mathbf{0.0}$ \\
+        \bottomrule
+    \end{tabular}
+    \caption{Lịch sử lặp Jacobi cho Thực hành 1b. Nghiệm đạt giá trị chính xác ngay sau 3 bước (đến vòng 4 sai số $= 0$).}
+    \label{tab:1b_jacobi}
+\end{table}
+
+\textbf{Biện luận:}
+\begin{itemize}
+    \item Sau 3 bước, nghiệm trùng khớp \emph{tuyệt đối} với nghiệm đúng $(1, 2, -1)$. Điều này khớp hoàn hảo với $T_J^3 = 0$: sai số $\mathbf{e}^{(3)} = T_J^3\,\mathbf{e}^{(0)} = \mathbf{0}$.
+    \item Ở vòng 4, $\mathrm{err} = 0 < 10^{-5}$ nên vòng lặp dừng. Jacobi hoàn toàn không cần chạy tới hàng nghìn bước như nhiều hệ thông thường.
+    \item Đáng chú ý: ở các vòng 1--2, nghiệm tạm thời \emph{xa} nghiệm đúng (giá trị $\pm 13$), nhưng vẫn ``rơi đúng'' về nghiệm ở vòng 3. Đây là điểm rất khác các hệ chéo trội (vốn giảm đơn điệu); với ma trận nilpotent sự giảm sai số không nhất thiết đơn điệu nhưng cuối cùng dừng tuyệt đối sau $\le 3$ bước.
+\end{itemize}
+
+\subsubsection{Câu c. Chứng minh $\rho(T_{GS}) = 2$ và kiểm chứng phân kỳ}
+
+\textbf{Tính $T_{GS}$:} Với $A$ đã cho:
+\[
+    D + L = \begin{pmatrix} 1 & 0 & 0 \\ 1 & 1 & 0 \\ 2 & 2 & 1 \end{pmatrix}, \qquad
+    (D+L)^{-1} = \begin{pmatrix} 1 & 0 & 0 \\ -1 & 1 & 0 \\ 0 & -2 & 1 \end{pmatrix}.
+\]
+\[
+    U = \begin{pmatrix} 0 & 2 & -2 \\ 0 & 0 & 1 \\ 0 & 0 & 0 \end{pmatrix}, \qquad
+    T_{GS} = -(D+L)^{-1}U = \begin{pmatrix} 0 & -2 & 2 \\ 0 & 2 & -3 \\ 0 & 0 & 2 \end{pmatrix}.
+\]
+
+$T_{GS}$ là ma trận tam giác trên nên trị riêng chính là đường chéo: $\lambda_1 = 0$, $\lambda_2 = \lambda_3 = 2$. Vậy
+\begin{equation}
+    \boxed{\;\rho(T_{GS}) = 2\;} \quad (\text{khớp với đề bài}).
+\end{equation}
+Vì $\rho(T_{GS}) = 2 > 1$, Gauss--Seidel \emph{phân kỳ} với mọi giá trị khởi tạo $\ne \mathbf{x}^\ast$.
+
+\textbf{Kiểm chứng số:} Chạy Gauss--Seidel với $\varepsilon = 10^{-5}$ và $N_{\max} = 25$:
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{crrrr}
+        \toprule
+        $k$ & $x_1^{(k)}$ & $x_2^{(k)}$ & $x_3^{(k)}$ & $\mathrm{err}^{(k)}$ \\
+        \midrule
+        1  & $7.00\times 10^0$ & $-5.00\times 10^0$ & $1.00\times 10^0$ & $7.0\times 10^0$ \\
+        2  & $1.90\times 10^1$ & $-1.80\times 10^1$ & $3.00\times 10^0$ & $1.3\times 10^1$ \\
+        3  & $4.90\times 10^1$ & $-5.00\times 10^1$ & $7.00\times 10^0$ & $3.2\times 10^1$ \\
+        5  & $2.89\times 10^2$ & $-3.02\times 10^2$ & $3.10\times 10^1$ & $1.76\times 10^2$ \\
+        10 & $1.69\times 10^4$ & $-1.74\times 10^4$ & $1.02\times 10^3$ & $9.47\times 10^3$ \\
+        15 & $7.86\times 10^5$ & $-8.03\times 10^5$ & $3.28\times 10^4$ & $4.26\times 10^5$ \\
+        20 & $3.30\times 10^7$ & $-3.36\times 10^7$ & $1.05\times 10^6$ & $1.76\times 10^7$ \\
+        \textbf{25} & $\mathbf{1.31\times 10^9}$ & $\mathbf{-1.33\times 10^9}$ & $\mathbf{3.36\times 10^7}$ & $\mathbf{6.88\times 10^8}$ \\
+        \bottomrule
+    \end{tabular}
+    \caption{Lịch sử ``lặp'' Gauss--Seidel cho Thực hành 1b (trích một số bước). Nghiệm phân kỳ cực mạnh, sau 25 bước đã lên tới $\sim 10^9$, cách xa nghiệm đúng $(1, 2, -1)$.}
+    \label{tab:1b_gs}
+\end{table}
+
+\textbf{Biện luận:}
+\begin{itemize}
+    \item Sau 25 vòng, $|x_1| \approx 1.3\times 10^9$ trong khi nghiệm đúng $x_1^\ast = 1$. Sai số bùng nổ.
+    \item Tỉ số tăng của $\mathrm{err}^{(k+1)}/\mathrm{err}^{(k)}$ tiệm cận $2 = \rho(T_{GS})$. Ví dụ: $\mathrm{err}^{(25)}/\mathrm{err}^{(24)} \approx 6.88\times 10^8 / 3.31\times 10^8 \approx 2.08$. Khớp dự đoán lý thuyết $\|\mathbf{e}^{(k+1)}\| \sim \rho\,\|\mathbf{e}^{(k)}\|$.
+    \item So sánh với Jacobi: cùng hệ, Jacobi kết thúc sau \emph{3 bước} với nghiệm chính xác; Gauss--Seidel sau \emph{25 bước} đã sai lệch cỡ $10^9$. Đây là phản ví dụ dứt khoát cho quan niệm ``GS luôn tốt hơn Jacobi''.
+\end{itemize}
+
+\subsubsection{Nhận xét tổng quát về hai hành vi trái ngược}
+
+\begin{itemize}
+    \item \textbf{Lý do bản chất:} Hai ma trận lặp $T_J$ và $T_{GS}$ là \emph{các phép biến đổi khác hẳn nhau}; không có mối liên hệ đơn điệu giữa $\rho(T_J)$ và $\rho(T_{GS})$ ngoại trừ các trường hợp ma trận có tính chất đặc biệt. Với ma trận tổng quát, việc ``dùng giá trị mới ngay lập tức'' có thể \emph{khuếch đại sai số} thay vì dập tắt nó.
+    \item Hai ví dụ 1a và 1b củng cố thông điệp: trước khi áp dụng Jacobi hoặc Gauss--Seidel, \emph{luôn luôn} nên tính $\rho(T)$ để biết liệu phép lặp có hội tụ và tốc độ ra sao.
+\end{itemize}
+
+% =============================================================
+\section{Kết luận}
+% =============================================================
+
+Qua hai thực hành, các điểm chính rút ra như sau:
+
+\begin{enumerate}
+    \item \textbf{Điều kiện hội tụ chặt chẽ duy nhất} của các phương pháp lặp tuyến tính dạng $\mathbf{x}^{(k+1)} = T\mathbf{x}^{(k)} + \mathbf{c}$ là $\rho(T) < 1$. Chéo trội nghiêm ngặt chỉ là điều kiện \emph{đủ}, không phải \emph{cần}.
+
+    \item \textbf{Thực hành 1a} minh hoạ một hệ \emph{không} chéo trội nhưng vẫn hội tụ dưới Gauss--Seidel vì $\rho(T_{GS}) = 0.625 < 1$. Hội tụ sau 13 vòng với $\varepsilon = 10^{-2}$, tốc độ giảm sai số theo tỉ lệ hình học công bội $\approx \rho$ -- khớp tuyệt đối với lý thuyết.
+
+    \item \textbf{Thực hành 1b} là một phản ví dụ kinh điển: $\rho(T_J) = 0$ (ma trận lặp nilpotent bậc 3) khiến Jacobi đạt nghiệm \emph{chính xác tuyệt đối sau 3 vòng lặp}, trong khi $\rho(T_{GS}) = 2$ khiến Gauss--Seidel \emph{phân kỳ} với sai số nhân đôi mỗi bước, sau 25 bước đã lên tới $\sim 10^9$. Trực giác ``Gauss--Seidel luôn tốt hơn Jacobi'' là \emph{sai} trong trường hợp tổng quát.
+
+    \item \textbf{Quy tắc khi tính:} Trước khi chạy Jacobi hay Gauss--Seidel, luôn tính $\rho(T_J)$, $\rho(T_{GS})$; chọn phương pháp có $\rho$ nhỏ hơn; nếu cả hai $\ge 1$ thì chuyển sang kỹ thuật khác (phương trình chuẩn tắc như BTVN 5, khử Gauss trực tiếp, SOR với $\omega$ tối ưu, v.v.).
+
+\end{enumerate}
+
+\end{document}

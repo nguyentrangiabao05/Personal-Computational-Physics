@@ -1,0 +1,13 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{dieukienbien}\PYG{p}{(}\PYG{n}{N\PYGZus{}time}\PYG{p}{,} \PYG{n}{N\PYGZus{}x}\PYG{p}{,} \PYG{n}{x\PYGZus{}t0}\PYG{p}{,} \PYG{n}{t\PYGZus{}x0}\PYG{p}{,} \PYG{n}{t\PYGZus{}xl}\PYG{p}{):}
+    \PYG{n}{u} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{((}\PYG{n}{N\PYGZus{}x}\PYG{p}{,} \PYG{n}{N\PYGZus{}time}\PYG{p}{),} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{float}\PYG{p}{)}
+
+    \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{N\PYGZus{}time}\PYG{p}{):}
+        \PYG{n}{u}\PYG{p}{[}\PYG{n}{N\PYGZus{}x}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{][}\PYG{n}{i}\PYG{p}{]} \PYG{o}{=} \PYG{p}{(}\PYG{n}{t\PYGZus{}xl}\PYG{p}{)}      \PYG{c+c1}{\PYGZsh{} bien phai}
+    \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{N\PYGZus{}time}\PYG{p}{):}
+        \PYG{n}{u}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{][}\PYG{n}{i}\PYG{p}{]} \PYG{o}{=} \PYG{p}{(}\PYG{n}{t\PYGZus{}x0}\PYG{p}{)}          \PYG{c+c1}{\PYGZsh{} bien trai}
+    \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{N\PYGZus{}x}\PYG{p}{):}
+        \PYG{n}{u}\PYG{p}{[}\PYG{n}{i}\PYG{p}{][}\PYG{l+m+mi}{0}\PYG{p}{]} \PYG{o}{=} \PYG{p}{(}\PYG{n}{x\PYGZus{}t0}\PYG{p}{)}          \PYG{c+c1}{\PYGZsh{} dieu kien dau}
+
+    \PYG{k}{return} \PYG{n}{u}
+\end{Verbatim}

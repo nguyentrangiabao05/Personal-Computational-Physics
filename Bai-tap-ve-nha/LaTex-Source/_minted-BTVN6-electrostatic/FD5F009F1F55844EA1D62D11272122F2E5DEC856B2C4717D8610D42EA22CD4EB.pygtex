@@ -1,0 +1,22 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{dieukienbien}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{n}{u\PYGZus{}bottom}\PYG{p}{,} \PYG{n}{u\PYGZus{}left}\PYG{p}{,} \PYG{n}{u\PYGZus{}right}\PYG{p}{,} \PYG{n}{u\PYGZus{}top}\PYG{p}{):}
+    \PYG{n}{u} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{((}\PYG{n}{n}\PYG{p}{,} \PYG{n}{n}\PYG{p}{),} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{float}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} u[i,0] = bottom}
+    \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{n}\PYG{p}{):}
+        \PYG{n}{u}\PYG{p}{[}\PYG{n}{i}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{]} \PYG{o}{=} \PYG{n}{u\PYGZus{}bottom}
+
+    \PYG{c+c1}{\PYGZsh{} u[0,j] = left}
+    \PYG{k}{for} \PYG{n}{j} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{n}\PYG{p}{):}
+        \PYG{n}{u}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{j}\PYG{p}{]} \PYG{o}{=} \PYG{n}{u\PYGZus{}left}
+
+    \PYG{c+c1}{\PYGZsh{} u[n\PYGZhy{}1,j] = right}
+    \PYG{k}{for} \PYG{n}{j} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{n}\PYG{p}{):}
+        \PYG{n}{u}\PYG{p}{[}\PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{j}\PYG{p}{]} \PYG{o}{=} \PYG{n}{u\PYGZus{}right}
+
+    \PYG{c+c1}{\PYGZsh{} u[i,n\PYGZhy{}1] = top}
+    \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{n}\PYG{p}{):}
+        \PYG{n}{u}\PYG{p}{[}\PYG{n}{i}\PYG{p}{,} \PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{=} \PYG{n}{u\PYGZus{}top}
+
+    \PYG{k}{return} \PYG{n}{u}
+\end{Verbatim}

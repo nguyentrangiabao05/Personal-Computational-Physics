@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+    \PYG{k}{def} \PYG{n+nf}{thenang}\PYG{p}{(}\PYG{n}{x}\PYG{p}{):}
+        \PYG{k}{global} \PYG{n}{V\PYGZus{}max}
+
+        \PYG{k}{if} \PYG{l+m+mi}{0} \PYG{o}{\PYGZlt{}=} \PYG{n}{x} \PYG{o}{\PYGZlt{}=} \PYG{l+m+mi}{15}\PYG{p}{:}
+            \PYG{k}{return} \PYG{l+m+mi}{0}
+        \PYG{k}{else}\PYG{p}{:}
+            \PYG{k}{return} \PYG{n}{V\PYGZus{}max}
+\end{Verbatim}

@@ -1,0 +1,24 @@
+def tinhtoan_backward_2thanh(u, kappa, C, rho, N_x, N_time, l, t_max, N_max, tol,
+                      file_data="truyen_nhiet.dat", file_log="ketqua_hoitu.dat"):
+    beta1, beta2, h, k = hamso(kappa, C, rho, N_x, N_time, l, t_max)
+
+    with open(file_log, "w", encoding="utf-8") as file:
+        for j in range(1, N_time):
+            err = np.zeros(N_x - 2)
+
+            for q in range(1, N_max + 1):       # Sua bien phu: N_max+1
+                u_old = u.copy()
+                for i in range(1, N_x - 1):
+                    u[i][j] = beta1*(u[i+1][j] + u[i-1][j]) + beta2*u[i][j-1]
+                    err[i-1] = abs(u[i][j] - u_old[i][j])
+
+                if np.max(err) < tol:
+                    file.write(f"Ket qua hoi tu tai vong lap thu: {q} "
+                               f"tai buoc thoi gian thu: {j}.\n")
+                    break
+            else:                                # else cua for: khong break
+                file.write(f"Khong hoi tu tai buoc thoi gian thu: {j} "
+                           f"sau {N_max} vong lap.\n")
+
+    luufile(u, N_x, N_time, l, t_max, h, k, filename=file_data)
+    return u

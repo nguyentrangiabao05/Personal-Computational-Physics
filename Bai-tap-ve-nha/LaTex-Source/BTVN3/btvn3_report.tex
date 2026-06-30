@@ -1,0 +1,383 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{fancyhdr,graphicx,xcolor,comment,environ}
+\usepackage{mdframed}
+\usepackage[shortlabels]{enumitem}
+\usepackage{indentfirst}
+\usepackage{hyperref}
+\usepackage[T5]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{courier}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{tabularx}
+\usepackage{subcaption}
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+\usepackage[vietnamese]{babel}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+}
+
+\pagestyle{fancy}
+\setlength{\headheight}{28pt}
+
+\newenvironment{problem}[2][Problem]
+    {\begin{mdframed}[backgroundcolor=gray!20] \textbf{#1 #2} \\
+    }
+    {\end{mdframed}}
+
+\newenvironment{solution}
+    {\textit{Nội dung:}}
+    {}
+
+\renewcommand{\qed}{\quad\qedsymbol}
+\binoppenalty=\maxdimen
+\relpenalty=\maxdimen
+
+\lhead{\shortstack[l]{Họ tên: Nguyễn Trần Gia Bảo\\MSSV: 23137003}}
+\chead{\shortstack[c]{\textbf{Báo cáo bài tập về nhà 3}}}
+\rhead{\shortstack[r]{Vật lý tính toán (CP)\\GV: Thầy TS. Vũ Quang Tuyên}}
+
+\definecolor{codebg}{RGB}{245,245,245}
+\definecolor{codeframe}{RGB}{220,220,220}
+\definecolor{codecomment}{RGB}{0,128,0}
+\definecolor{codekeyword}{RGB}{0,0,180}
+\definecolor{codestring}{RGB}{163,21,21}
+
+\lstdefinestyle{mypython}{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\footnotesize\ttfamily,
+    keywordstyle=\color{codekeyword}\bfseries,
+    commentstyle=\color{codecomment},
+    stringstyle=\color{codestring},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=8pt,
+    frame=single,
+    rulecolor=\color{codeframe},
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=4,
+    showstringspaces=false,
+    captionpos=b
+}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{BÁO CÁO BTVN 3: GIẢI BÀI TOÁN CON LẮC ĐƠN BẰNG EULER, MEM VÀ RK4}}\\[0.5em]
+    {\large Môn: Vật lý tính toán\\[0.5em]Computational Physics}
+\end{center}
+
+\vspace{1em}
+
+\section{Nội dung bài tập}
+
+Bài toán yêu cầu khảo sát dao động của con lắc đơn chiều dài $l$ với góc lệch $\theta$ so với phương thẳng đứng. Hai phương trình cần xét là
+\begin{equation}
+\theta'' + \frac{g}{l}\sin\theta = 0,
+\label{eq:nonlinear}
+\end{equation}
+ứng với mô hình con lắc đầy đủ, và gần đúng góc nhỏ
+\begin{equation}
+\theta'' + \frac{g}{l}\theta = 0.
+\label{eq:linear}
+\end{equation}
+
+Yêu cầu chính của bài tập:
+\begin{enumerate}
+    \item Hoàn thiện chương trình giải bài toán bằng ba phương pháp số: Euler thường, Euler cải tiến (MEM) và Runge--Kutta bậc 4 (RK4).
+    \item Với $\theta_0 = \pi/6$, $\dot\theta_0 = 0$, $l = 60$ cm, vẽ và so sánh đồ thị $\theta(t)$ của các phương pháp số cho phương trình~\eqref{eq:nonlinear} và~\eqref{eq:linear}.
+    \item So sánh nghiệm của phương trình~\eqref{eq:nonlinear} và~\eqref{eq:linear} cho hai điều kiện đầu $\theta_0 = \pi/12$ và $\theta_0 = \pi/4$; phần đồ thị này được vẽ bằng Gnuplot.
+\end{enumerate}
+
+\section{Cơ sở lý thuyết}
+
+\subsection{Đưa phương trình bậc hai về hệ bậc một}
+
+Đặt
+\[
+Y(t) = 
+\begin{bmatrix}
+\theta(t)\\
+\omega(t)
+\end{bmatrix},
+\qquad \omega(t)=\dot\theta(t).
+\]
+Khi đó hai phương trình vi phân trở thành các hệ bậc một:
+\begin{align}
+\frac{d\theta}{dt} &= \omega,
+&
+\frac{d\omega}{dt} &= -\frac{g}{l}\sin\theta
+\qquad \text{(PT [1])},
+\label{eq:sys1}
+\\
+\frac{d\theta}{dt} &= \omega,
+&
+\frac{d\omega}{dt} &= -\frac{g}{l}\theta
+\qquad \text{(PT [2])}.
+\label{eq:sys2}
+\end{align}
+
+Trong bài này dùng $g = 9.81\ \mathrm{m/s^2}$ và $l = 0.6\ \mathrm{m}$, do đó tần số góc của mô hình góc nhỏ là
+\[
+\Omega = \sqrt{\frac{g}{l}} \approx 4.0435\ \mathrm{s^{-1}},
+\]
+và chu kỳ tương ứng là
+\[
+T_0 = 2\pi\sqrt{\frac{l}{g}} \approx 1.5539\ \mathrm{s}.
+\]
+
+Đối với phương trình tuyến tính~\eqref{eq:linear}, nghiệm giải tích với điều kiện đầu $\theta(0)=\theta_0$, $\omega(0)=\omega_0$ là
+\begin{equation}
+\theta(t)=\theta_0\cos(\Omega t)+\frac{\omega_0}{\Omega}\sin(\Omega t).
+\label{eq:exact_linear}
+\end{equation}
+Trong trường hợp đang xét, $\omega_0=0$ nên
+\[
+\theta(t)=\theta_0\cos(\Omega t).
+\]
+
+\subsection{Các phương pháp số}
+
+Giả sử $t_n=a+nh$, với bước $h=(b-a)/N$.
+
+\paragraph{Phương pháp Euler thường.}
+Với hệ $Y'=F(t,Y)$, công thức cập nhật là
+\begin{equation}
+Y_{n+1}=Y_n+hF(t_n,Y_n).
+\label{eq:euler}
+\end{equation}
+Đây là phương pháp bậc một nên sai số tích lũy tương đối lớn, đặc biệt với bài toán dao động.
+
+\paragraph{Phương pháp Euler cải tiến (Modified Euler Method -- MEM).}
+Phương pháp này dùng trung bình giữa độ dốc ở đầu bước và độ dốc dự đoán ở cuối bước:
+\begin{equation}
+Y_{n+1}=Y_n+\frac{h}{2}\left[F(t_n,Y_n)+F\bigl(t_{n+1},Y_n+hF(t_n,Y_n)\bigr)\right].
+\label{eq:mem}
+\end{equation}
+Phương pháp có bậc chính xác cao hơn Euler thường và ổn định hơn với dao động điều hòa.
+
+\paragraph{Phương pháp Runge--Kutta bậc 4.}
+Công thức cập nhật là
+\begin{align}
+K_1 &= hF(t_n,Y_n),\nonumber\\
+K_2 &= hF\left(t_n+\frac{h}{2},Y_n+\frac{K_1}{2}\right),\nonumber\\
+K_3 &= hF\left(t_n+\frac{h}{2},Y_n+\frac{K_2}{2}\right),\nonumber\\
+K_4 &= hF(t_n+h,Y_n+K_3),\nonumber\\
+Y_{n+1} &= Y_n+\frac{K_1+2K_2+2K_3+K_4}{6}.
+\label{eq:rk4}
+\end{align}
+Đây là phương pháp bậc bốn, cho độ chính xác rất cao với cùng bước thời gian.
+
+\section{Phân tích chương trình}
+
+Chương trình được viết bằng Python trong notebook \texttt{daodongdieuhoa.ipynb}. Các hàm chính gồm:
+
+\subsection{Khai báo hệ phương trình}
+\begin{lstlisting}[style=mypython,caption={Khai báo hai hệ phương trình của bài toán con lắc}]
+def phuongtrinh_1(t, Y):
+    theta = Y[0]
+    omega = Y[1]
+    return np.array([omega, -(g/l)*np.sin(theta)])
+
+def phuongtrinh_2(t, Y):
+    theta = Y[0]
+    omega = Y[1]
+    return np.array([omega, -(g/l)*theta])
+\end{lstlisting}
+
+\textbf{Ý nghĩa.} 
+\texttt{phuongtrinh\_1} biểu diễn mô hình con lắc phi tuyến đầy đủ, còn \texttt{phuongtrinh\_2} là gần đúng góc nhỏ. Cả hai đều được đưa về dạng vector $Y' = F(t,Y)$ để có thể dùng chung các bộ giải số.
+
+\subsection{Hàm Euler thường}
+\begin{lstlisting}[style=mypython,caption={Thuật toán Euler thường}]
+def euler(a,b,N,alpha,phuongtrinh,filename):
+    h = (b-a)/N
+    x = [a]
+    y = [alpha]
+
+    for i in range(1, N+1):
+        y.append(y[i-1] + h * phuongtrinh(x[i-1], y[i-1]))
+        x.append(a + i*h)
+
+    return x, y
+\end{lstlisting}
+
+\subsection{Hàm Euler cải tiến (MEM)}
+\begin{lstlisting}[style=mypython,caption={Thuật toán Euler cải tiến}]
+def Euler_modified(a,b,N,alpha,phuongtrinh,filename):
+    h = (b-a)/N
+    x = [a]
+    y = [alpha]
+
+    for i in range(1, N+1):
+        x.append(a + i*h)
+        y.append(y[i-1] + h/2 * (
+            phuongtrinh(x[i-1], y[i-1])
+            + phuongtrinh(x[i], y[i-1] + h*phuongtrinh(x[i-1], y[i-1]))
+        ))
+
+    return x, y
+\end{lstlisting}
+
+\subsection{Hàm RK4}
+\begin{lstlisting}[style=mypython,caption={Thuật toán Runge--Kutta bậc 4}]
+def RK4(a, b, N, alpha, phuongtrinh, filename):
+    h = (b - a) / N
+    x = [a]
+    y = [alpha]
+
+    for i in range(1, N + 1):
+        x.append(a + i*h)
+
+        k1 = h * phuongtrinh(x[i-1], y[i-1])
+        k2 = h * phuongtrinh(x[i-1] + h/2, y[i-1] + k1/2)
+        k3 = h * phuongtrinh(x[i-1] + h/2, y[i-1] + k2/2)
+        k4 = h * phuongtrinh(x[i-1] + h,   y[i-1] + k3)
+
+        y.append(y[i-1] + (k1 + 2*k2 + 2*k3 + k4)/6)
+
+    return x, y
+\end{lstlisting}
+
+Ngoài việc tính nghiệm số, chương trình còn ghi dữ liệu $t$, $\theta$, $\omega$ ra các file \texttt{.txt}; những file này được dùng để vẽ đồ thị bằng Python và Gnuplot.
+
+\section{Kết quả và thảo luận}
+
+Trong toàn bộ phần tính toán, em dùng khoảng thời gian $0 \le t \le 10\ \mathrm{s}$ với $N=1000$ bước, tương ứng $h=0.01\ \mathrm{s}$.
+
+\subsection{So sánh Euler, MEM và RK4 cho $\theta_0=\pi/6$}
+
+Với điều kiện đầu
+\[
+\theta(0)=\frac{\pi}{6},\qquad \omega(0)=0,
+\]
+đồ thị thu được cho PT [1] và PT [2] được trình bày trong Hình~\ref{fig:bai1}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.98\textwidth]{BTVN3/Bai1.pdf}
+    \caption{So sánh nghiệm số của ba phương pháp Euler, MEM và RK4 cho PT [1] và PT [2] khi $\theta_0=\pi/6$, $\omega_0=0$, $l=0.6$ m.}
+    \label{fig:bai1}
+\end{figure}
+
+Từ Hình~\ref{fig:bai1} có thể rút ra các nhận xét chính sau:
+\begin{itemize}
+    \item Với cả PT [1] lẫn PT [2], nghiệm Euler thường bị tăng biên độ rõ rệt theo thời gian. Đây là dấu hiệu điển hình của sai số tích lũy và sai lệch năng lượng trong bài toán dao động.
+    \item Hai phương pháp MEM và RK4 cho đường cong gần như chồng khít nhau trong khoảng thời gian khảo sát. Biên độ dao động được bảo toàn tốt hơn nhiều so với Euler thường.
+    \item Đối với PT [1], đường RK4 gần như giữ nguyên biên độ ban đầu $\theta_0 \approx 0.5236$ rad, trong khi Euler thường làm biên độ tăng lên đến xấp xỉ $1.118$ rad tại đỉnh lớn nhất trong khoảng khảo sát.
+\end{itemize}
+
+Để đánh giá định lượng, do PT [2] có nghiệm giải tích~\eqref{eq:exact_linear}, ta có thể dùng nghiệm này làm chuẩn. Kết quả sai số của ba phương pháp được cho trong Bảng~\ref{tab:error_linear}.
+
+\begin{table}[H]
+\centering
+\caption{Sai số của các phương pháp số đối với PT [2] khi so với nghiệm giải tích, với $\theta_0=\pi/6$.}
+\label{tab:error_linear}
+\begin{tabular}{lcccc}
+\toprule
+Phương pháp & $\max |\theta|$ (rad) & Sai số lớn nhất (rad) & Sai số RMS (rad) & Sai số tại $t=10$ s (rad) \\
+\midrule
+Euler & 1.121935 & $5.992\times 10^{-1}$ & $2.390\times 10^{-1}$ & $5.973\times 10^{-1}$ \\
+MEM   & 0.523759 & $5.608\times 10^{-3}$ & $2.387\times 10^{-3}$ & $2.407\times 10^{-3}$ \\
+RK4   & 0.523599 & $4.585\times 10^{-7}$ & $1.952\times 10^{-7}$ & $2.006\times 10^{-7}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Bảng~\ref{tab:error_linear} cho thấy RK4 là phương pháp chính xác nhất. Sai số lớn nhất của RK4 chỉ cỡ $10^{-7}$ rad, nhỏ hơn nhiều so với MEM ($10^{-3}$ rad) và Euler thường (cỡ $10^{-1}$ rad). Kết quả này hoàn toàn phù hợp với bậc chính xác của các phương pháp: Euler là bậc một, MEM là bậc hai, còn RK4 là bậc bốn.
+
+Một cách nhìn khác là xét sự bảo toàn năng lượng. Với PT [1], độ lệch năng lượng tương đối tại $t=10$ s của Euler thường vượt quá 300\%, trong khi MEM chỉ vào khoảng $6\times 10^{-4}$ và RK4 gần như bảo toàn năng lượng hoàn toàn. Điều này giải thích trực tiếp vì sao đường Euler bị ``phình'' biên độ trong cả hai biên của Hình~\ref{fig:bai1}.
+
+\subsection{So sánh PT [1] và PT [2] cho hai góc ban đầu khác nhau}
+
+Ở phần này chỉ dùng RK4 để tránh ảnh hưởng của sai số phương pháp số, sau đó so sánh trực tiếp nghiệm của PT [1] và PT [2]. Hai trường hợp được xét là:
+\[
+\theta_0 = \frac{\pi}{12} \quad \text{và} \quad \theta_0 = \frac{\pi}{4},
+\qquad \omega_0=0.
+\]
+
+Kết quả vẽ bằng Gnuplot được trình bày trong Hình~\ref{fig:compare-angles}.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{BTVN3/bai2_pi_12.png}
+        \caption{$\theta_0=\pi/12$.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{BTVN3/bai2_pi_4.png}
+        \caption{$\theta_0=\pi/4$.}
+    \end{subfigure}
+    \caption{So sánh nghiệm của PT [1] và PT [2] bằng RK4 cho hai giá trị góc lệch ban đầu.}
+    \label{fig:compare-angles}
+\end{figure}
+
+Từ Hình~\ref{fig:compare-angles} có thể nhận thấy:
+\begin{itemize}
+    \item Khi $\theta_0=\pi/12$, hai đường PT [1] và PT [2] gần như chồng lên nhau trên toàn khoảng thời gian khảo sát. Điều này cho thấy gần đúng $\sin\theta \approx \theta$ là rất tốt ở góc nhỏ.
+    \item Khi $\theta_0=\pi/4$, sự sai khác giữa hai mô hình tăng lên rõ rệt. Biên độ ban đầu vẫn giống nhau, nhưng PT [1] dao động chậm hơn PT [2], dẫn đến lệch pha tích lũy ngày càng lớn theo thời gian.
+    \item Nói cách khác, với góc ban đầu đủ lớn, bài toán không còn có thể mô tả chính xác chỉ bằng mô hình góc nhỏ.
+\end{itemize}
+
+Để định lượng hơn, chu kỳ của PT [2] luôn bằng
+\[
+T_0 = 2\pi\sqrt{\frac{l}{g}} \approx 1.553893\ \mathrm{s}.
+\]
+Trong khi đó, chu kỳ của con lắc phi tuyến phụ thuộc vào biên độ và có thể viết dưới dạng tích phân elliptic hoàn chỉnh bậc nhất:
+\[
+T(\theta_0)=4\sqrt{\frac{l}{g}}\,K\!\left(\sin^2\frac{\theta_0}{2}\right).
+\]
+Giá trị chu kỳ lý thuyết và chu kỳ đọc ra từ nghiệm RK4 được tổng hợp trong Bảng~\ref{tab:periods}.
+
+\begin{table}[H]
+\centering
+\caption{So sánh chu kỳ của PT [1] và PT [2] cho hai góc ban đầu.}
+\label{tab:periods}
+\begin{tabular}{lcccc}
+\toprule
+$\theta_0$ & $T_{\mathrm{PT[1]},\,\mathrm{RK4}}$ (s) & $T_{\mathrm{PT[2]},\,\mathrm{RK4}}$ (s) & $T_{\mathrm{PT[1]},\,\mathrm{LT}}$ (s) & $T_{\mathrm{PT[2]},\,\mathrm{LT}}$ (s) \\
+\midrule
+$\pi/12$ & 1.560575 & 1.553893 & 1.560575 & 1.553893 \\
+$\pi/4$  & 1.616007 & 1.553893 & 1.616007 & 1.553893 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Bảng~\ref{tab:periods} cho thấy:
+\begin{itemize}
+    \item Với $\theta_0=\pi/12$, chu kỳ phi tuyến chỉ lớn hơn chu kỳ góc nhỏ khoảng $0.43\%$. Vì vậy hai nghiệm gần như không tách nhau đáng kể trong khoảng 10 giây.
+    \item Với $\theta_0=\pi/4$, chu kỳ phi tuyến lớn hơn khoảng $4.0\%$. Sai lệch này đủ lớn để tạo ra lệch pha đáng kể sau nhiều chu kỳ, đúng như quan sát trên đồ thị.
+\end{itemize}
+
+Về mặt vật lý, kết quả này xuất phát từ việc gần đúng $\sin\theta \approx \theta$ chỉ đúng tốt khi $|\theta| \ll 1$. Khi biên độ tăng, thành phần phi tuyến làm lực kéo về không còn tỉ lệ tuyến tính với $\theta$, do đó chu kỳ phụ thuộc vào biên độ và trở nên lớn hơn giá trị góc nhỏ.
+
+\section{Kết luận}
+
+Từ các kết quả tính toán và so sánh ở trên, có thể rút ra các kết luận sau:
+\begin{enumerate}
+    \item Việc chuyển phương trình con lắc về hệ bậc một cho phép áp dụng trực tiếp các phương pháp số chuẩn như Euler, MEM và RK4.
+    \item Với cùng bước thời gian $h=0.01$ s, Euler thường cho sai số lớn và làm biên độ tăng dần theo thời gian, nên không phù hợp để mô phỏng dao động trong thời gian dài.
+    \item MEM cải thiện đáng kể so với Euler thường; nghiệm thu được bám khá tốt lời giải đúng của mô hình góc nhỏ.
+    \item RK4 cho kết quả tốt nhất trong ba phương pháp, với sai số gần như không đáng kể trong bài toán này.
+    \item Gần đúng góc nhỏ PT [2] mô tả rất tốt con lắc khi $\theta_0=\pi/12$, nhưng bắt đầu sai khác rõ rệt khi $\theta_0=\pi/4$. Sai khác chủ yếu thể hiện ở sự tăng chu kỳ và lệch pha của mô hình phi tuyến PT [1].
+\end{enumerate}
+
+Như vậy, nếu chỉ cần khảo sát dao động biên độ nhỏ thì phương trình tuyến tính là đủ. Tuy nhiên, khi góc lệch ban đầu không còn nhỏ, cần dùng phương trình phi tuyến đầy đủ và một phương pháp số có độ chính xác cao, trong đó RK4 là lựa chọn phù hợp nhất trong phạm vi bài tập này.
+
+\end{document}

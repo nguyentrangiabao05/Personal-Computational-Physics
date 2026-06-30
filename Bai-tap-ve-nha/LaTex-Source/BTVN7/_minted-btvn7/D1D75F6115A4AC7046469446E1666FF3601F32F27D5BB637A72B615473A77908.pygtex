@@ -1,0 +1,11 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{hamso}\PYG{p}{(}\PYG{n}{kappa}\PYG{p}{,} \PYG{n}{C}\PYG{p}{,} \PYG{n}{rho}\PYG{p}{,} \PYG{n}{N\PYGZus{}x}\PYG{p}{,} \PYG{n}{N\PYGZus{}time}\PYG{p}{,} \PYG{n}{l}\PYG{p}{,} \PYG{n}{t\PYGZus{}max}\PYG{p}{):}
+    \PYG{n}{h} \PYG{o}{=} \PYG{n}{l}\PYG{o}{/}\PYG{p}{(}\PYG{n}{N\PYGZus{}x}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)}
+    \PYG{n}{k} \PYG{o}{=} \PYG{n}{t\PYGZus{}max}\PYG{o}{/}\PYG{p}{(}\PYG{n}{N\PYGZus{}time}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)}
+    \PYG{n}{alpha} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{kappa}\PYG{o}{/}\PYG{p}{(}\PYG{n}{C}\PYG{o}{*}\PYG{n}{rho}\PYG{p}{))}
+    \PYG{n}{eta}  \PYG{o}{=} \PYG{n}{alpha} \PYG{o}{**} \PYG{l+m+mi}{2} \PYG{o}{*} \PYG{n}{k} \PYG{o}{/} \PYG{n}{h}\PYG{o}{**}\PYG{l+m+mi}{2}
+
+    \PYG{n}{beta1} \PYG{o}{=} \PYG{n}{eta}\PYG{o}{/}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{eta}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{p}{)}
+    \PYG{n}{beta2} \PYG{o}{=} \PYG{l+m+mi}{1}\PYG{o}{/}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{eta}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{beta1}\PYG{p}{,} \PYG{n}{beta2}\PYG{p}{,} \PYG{n}{h}\PYG{p}{,} \PYG{n}{k}
+\end{Verbatim}

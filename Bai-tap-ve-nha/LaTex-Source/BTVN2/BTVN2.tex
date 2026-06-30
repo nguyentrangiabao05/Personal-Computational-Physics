@@ -1,0 +1,494 @@
+% Do not alter this block (unless you're familiar with LaTeX)
+\documentclass{article}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,amsfonts, fancyhdr, color, comment, graphicx, environ}
+\usepackage{xcolor}
+
+\usepackage{mdframed}
+\usepackage[shortlabels]{enumitem}
+\usepackage{indentfirst}
+\usepackage{hyperref}
+\usepackage[T5]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{courier}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{array}
+\renewcommand{\tablename}{Bảng}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+\usepackage[vietnamese]{babel}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+
+\pagestyle{fancy}
+\setlength{\headheight}{28pt}
+
+\newenvironment{problem}[2][Problem]
+    {\begin{mdframed}[backgroundcolor=gray!20] \textbf{#1 #2} \\}
+    {\end{mdframed}}
+
+\newenvironment{solution}
+    {\textit{Nội dung:}}
+    {}
+
+\renewcommand{\qed}{\quad\qedsymbol}
+
+% prevent line break in inline mode
+\binoppenalty=\maxdimen
+\relpenalty=\maxdimen
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Fill in the appropriate information below
+\lhead{\shortstack[l]{Họ tên: Nguyễn Trần Gia Bảo\\MSSV: 23137003}}
+\chead{\shortstack[c]{\textbf{Báo cáo bài tập về nhà 2}}}
+\rhead{\shortstack[r]{Vật lý tính toán (CP)\\GV: Thầy TS. Vũ Quang Tuyên}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ------------------------------
+% Python code style
+% ------------------------------
+\definecolor{codebg}{RGB}{245,245,245}
+\definecolor{codeframe}{RGB}{220,220,220}
+\definecolor{codecomment}{RGB}{0,128,0}
+\definecolor{codekeyword}{RGB}{0,0,180}
+\definecolor{codestring}{RGB}{163,21,21}
+
+\lstdefinestyle{mypython}{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\footnotesize\ttfamily,
+    keywordstyle=\color{codekeyword}\bfseries,
+    commentstyle=\color{codecomment},
+    stringstyle=\color{codestring},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=8pt,
+    frame=single,
+    rulecolor=\color{codeframe},
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=4,
+    showstringspaces=false,
+    captionpos=b
+}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{BÁO CÁO BTVN 2: TÍCH PHÂN NHIỀU CHIỀU VÀ PHƯƠNG PHÁP MONTE CARLO}}\\[0.5em]
+    {\large Môn: Vật lý tính toán\\[0.5em]Computational Physics}
+\end{center}
+
+\vspace{1em}
+
+\section{Nội dung bài tập}
+
+Bài tập gồm ba phần chính:
+\begin{enumerate}
+    \item \textbf{Thực hành 1a:} viết thuật toán Monte Carlo để tính tích phân nhiều chiều
+    \[
+    I_D = \int_0^1 dx_1 \int_0^1 dx_2 \cdots \int_0^1 dx_D\,(x_1^2 + x_2^2 + \cdots + x_D^2),
+    \]
+    khảo sát cho các trường hợp nhiều chiều và ước lượng số điểm ngẫu nhiên cần thiết để đạt độ chính xác cỡ $10^{-4}$.
+
+    \item \textbf{Thực hành 1b:} tính gần đúng tích phân
+    \[
+    I_{10} = \int_0^1 dx_1 \int_0^1 dx_2 \cdots \int_0^1 dx_{10}\,(x_1 + x_2 + \cdots + x_{10})^2,
+    \]
+    rồi so sánh phương pháp tổng Riemann thông thường với phương pháp Monte Carlo. Nghiệm giải tích đã cho là $155/6$.
+
+    \item \textbf{Thực hành MC 2:}
+    \begin{enumerate}[a)]
+        \item tính khối lượng của khối khí trong lập phương đơn vị với mật độ
+        \[
+        \rho(x,y,z) = x^2 + y^2 + z^2;
+        \]
+        \item tính thể tích phần giao giữa hình cầu bán kính $R=1$ tâm tại gốc tọa độ và hình trụ bán kính $r=0.5$ dọc theo trục $z$.
+    \end{enumerate}
+\end{enumerate}
+
+\section{Cơ sở phương pháp}
+
+\subsection{Công thức Monte Carlo cho tích phân nhiều chiều}
+
+Xét tích phân trên miền $\Omega \subset \mathbb{R}^D$
+\[
+I = \int_{\Omega} f(\mathbf{x})\,d\mathbf{x}.
+\]
+Nếu lấy ngẫu nhiên $N$ điểm $\mathbf{x}_k$ phân bố đều trên miền $\Omega$, tích phân được xấp xỉ bởi
+\[
+I \approx V_{\Omega}\,\frac{1}{N}\sum_{k=1}^{N} f(\mathbf{x}_k),
+\]
+trong đó $V_{\Omega}$ là thể tích của miền lấy mẫu.
+
+Ưu điểm của Monte Carlo là phương pháp này phù hợp cho tích phân nhiều chiều do chạy nhanh hơn phương pháp tổng Riemann.
+
+\subsection{Ước lượng sai số Monte Carlo}
+
+Gọi giá trị trung bình mẫu là
+\begin{equation*}
+\overline{f} = \frac{1}{N}\sum_{k=1}^{N} f(\mathbf{x}_k).
+\end{equation*}
+Khi đó sai số chuẩn của tích phân có thể ước lượng từ phương sai mẫu:
+\begin{equation*}
+\sigma_I \approx V_{\Omega}\sqrt{\frac{1}{N(N-1)}\sum_{k=1}^{N}\left(f(\mathbf{x}_k)-\overline{f}\right)^2}.
+\end{equation*}
+Trong code, biểu thức này được tính lại dưới dạng tương đương bằng cách lưu đồng thời $\sum f$ và $\sum f^2$.
+
+\section{Phân tích chương trình}
+
+\subsection{Khối 1: Hàm Monte Carlo tổng quát cho tích phân nhiều chiều}
+\begin{lstlisting}[style=mypython,caption={Hàm Monte Carlo tổng quát dùng cho tích phân nhiều chiều}]
+def tich_phan_monte_carlo_nhieu_chieu(a,b,N,N_D,hamso):
+    S = 0
+    for i in range(N):
+        x = []
+        for j in range(N_D):
+            x.append(np.random.uniform(a[j],b[j]))
+        S = S + hamso(x)
+
+    tich = 1
+    for j in range(N_D):
+        tich = tich * (b[j]-a[j])
+
+    ketqua = tich * S/N
+    return ketqua
+\end{lstlisting}
+
+\textbf{Giải thích:}
+
+Hàm trên thực hiện đúng công thức Monte Carlo cơ bản:
+\begin{itemize}
+    \item sinh $N$ điểm ngẫu nhiên trong miền hộp chữ nhật $[a_1,b_1]\times\cdots\times[a_D,b_D]$;
+    \item tính giá trị hàm dưới dấu tích phân tại mỗi điểm;
+    \item lấy trung bình cộng các giá trị đó;
+    \item nhân với thể tích miền tích phân để thu được giá trị gần đúng của tích phân.
+\end{itemize}
+
+% ==========================================================
+\subsection{Khối 2: Hàm ước lượng sai số Monte Carlo}
+\begin{lstlisting}[style=mypython,caption={Hàm Monte Carlo có kèm ước lượng sai số}]
+def MC_nhieuchieu_tinh_saiso(a, b, N, N_D, hamso):
+    tong_f = 0.0
+    tong_f2 = 0.0
+
+    for i in range(N):
+        x = []
+        for j in range(N_D):
+            x.append(np.random.uniform(a[j], b[j]))
+
+        fx = hamso(x)
+        tong_f += fx
+        tong_f2 += fx**2
+
+    V = 1.0
+    for j in range(N_D):
+        V *= (b[j] - a[j])
+
+    f_tb = tong_f / N
+    ketqua = V * f_tb
+
+    if N > 1:
+        phuong_sai_mau = (tong_f2 - N * f_tb**2) / (N - 1)
+        sai_so_uoc_luong = V * np.sqrt(phuong_sai_mau / N)
+    else:
+        sai_so_uoc_luong = 0.0
+
+    return ketqua, sai_so_uoc_luong
+\end{lstlisting}
+
+\textbf{Giải thích:}
+
+Hàm này ngoài việc trả về giá trị tích phân còn trả về sai số chuẩn ước lượng. Đây là phần quan trọng đối với bài 1a vì đề bài yêu cầu xác định số mẫu $N$ cần thiết để đạt độ chính xác cỡ $10^{-4}$.
+
+% ==========================================================
+\subsection{Khối 3: Tổng Riemann nhiều chiều bằng đệ quy}
+\begin{lstlisting}[style=mypython,caption={Hàm tổng Riemann nhiều chiều}]
+def tinhtongRiemann(a,b,N,N_D,hamso):
+    delta_h = []
+    for j in range(len(a)):
+        delta_h.append((b[j]-a[j])/N)
+    dV = 1
+    for j in range(len(a)):
+        dV = dV* delta_h[j]
+    
+    S = 0.0
+    x = [0.0] * N_D
+
+    def de_quy(chieu):
+        nonlocal S
+
+        if chieu == N_D:
+            S += hamso(x)
+            return
+
+        for i in range(N):
+            x[chieu] = a[chieu] + i * delta_h[chieu]
+            de_quy(chieu + 1)
+
+    de_quy(0)
+
+    return S * dV
+\end{lstlisting}
+
+\textbf{Giải thích:}
+
+Phương pháp tổng Riemann trong nhiều chiều cần duyệt toàn bộ các nút lưới. Nếu mỗi chiều chia thành $N$ đoạn thì tổng số điểm lưới là $N^D$. Với $D=10$, chi phí tính toán tăng rất nhanh. Trong bài này, khi chọn $N=6$ cho mỗi chiều thì số điểm lưới đã là
+\[
+6^{10} = 60{,}466{,}176.
+\]
+Đây là nguyên nhân chính làm thời gian chạy của phương pháp này lớn hơn rõ rệt so với Monte Carlo.
+
+% ==========================================================
+\subsection{Khối 4: Hàm chỉ thị dùng để tính thể tích giao nhau}
+\begin{lstlisting}[style=mypython,caption={Hàm chỉ thị cho bài toán thể tích phần giao}]
+def hamso_Nchieu_MC2_A(x):
+    if x[0]**2 + x[1]**2 + x[2]**2 <= 1 and x[0]**2 + x[1]**2 <= 0.25:
+        return 1
+    else:
+        return 0
+\end{lstlisting}
+
+\textbf{Giải thích:}
+
+Trong bài toán hình học, ta đưa việc tính thể tích về tích phân của hàm chỉ thị. Nếu điểm $(x,y,z)$ đồng thời nằm trong hình cầu và trong hình trụ thì hàm chỉ thị nhận giá trị 1, ngược lại nhận giá trị 0. Trung bình Monte Carlo của hàm chỉ thị chính là tỉ phần thể tích của miền cần tìm trong hộp lấy mẫu.
+
+\section{Kết quả và thảo luận}
+
+\subsection{Thực hành 1a: Tích phân của tổng bình phương trên siêu lập phương đơn vị}
+
+Hàm dưới dấu tích phân là
+\[
+f(\mathbf{x}) = x_1^2 + x_2^2 + \cdots + x_D^2.
+\]
+Do miền tích phân là siêu lập phương đơn vị, nghiệm giải tích có thể tính ngay:
+\[
+I_D = \int_{[0,1]^D} \left(\sum_{i=1}^{D} x_i^2\right)
+\, d\mathbf{x}
+= \sum_{i=1}^{D} \int_0^1 x_i^2\,dx_i
+= \frac{D}{3}.
+\]
+
+Vì vậy:
+\[
+I_3 = 1, \qquad I_4 = \frac{4}{3}, \qquad I_{10} = \frac{10}{3}.
+\]
+
+\subsubsection{Kết quả chạy Monte Carlo}
+
+Từ file output đã chạy, kết quả thu được như Bảng~\ref{tab:mc1a_ketqua}.
+
+\begin{table}[H]
+\centering
+\caption{Kết quả bài 1a với Monte Carlo cho các trường hợp nhiều chiều}
+\label{tab:mc1a_ketqua}
+\begin{tabular}{cccccc}
+\toprule
+$D$ & $N$ & Kết quả MC & Nghiệm giải tích & Sai số tuyệt đối & Thời gian chạy (s) \\
+\midrule
+3  & $10^6$ & 0.999019692487 & 1.000000000000 & 0.000980307513 & 15.367670874 \\
+4  & $10^6$ & 1.332944497497 & 1.333333333333 & 0.000388835836 & 19.368983514 \\
+10 & $10^6$ & 3.333908441127 & 3.333333333333 & 0.000575107794 & 46.963117374 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Kết quả cho thấy Monte Carlo cho giá trị gần đúng tốt ngay cả trong trường hợp số chiều tăng lên. Thời gian chạy tăng theo số chiều do mỗi lần đánh giá hàm cần cộng nhiều biến hơn, nhưng mức tăng vẫn chậm hơn rất nhiều so với phương pháp lưới tensor-product.
+
+\subsubsection{Ước lượng số mẫu cần thiết để đạt độ chính xác cỡ 10 mũ trừ 4}
+
+Từ file khảo sát sai số đã chạy, trong khoảng giá trị $N$ được thử nghiệm, sai số ước lượng vẫn chưa giảm xuống dưới $10^{-4}$ cho các trường hợp đã khảo sát. Điều này phù hợp với quy luật hội tụ của Monte Carlo:
+\[
+\sigma_I \propto \frac{1}{\sqrt{N}}.
+\]
+
+Đối với bài này, có thể ước lượng trực tiếp bằng phương sai lý thuyết. Với biến ngẫu nhiên $X \sim U(0,1)$:
+\[
+\mathbb{E}[X^2] = \frac{1}{3}, \qquad \mathbb{E}[X^4] = \frac{1}{5},
+\]
+\[
+\mathrm{Var}(X^2) = \frac{1}{5} - \frac{1}{9} = \frac{4}{45}.
+\]
+Vì các biến độc lập,
+\[
+\mathrm{Var}\!\left(\sum_{i=1}^{D} X_i^2\right) = D\cdot \frac{4}{45}.
+\]
+Do miền tích phân có thể tích bằng 1, sai số chuẩn Monte Carlo được xấp xỉ bởi
+\[
+\sigma_I \approx \sqrt{\frac{4D}{45N}}.
+\]
+Đặt $\sigma_I \le 10^{-4}$, ta thu được
+\[
+N \gtrsim \frac{4D}{45\times 10^{-8}}.
+\]
+
+\begin{table}[H]
+\centering
+\caption{Ước lượng lý thuyết số mẫu để đạt sai số cỡ $10^{-4}$ trong bài 1a}
+\label{tab:mc1a_N}
+\begin{tabular}{ccc}
+\toprule
+$D$ & Công thức ước lượng & $N$ xấp xỉ \\
+\midrule
+3 & $\dfrac{12}{45\times 10^{-8}}$ & $2.67\times 10^7$ \\
+4 & $\dfrac{16}{45\times 10^{-8}}$ & $3.56\times 10^7$ \\
+10 & $\dfrac{40}{45\times 10^{-8}}$ & $8.89\times 10^7$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Như vậy, muốn đạt độ chính xác cỡ $10^{-4}$ thì số mẫu cần thiết là hàng chục triệu điểm. Đây cũng là lý do vì sao trong file khảo sát sai số, với vài triệu điểm ngẫu nhiên vẫn chưa đạt được ngưỡng yêu cầu.
+
+\subsection{Thực hành 1b: So sánh tổng Riemann và Monte Carlo cho tích phân 10 chiều}
+
+Xét tích phân
+\[
+I_{10} = \int_{[0,1]^{10}} (x_1+x_2+\cdots+x_{10})^2\,d\mathbf{x}.
+\]
+
+Đặt $S = x_1 + x_2 + \cdots + x_{10}$, khi đó
+\[
+S^2 = \sum_{i=1}^{10} x_i^2 + 2\sum_{i<j} x_i x_j.
+\]
+Lấy tích phân từng hạng tử:
+\[
+\int_{[0,1]^{10}} x_i^2\,d\mathbf{x} = \frac{1}{3},
+\qquad
+\int_{[0,1]^{10}} x_i x_j\,d\mathbf{x} = \frac{1}{4}.
+\]
+Vì có 10 hạng tử kiểu $x_i^2$ và $\binom{10}{2}=45$ hạng tử kiểu $x_i x_j$, nên
+\[
+I_{10} = 10\cdot\frac{1}{3} + 2\cdot 45\cdot \frac{1}{4}
+= \frac{10}{3} + \frac{45}{2}
+= \frac{155}{6} \approx 25.833333333333.
+\]
+
+\subsubsection{Kết quả so sánh}
+
+Trong chương trình đã chạy:
+\begin{itemize}
+    \item tổng Riemann dùng $N_{\mathrm{RM}}=6$ cho mỗi chiều;
+    \item Monte Carlo dùng $N_{\mathrm{MC}}=10^4$ điểm ngẫu nhiên.
+\end{itemize}
+
+Kết quả thu được như Bảng~\ref{tab:mc1b}.
+
+\begin{table}[H]
+\centering
+\caption{So sánh tổng Riemann và Monte Carlo cho bài 1b}
+\label{tab:mc1b}
+\begin{tabular}{lccc}
+\toprule
+Phương pháp & Kết quả số & Sai số tuyệt đối & Thời gian chạy (s) \\
+\midrule
+Tổng Riemann & 18.171296298989 & 7.662037034344 & 39.061605482 \\
+Monte Carlo & 25.880780693346 & 0.047447360013 & 0.337083387 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Nhận xét:}
+\begin{itemize}
+    \item Với cùng bài toán 10 chiều, tổng Riemann cho sai số rất lớn dù thời gian chạy đã lên tới khoảng 39 giây. Nguyên nhân là số điểm trên mỗi chiều chỉ lấy bằng 6, nên lưới còn thưa, trong khi tổng số tổ hợp điểm vẫn rất lớn.
+    \item Monte Carlo với chỉ $10^4$ điểm ngẫu nhiên cho kết quả gần nghiệm giải tích hơn nhiều, đồng thời thời gian chạy chỉ khoảng 0.34 giây.
+    \item Bài toán này minh họa rõ nhược điểm của phương pháp Reimann trong không gian nhiều chiều: chi phí tính tăng theo $N^D$. Ngược lại, Monte Carlo tránh được sự phức tạp trong phép tính khi làm với $D$ chiều với D lớn.
+\end{itemize}
+
+\subsection{Thực hành MC 2a: Khối lượng của khối khí trong lập phương đơn vị}
+
+Mật độ khối lượng được cho bởi
+\[
+\rho(x,y,z) = x^2 + y^2 + z^2,
+\qquad (x,y,z)\in[0,1]^3.
+\]
+Khối lượng cần tính là
+\[
+M = \iiint_{[0,1]^3} (x^2 + y^2 + z^2)\,dx\,dy\,dz.
+\]
+Tính giải tích cho kết quả:
+\[
+M = \int_0^1 x^2\,dx + \int_0^1 y^2\,dy + \int_0^1 z^2\,dz = 1.
+\]
+
+Kết quả Monte Carlo đã chạy:
+\begin{table}[H]
+\centering
+\caption{Kết quả bài MC 2a}
+\label{tab:mc2a}
+\begin{tabular}{cccc}
+\toprule
+$N$ & Kết quả MC & Sai số ước lượng & Sai số tuyệt đối so với nghiệm đúng \\
+\midrule
+$10^6$ & 1.000189365043 & 0.000516962992 & 0.000189365043 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Kết quả thu được phù hợp với nghiệm đúng $M=1$. Sai số thực tế nhỏ hơn sai số ước lượng, nên kết quả là hợp lý.
+
+\subsection{Thực hành MC 2b: Thể tích phần giao giữa hình cầu và hình trụ}
+
+Bài toán yêu cầu tính thể tích của miền
+\[
+\Omega = \left\{(x,y,z): x^2+y^2+z^2\le 1,\; x^2+y^2\le 0.25\right\}.
+\]
+Trong chương trình, miền lấy mẫu được chọn là khối lập phương $[-1,1]^3$ có thể tích bằng 8. Mỗi điểm ngẫu nhiên được kiểm tra xem có thuộc miền $\Omega$ hay không. Từ đó, thể tích được xấp xỉ bởi
+\[
+V_{\Omega} \approx 8\,\frac{N_{\mathrm{inside}}}{N}.
+\]
+
+Ngoài Monte Carlo, bài toán này còn có thể kiểm tra lại bằng tích phân giải tích trong tọa độ trụ:
+\[
+V = \int_0^{2\pi}\!d\phi\int_0^{0.5}\!r\,dr\int_{-\sqrt{1-r^2}}^{\sqrt{1-r^2}}\!dz.
+\]
+Suy ra
+\[
+V = 4\pi \int_0^{0.5} r\sqrt{1-r^2}\,dr
+= \frac{4\pi}{3}\left[1-\left(\frac{3}{4}\right)^{3/2}\right]
+\approx 1.468091158435.
+\]
+
+Kết quả Monte Carlo đã chạy:
+\begin{table}[H]
+\centering
+\caption{Kết quả bài MC 2b}
+\label{tab:mc2b}
+\begin{tabular}{cccc}
+\toprule
+$N$ & Kết quả MC & Nghiệm giải tích & Sai số tuyệt đối \\
+\midrule
+$10^6$ & 1.471008000 & 1.468091158435 & 0.002916841565 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Sai số khoảng $2.9\times 10^{-3}$ là chấp nhận được đối với phép tính Monte Carlo với $10^6$ điểm ngẫu nhiên trong không gian ba chiều.
+
+\section{Kết luận}
+
+Từ các kết quả đã tính được, có thể rút ra các kết luận chính sau:
+\begin{itemize}
+    \item Phương pháp Monte Carlo cho phép xử lý tích phân nhiều chiều một cách trực tiếp, với thuật toán rất đơn giản và chạy khá ổn định.
+    \item Với bài 1a, kết quả Monte Carlo bám tốt nghiệm giải tích $D/3$. Tuy nhiên, để giảm sai số xuống cỡ $10^{-4}$ thì số mẫu cần lên đến hàng chục triệu điểm. (Em đã thử test nhưng máy em đã không chạy nổi, dù em đã thử dùng thêm MPI trên server của em nhưng vẫn k ra được $10^{-4}$)
+    \item Với bài 1b, Monte Carlo vượt trội hơn tổng Riemann trong bài toán 10 chiều xét trên cùng mức độ chính xác thực tế. Tổng Riemann chịu ảnh hưởng rất mạnh của số chiều do số nút lưới tăng theo hàm mũ.
+    \item Với các bài toán hình học và bài toán khối lượng trong MC 2, Monte Carlo cho kết quả phù hợp với nghiệm giải tích hoặc với giá trị kiểm tra độc lập.
+\end{itemize}
+
+Nhìn chung, đối với các bài toán tích phân nhiều chiều trong vật lý tính toán, Monte Carlo là một công cụ hiệu quả hơn các phương pháp tổng Riemann khi số chiều của không gian tích phân tăng cao.
+
+\end{document}

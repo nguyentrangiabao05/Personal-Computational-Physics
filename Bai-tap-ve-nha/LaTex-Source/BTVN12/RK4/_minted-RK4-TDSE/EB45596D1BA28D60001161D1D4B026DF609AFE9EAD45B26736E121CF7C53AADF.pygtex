@@ -1,0 +1,10 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{kiemtra\PYGZus{}CFL}\PYG{p}{(}\PYG{n}{dt}\PYG{p}{,} \PYG{n}{dx}\PYG{p}{,} \PYG{n}{V\PYGZus{}max}\PYG{p}{):}
+    \PYG{n}{dieu\PYGZus{}kien} \PYG{o}{=} \PYG{l+m+mi}{1} \PYG{o}{/} \PYG{p}{(}\PYG{l+m+mi}{2} \PYG{o}{/} \PYG{n}{dx}\PYG{o}{**}\PYG{l+m+mi}{2} \PYG{o}{+} \PYG{n}{V\PYGZus{}max}\PYG{p}{)}
+    \PYG{k}{if} \PYG{n}{dt} \PYG{o}{\PYGZlt{}=} \PYG{n}{dieu\PYGZus{}kien}\PYG{p}{:}
+        \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Dieu kien CFL duoc thoa man.\PYGZdq{}}\PYG{p}{)}
+        \PYG{k}{return} \PYG{k+kc}{True}
+    \PYG{k}{else}\PYG{p}{:}
+        \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Khong the hoi tu do vi pham dieu kien CFL.\PYGZdq{}}\PYG{p}{)}
+        \PYG{k}{return} \PYG{k+kc}{False}
+\end{Verbatim}

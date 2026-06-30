@@ -1,0 +1,18 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{L}          \PYG{o}{=} \PYG{l+m+mi}{100}    \PYG{c+c1}{\PYGZsh{} Canh hinh vuong (cm)}
+\PYG{n}{n}          \PYG{o}{=} \PYG{l+m+mi}{100}    \PYG{c+c1}{\PYGZsh{} So nut luoi}
+\PYG{n}{u\PYGZus{}bien}     \PYG{o}{=} \PYG{l+m+mi}{0}      \PYG{c+c1}{\PYGZsh{} Bon canh noi dat}
+\PYG{n}{u\PYGZus{}cao}      \PYG{o}{=} \PYG{l+m+mi}{100}    \PYG{c+c1}{\PYGZsh{} Thanh tren}
+\PYG{n}{u\PYGZus{}thap}     \PYG{o}{=} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{100}   \PYG{c+c1}{\PYGZsh{} Thanh duoi}
+\PYG{n}{chieudai}   \PYG{o}{=} \PYG{l+m+mi}{50}     \PYG{c+c1}{\PYGZsh{} Chieu dai moi thanh (cm)}
+\PYG{n}{chieurong}  \PYG{o}{=} \PYG{l+m+mi}{30}     \PYG{c+c1}{\PYGZsh{} Khoang cach giua hai thanh (cm)}
+\PYG{n}{N\PYGZus{}max}      \PYG{o}{=} \PYG{l+m+mi}{100000}
+\PYG{n}{err\PYGZus{}max}    \PYG{o}{=} \PYG{l+m+mf}{1e\PYGZhy{}6}
+
+\PYG{n}{u\PYGZus{}bai2}\PYG{p}{,} \PYG{n}{start}\PYG{p}{,} \PYG{n}{end}\PYG{p}{,} \PYG{n}{thanh\PYGZus{}on}\PYG{p}{,} \PYG{n}{thanh\PYGZus{}duoi} \PYG{o}{=} \PYG{n}{dieukienbien\PYGZus{}bai2}\PYG{p}{(}
+    \PYG{n}{n}\PYG{p}{,} \PYG{n}{u\PYGZus{}bien}\PYG{p}{,} \PYG{n}{u\PYGZus{}thap}\PYG{p}{,} \PYG{n}{u\PYGZus{}cao}\PYG{p}{,} \PYG{n}{chieudai}\PYG{p}{,} \PYG{n}{chieurong}\PYG{p}{,} \PYG{n}{L}\PYG{p}{)}
+
+\PYG{n}{u\PYGZus{}result} \PYG{o}{=} \PYG{n}{Gauss\PYGZus{}Seidel\PYGZus{}bai2}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{n}{u\PYGZus{}bai2}\PYG{p}{,} \PYG{n}{L}\PYG{p}{,} \PYG{n}{N\PYGZus{}max}\PYG{p}{,} \PYG{n}{err\PYGZus{}max}\PYG{p}{,}
+            \PYG{n}{baitap}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}baiso2\PYGZdq{}}\PYG{p}{,} \PYG{n}{start}\PYG{o}{=}\PYG{n}{start}\PYG{p}{,} \PYG{n}{end}\PYG{o}{=}\PYG{n}{end}\PYG{p}{,}
+            \PYG{n}{thanh\PYGZus{}o\PYGZus{}tren}\PYG{o}{=}\PYG{n}{thanh\PYGZus{}on}\PYG{p}{,} \PYG{n}{thanh\PYGZus{}o\PYGZus{}duoi}\PYG{o}{=}\PYG{n}{thanh\PYGZus{}duoi}\PYG{p}{)}
+\end{Verbatim}

@@ -1,0 +1,18 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{diag\PYGZus{}dominant}\PYG{p}{(}\PYG{n}{A}\PYG{p}{):}
+    \PYG{n}{n} \PYG{o}{=} \PYG{n}{A}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+    \PYG{n}{sum\PYGZus{}row} \PYG{o}{=} \PYG{l+m+mi}{0}
+    \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{n}\PYG{p}{):}
+        \PYG{k}{for} \PYG{n}{j} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{n}\PYG{p}{):}
+            \PYG{k}{if} \PYG{n}{i} \PYG{o}{!=} \PYG{n}{j}\PYG{p}{:}
+                \PYG{n}{sum\PYGZus{}row} \PYG{o}{=} \PYG{n}{sum\PYGZus{}row} \PYG{o}{+} \PYG{n+nb}{abs}\PYG{p}{(}\PYG{n}{A}\PYG{p}{[}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{p}{])}
+        \PYG{k}{if} \PYG{n+nb}{abs}\PYG{p}{(}\PYG{n}{A}\PYG{p}{[}\PYG{n}{i}\PYG{p}{,} \PYG{n}{i}\PYG{p}{])} \PYG{o}{\PYGZgt{}} \PYG{n}{sum\PYGZus{}row}\PYG{p}{:}
+            \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Ma tran A co troi duong cheo nghiem ngat\PYGZdq{}}\PYG{p}{)}
+            \PYG{n}{diag\PYGZus{}dominant} \PYG{o}{=} \PYG{l+s+s1}{\PYGZsq{}strict\PYGZsq{}}
+        \PYG{k}{elif} \PYG{n+nb}{abs}\PYG{p}{(}\PYG{n}{A}\PYG{p}{[}\PYG{n}{i}\PYG{p}{,} \PYG{n}{i}\PYG{p}{])} \PYG{o}{\PYGZgt{}=} \PYG{n}{sum\PYGZus{}row}\PYG{p}{:}
+            \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Ma tran A co troi duong cheo\PYGZdq{}}\PYG{p}{)}
+            \PYG{n}{diag\PYGZus{}dominant} \PYG{o}{=} \PYG{l+s+s1}{\PYGZsq{}yes\PYGZsq{}}
+        \PYG{k}{else}\PYG{p}{:}
+            \PYG{n}{diag\PYGZus{}dominant} \PYG{o}{=} \PYG{l+s+s1}{\PYGZsq{}no\PYGZsq{}}
+    \PYG{k}{return} \PYG{n}{diag\PYGZus{}dominant}
+\end{Verbatim}

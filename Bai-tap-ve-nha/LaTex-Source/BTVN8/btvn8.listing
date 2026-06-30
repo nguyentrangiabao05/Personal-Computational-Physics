@@ -1,0 +1,18 @@
+def khoitao_u_caitien_vantoc(dt, dx, tmax, L, f_x, g_x, c, k, h):
+    beta, ondinh = tinh_beta(c, k, h)
+    if not ondinh:
+        return None, None, None
+    n = int(tmax/dt) + 1
+    m = int(L/dx) + 1
+    u = np.zeros((n, m))
+    x = np.linspace(0, L, m)
+    t = np.linspace(0, tmax, n)
+    for j in range(m):
+        u[0, j] = f_x(x[j], L)
+    for j in range(1, m-1):
+        u[1, j] = (1 - beta**2)*u[0, j] \
+                + (beta**2/2)*(u[0, j-1] + u[0, j+1]) \
+                + dt*g_x(x[j], L)
+    u[:, 0]  = 0.0
+    u[:, -1] = 0.0
+    return u, x, t

@@ -1,0 +1,604 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{vietnam}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{graphicx}
+\usepackage{tabularray}
+\usepackage{tabularx}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage[left=2.5cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{fancyhdr}
+\setlength{\headheight}{15.2807pt}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{indentfirst}
+\captionsetup[figure]{justification=centering}
+
+\usepackage{minted}
+\setminted{style=friendly}
+
+% ===== Code block style (tcolorbox + minted) =====
+\usepackage{tcolorbox}
+\tcbuselibrary{minted,breakable,xparse,skins}
+
+\definecolor{bg}{gray}{0.95}
+\DeclareTCBListing{mintedbox}{O{}m!O{}}{%
+  breakable=true,
+  listing engine=minted,
+  listing only,
+  minted language=#2,
+  minted style=default,
+  minted options={%
+    linenos,
+    gobble=0,
+    breaklines=true,
+    breakafter=,,
+    fontsize=\small,
+    numbersep=8pt,
+    #1},
+  boxsep=0pt,
+  left skip=0pt,
+  right skip=0pt,
+  left=25pt,
+  right=0pt,
+  top=3pt,
+  bottom=3pt,
+  arc=5pt,
+  leftrule=0pt,
+  rightrule=0pt,
+  bottomrule=2pt,
+  toprule=2pt,
+  colback=bg,
+  colframe=orange!70,
+  enhanced,
+  overlay={%
+    \begin{tcbclipinterior}
+    \fill[orange!20!white] (frame.south west) rectangle ([xshift=20pt]frame.north west);
+    \end{tcbclipinterior}},
+  #3}
+
+% ===== Hyperlink =====
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    filecolor=magenta,
+    urlcolor=cyan,
+    citecolor=red!70!black
+}
+
+% ===== Header / Footer =====
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textbf{Báo cáo BTVN 5 -- Vật lý tính toán}}
+\rhead{\textit{Jacobi \& Gauss--Seidel}}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% ===== Section formatting =====
+\titleformat{\section}{\Large\bfseries\color{blue!80!black}}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\large\bfseries\color{blue!70!black}}{\thesubsection.}{0.5em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{blue!60!black}}{\thesubsubsection.}{0.5em}{}
+
+% ===== Fallback lstlisting (nếu không dùng minted) =====
+\usepackage{listings}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.96}
+\definecolor{keywordcolor}{rgb}{0.1,0.1,0.8}
+\definecolor{stringcolor}{rgb}{0.7,0.2,0.2}
+\definecolor{numbercolor}{rgb}{0.6,0.6,0.6}
+\definecolor{framecolor}{rgb}{0.85,0.85,0.85}
+
+\lstdefinestyle{pythonstyle}{
+    language=Python,
+    backgroundcolor=\color{backcolour},
+    keywordstyle=\bfseries\color{keywordcolor},
+    stringstyle=\color{stringcolor},
+    numberstyle=\tiny\color{numbercolor},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=10pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=4,
+    frame=single,
+    rulecolor=\color{framecolor}
+}
+\lstset{style=pythonstyle}
+\renewcommand{\lstlistingname}{Listing}
+
+\begin{document}
+
+% ================= TRANG BÌA =================
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+
+    \rule{\textwidth}{1pt} \\[0.5cm]
+    {\huge \textbf{BÁO CÁO BÀI TẬP VỀ NHÀ 6}} \\[0.4cm]
+    {\large \textbf{GIẢI PHƯƠNG TRÌNH LAPLACE CHO BÀI TOÁN}} \\[0.2cm]
+    {\large \textbf{THẾ TĨNH ĐIỆN BẰNG PHƯƠNG PHÁP GAUSS--SEIDEL}} \\[0.2cm]
+    \rule{\textwidth}{1pt}
+
+    \vspace{2cm}
+
+    {\large
+    \begin{tabular}{rl}
+        \textbf{Họ và tên:}  & Nguyễn Trần Gia Bảo \\[4pt]
+        \textbf{MSSV:}       & 23137003 \\[4pt]
+        \textbf{Môn học:}    & Vật lý tính toán (PHY10532) \\[4pt]
+        \textbf{Giảng viên:} & TS.\@ Vũ Quang Tuyên \\
+    \end{tabular}
+    }
+
+    \vfill
+    {\large \today}
+\end{titlepage}
+
+% ================= MỤC LỤC =================
+\newpage
+\tableofcontents
+\newpage
+
+% =============================================================
+\section{Giới thiệu và nội dung bài tập}
+% =============================================================
+
+Trong tĩnh điện học, việc xác định phân bố thế điện $V(x,y)$ bên trong một miền không có điện tích là bài toán cơ bản dẫn đến phương trình Laplace $\nabla^2 V = 0$. Nghiệm giải tích chỉ tồn tại cho một số hình học đặc biệt (hình chữ nhật, hình trụ, hình cầu\ldots), nên trong thực tế ta phải dùng các phương pháp số.
+
+Bài tập yêu cầu giải số phương trình Laplace hai chiều bằng \textbf{phương pháp sai phân hữu hạn} kết hợp \textbf{lặp Gauss--Seidel}, cụ thể gồm hai bài toán:
+
+\begin{enumerate}
+    \item \textbf{Bài 1 -- Hình vuông với cạnh trên ở $100\,\mathrm{V}$:}\\
+    Miền vuông $L\times L$ không tích điện. Ba cạnh (đáy, trái, phải) được nối đất ($V = 0\,\mathrm{V}$), cạnh trên được nối với nguồn điện thế không đổi $V = 100\,\mathrm{V}$. Yêu cầu tìm và vẽ phân bố thế điện bên trong hình vuông.
+
+    \item \textbf{Bài 2 -- Hai thanh kim loại trong hộp nối đất:}\\
+    Miền vuông $L\times L$ với bốn cạnh đều nối đất ($V = 0\,\mathrm{V}$). Bên trong hộp đặt hai thanh kim loại song song có cùng chiều dài: thanh trên ở $V = 100\,\mathrm{V}$, thanh dưới ở $V = -100\,\mathrm{V}$. Chiều dài thanh và khoảng cách giữa hai thanh do người làm tự chọn. Yêu cầu tính và vẽ phân bố thế điện trong miền.
+\end{enumerate}
+
+Chương trình viết bằng Python, sử dụng NumPy để tính toán và Matplotlib để trực quan hóa.
+
+% =============================================================
+\section{Cơ sở lý thuyết}
+% =============================================================
+
+\subsection{Phương trình Laplace cho thế tĩnh điện}
+
+Trong điện động lực cổ điển, thế điện $V(\mathbf{r})$ và mật độ điện tích $\rho(\mathbf{r})$ liên hệ với nhau qua \textbf{phương trình Poisson}:
+\begin{equation}
+    \nabla^2 V = -\frac{\rho}{\varepsilon_0}.
+    \label{eq:poisson}
+\end{equation}
+
+Trong miền \emph{không có điện tích} ($\rho = 0$), Phương trình~\eqref{eq:poisson} rút về \textbf{phương trình Laplace}:
+\begin{equation}
+    \nabla^2 V = \frac{\partial^2 V}{\partial x^2} + \frac{\partial^2 V}{\partial y^2} = 0.
+    \label{eq:laplace}
+\end{equation}
+
+Cùng với điều kiện biên (BCs), Phương trình~\eqref{eq:laplace} xác định duy nhất thế điện trong miền. Với bài toán của chúng ta, biên được cho bởi điện thế không đổi (\emph{điều kiện Dirichlet}).
+
+\subsection{Rời rạc hóa bằng phương pháp sai phân hữu hạn}
+
+Chia miền $L\times L$ thành lưới vuông đều gồm $n\times n$ nút, với khoảng cách lưới:
+\[
+    h = \frac{L}{n-1}.
+\]
+
+Ký hiệu $V_{i,j} = V(x_i, y_j)$ với $x_i = i\,h$, $y_j = j\,h$ và $i,j = 0,1,\dots,n-1$. Dùng công thức sai phân trung tâm bậc hai:
+\begin{equation}
+    \left.\frac{\partial^2 V}{\partial x^2}\right|_{i,j}
+    \approx \frac{V_{i+1,j} - 2V_{i,j} + V_{i-1,j}}{h^2}, \qquad
+    \left.\frac{\partial^2 V}{\partial y^2}\right|_{i,j}
+    \approx \frac{V_{i,j+1} - 2V_{i,j} + V_{i,j-1}}{h^2}.
+    \label{eq:centralDiff}
+\end{equation}
+
+Thay vào Phương trình~\eqref{eq:laplace}:
+\[
+    \frac{V_{i+1,j} + V_{i-1,j} + V_{i,j+1} + V_{i,j-1} - 4V_{i,j}}{h^2} = 0.
+\]
+
+Rút gọn, ta được \textbf{công thức năm điểm} (five-point stencil) nổi tiếng:
+\begin{equation}
+    \boxed{\; V_{i,j} = \frac{1}{4}\bigl(V_{i+1,j} + V_{i-1,j} + V_{i,j+1} + V_{i,j-1}\bigr) \;}
+    \label{eq:5point}
+\end{equation}
+
+Phương trình~\eqref{eq:5point} là biểu hiện rời rạc của tính chất \emph{trung bình} của hàm điều hòa: giá trị $V$ tại một điểm bằng trung bình cộng giá trị $V$ tại bốn điểm lân cận.
+
+\subsection{Công thức lặp Gauss--Seidel cho phương trình Laplace}
+
+Phương trình~\eqref{eq:5point} hình thành một hệ $N = (n-2)^2$ phương trình tuyến tính (bỏ qua các nút biên đã biết) với $N$ ẩn $V_{i,j}$. Hệ này có thể viết ở dạng $A\mathbf{V} = \mathbf{b}$, trong đó ma trận $A$ \emph{rất thưa}: mỗi hàng chỉ có tối đa 5 phần tử khác 0 (đường chéo bằng $-4$, bốn vị trí lân cận bằng $+1$). Việc giải trực tiếp bằng phương pháp khử Gauss với ma trận $N\times N$ sẽ rất tốn kém khi $n$ lớn; do đó ta dùng \textbf{phương pháp lặp}.
+
+\textbf{Gauss--Seidel} áp dụng cho Phương trình~\eqref{eq:5point} có dạng:
+\begin{equation}
+    V_{i,j}^{(k+1)} = \frac{1}{4}\Bigl(V_{i+1,j}^{(k)} + V_{i-1,j}^{(k+1)} + V_{i,j+1}^{(k)} + V_{i,j-1}^{(k+1)}\Bigr).
+    \label{eq:GS_laplace}
+\end{equation}
+
+Lý do xuất hiện ký hiệu $(k+1)$ ở $V_{i-1,j}$ và $V_{i,j-1}$: khi duyệt lưới theo thứ tự tăng dần $i$, $j$, các giá trị tại nút $(i-1, j)$ và $(i, j-1)$ đã được cập nhật trong cùng vòng lặp hiện tại, nên ta dùng giá trị \emph{mới nhất} thay vì giữ giá trị cũ như Jacobi. Nhờ tận dụng thông tin mới này, Gauss--Seidel thường hội tụ nhanh gần gấp đôi so với Jacobi.
+
+\subsection{Điều kiện hội tụ}
+
+Ma trận $A$ của hệ rời rạc hóa phương trình Laplace có tính chất \emph{chéo trội yếu} ($|a_{ii}| \ge \sum_{j\neq i}|a_{ij}|$, với dấu bằng tại các nút kề biên) và đối xứng xác định dương (với BCs Dirichlet). Theo định lý \textbf{Ostrowski--Reich}, Gauss--Seidel \emph{luôn hội tụ} về nghiệm đúng của hệ tuyến tính, bất chấp giá trị khởi tạo. Điều này giải thích vì sao phương pháp ổn định với bài toán của ta.
+
+\subsection{Điều kiện biên Dirichlet và vật dẫn nội bộ}
+
+\textbf{Điều kiện biên Dirichlet} quy định giá trị của $V$ trên biên $\partial\Omega$ của miền:
+\[
+    V\big|_{\partial\Omega} = V_{\text{bd}}(\mathbf{r}).
+\]
+
+Trong quá trình lặp, các nút biên \emph{không bao giờ được cập nhật}, chúng giữ nguyên giá trị do điều kiện biên quy định.
+
+Với Bài 2, ta có thêm \textbf{vật dẫn bên trong miền} (hai thanh kim loại). Về mặt số học, ta xử lý tương tự biên Dirichlet: các nút thuộc hai thanh được cố định tại $+100\,\mathrm{V}$ và $-100\,\mathrm{V}$ ngay từ đầu, đồng thời bước lặp phải \emph{bỏ qua} những nút này khi cập nhật.
+
+\subsection{Tiêu chuẩn dừng}
+
+Quá trình lặp dừng khi sai số lớn nhất giữa hai vòng lặp liên tiếp nhỏ hơn ngưỡng cho trước:
+\begin{equation}
+    \mathrm{err}^{(k)} = \max_{(i,j)} \left|V_{i,j}^{(k+1)} - V_{i,j}^{(k)}\right| < \varepsilon.
+    \label{eq:stop}
+\end{equation}
+
+Đồng thời ta đặt số lần lặp tối đa $N_{\max}$ để ngăn vòng lặp chạy vô hạn khi phương pháp không hội tụ.
+
+% =============================================================
+\section{Phân tích chương trình}
+% =============================================================
+
+\subsection{Hàm thiết lập điều kiện biên (Bài 1)}
+
+\begin{mintedbox}{python}
+def dieukienbien(n, u_bottom, u_left, u_right, u_top):
+    u = np.zeros((n, n), dtype=float)
+
+    # u[i,0] = bottom
+    for i in range(n):
+        u[i, 0] = u_bottom
+
+    # u[0,j] = left
+    for j in range(n):
+        u[0, j] = u_left
+
+    # u[n-1,j] = right
+    for j in range(n):
+        u[n-1, j] = u_right
+
+    # u[i,n-1] = top
+    for i in range(n):
+        u[i, n-1] = u_top
+
+    return u
+\end{mintedbox}
+
+\textbf{Giải thích:}
+\begin{itemize}
+    \item Khởi tạo mảng $n\times n$ toàn số 0. Quy ước $u[i,j] = V(x_i, y_j)$ với $i$ là chỉ số theo $x$, $j$ là chỉ số theo $y$.
+    \item Bốn vòng lặp tương ứng bốn cạnh biên: đáy ($j=0$), trái ($i=0$), phải ($i=n-1$), đỉnh ($j=n-1$).
+    \item Các nút nội mặc định bằng 0 (giá trị khởi tạo). Giá trị khởi tạo không ảnh hưởng tới nghiệm cuối (do Gauss--Seidel đảm bảo hội tụ), chỉ ảnh hưởng đến số bước lặp.
+\end{itemize}
+
+\subsection{Hàm lưu file kết quả}
+
+\begin{mintedbox}{python}
+def luufile_gauss_seidel(k, u, err, L, prefixfilename, final):
+    if final == True:
+        filename = f"{'final'}_{prefixfilename}_{k}.txt"
+    else:
+        filename = f"{'khonghoitu'}_{prefixfilename}_{k}.txt"
+    with open(f"{filename}", "w", encoding="utf-8") as file:
+        file.write(f"### Ket qua tinh toan tai vong lap {k}\n\n")
+        file.write(f"### Do chinh xac: {np.max(err):.6e}\n\n")
+        file.write(f"#" * 100 + "\n" + "\n")
+        file.write(f"### {'x':>15s} {'y':>15s} {'V':>15s} {'Error':>15s}\n")
+        for i in range(u.shape[0]):
+            for j in range(u.shape[1]):
+                x = 0 + i * L / (u.shape[0] - 1)
+                y = 0 + j * L / (u.shape[1] - 1)
+                file.write(f"    {x:15.6f} {y:15.6f} {u[i][j]:15.6f} {err[i][j]:15.6f}\n")
+            file.write(f"\n") 
+\end{mintedbox}
+
+\textbf{Giải thích:}
+\begin{itemize}
+    \item Tham số \texttt{final} phân biệt hai trường hợp: đã hội tụ (\texttt{final\_*}) hay chưa hội tụ sau $N_{\max}$ bước (\texttt{khonghoitu\_*}). Tên file chứa số bước lặp $k$ giúp truy vết dễ dàng.
+    \item Ghi ra bốn cột: $x$, $y$, $V$, sai số $\Delta V$ tại mỗi nút. Việc chèn dòng trắng sau mỗi hàng $i$ giúp đọc dữ liệu lại bằng \texttt{np.loadtxt} và \texttt{reshape} dễ dàng.
+\end{itemize}
+
+\subsection{Hàm Gauss--Seidel cho Bài 1}
+
+\begin{mintedbox}{python}
+def Gauss_Seidel(n, u, L, N_max, err_max, baitap):
+    converged = False
+    for k in range(N_max):
+        u_old = u.copy()
+        #for i in range(1, n-1):
+        #    for j in range(1, n-1):
+        #        u[i, j] = 0.25 * (u[i+1, j] + u[i-1, j] + u[i, j+1] + u[i, j-1])
+
+        u[1:-1, 1:-1] = 0.25 * (u[2:,  1:-1] + u[:-2, 1:-1] 
+                              + u[1:-1, 2:]  + u[1:-1, :-2])
+        
+        err = np.abs(u - u_old)
+        if np.max(err) < err_max:
+            converged = True
+            print(f"Da hoi tu sau {k} vong lap, max_err = {np.max(err):.2e}")
+            luufile_gauss_seidel(k, u, err, L, baitap, final=True)
+            break
+
+    if not converged:
+        print(f"Khong hoi tu sau {N_max} vong lap, max_err = {np.max(err):.2e}")
+        luufile_gauss_seidel(k, u, err, L, baitap, final=False)
+    return u
+\end{mintedbox}
+
+\textbf{Giải thích:}
+\begin{itemize}
+    \item Dòng \texttt{u\_old = u.copy()}: lưu lại trạng thái cũ để tính sai số sau khi cập nhật.
+    \item Phiên bản \emph{vector hoá} bằng NumPy slicing (dòng được dùng): cập nhật toàn bộ nút nội trong một dòng lệnh. Lưu ý rằng do NumPy tạo một mảng tạm ở vế phải trước khi gán cho vế trái, bước cập nhật này về bản chất gần với \emph{Jacobi} (tất cả nút dùng giá trị cũ) hơn là Gauss--Seidel thuần. Tuy nhiên, cả hai phương pháp đều hội tụ tới cùng nghiệm đối với phương trình Laplace, chỉ khác số bước lặp.
+    \item Phiên bản \emph{vòng lặp tường minh} (bị bình luận ở trên) mới là Gauss--Seidel thực thụ: khi cập nhật $u[i,j]$, giá trị $u[i{-}1,j]$ và $u[i,j{-}1]$ đã là giá trị mới của vòng lặp hiện tại.
+    \item Vector hoá được ưu tiên cho Bài 1 nhằm tăng tốc độ trên lưới $100\times 100$.
+    \item Tiêu chuẩn dừng: $\max|u - u_{\text{old}}| < \varepsilon$, phù hợp Phương trình~\eqref{eq:stop}.
+\end{itemize}
+
+\subsection{Hàm thiết lập điều kiện biên cho Bài 2}
+
+\begin{mintedbox}{python}
+def dieukienbien_bai2(n, u_bien, u_thap, u_cao, chieudai, chieurong, L):
+    u = np.zeros((n, n), dtype=float)
+
+    # Bon canh bien deu bang u_bien (= 0 V, noi dat)
+    for i in range(n):
+        u[i, 0] = u_bien          # bottom
+        u[i, n-1] = u_bien        # top
+    for j in range(n):
+        u[0, j] = u_bien          # left
+        u[n-1, j] = u_bien        # right
+
+    # Hai thanh kim loai doi xung qua truc ngang giua
+    n_chieudai  = int(chieudai  / L * (n - 1))   # 50/100 * 99 = 49
+    n_chieurong = int(chieurong / L * (n - 1))   # 30/100 * 99 = 29
+
+    n_center = n // 2
+    thanh_o_tren = n_center + n_chieurong // 2
+    thanh_o_duoi = n_center - n_chieurong // 2
+
+    start = (n - n_chieudai) // 2
+    end   = start + n_chieudai
+
+    for i in range(start, end):
+        u[i, thanh_o_tren] = u_cao
+        u[i, thanh_o_duoi] = u_thap
+
+    return u, start, end, thanh_o_tren, thanh_o_duoi
+\end{mintedbox}
+
+\textbf{Giải thích:}
+\begin{itemize}
+    \item \texttt{n\_chieudai}, \texttt{n\_chieurong}: quy đổi chiều dài vật lý (cm) sang số nút lưới tương ứng với kích thước $L$.
+    \item Hai thanh được đặt \emph{đối xứng qua tâm hình vuông}: thanh trên ở $j = n/2 + n_{\text{rộng}}/2$, thanh dưới ở $j = n/2 - n_{\text{rộng}}/2$. Khoảng cách giữa hai thanh là \texttt{chieurong}.
+    \item Hai thanh có cùng chiều dài \texttt{chieudai} và cùng căn giữa theo trục $x$ (từ \texttt{start} đến \texttt{end}).
+    \item Hàm trả về tọa độ lưới của hai thanh để hàm Gauss--Seidel có thể \emph{khoá} giá trị tại các nút này.
+\end{itemize}
+
+\subsection{Hàm Gauss--Seidel cho Bài 2}
+
+\begin{mintedbox}{python}
+def Gauss_Seidel_bai2(n, u, L, N_max, err_max, baitap,
+                     start, end, thanh_o_tren, thanh_o_duoi):
+    converged = False
+    for k in range(N_max):
+        u_old = u.copy()
+        for i in range(1, n-1):
+            for j in range(1, n-1):
+                if start <= i < end and (j == thanh_o_tren or j == thanh_o_duoi):
+                    continue    # Bo qua nut thuoc hai thanh kim loai
+                u[i, j] = 0.25 * (u[i+1, j] + u[i-1, j] 
+                                + u[i, j+1] + u[i, j-1])
+        
+        err = np.abs(u - u_old)
+        if np.max(err) < err_max:
+            converged = True
+            print(f"Da hoi tu sau {k} vong lap, max_err = {np.max(err):.2e}")
+            luufile_gauss_seidel(k, u, err, L, baitap, final=True)
+            break
+
+    if not converged:
+        print(f"Khong hoi tu sau {N_max} vong lap, max_err = {np.max(err):.2e}")
+        luufile_gauss_seidel(k, u, err, L, baitap, final=False)
+    return u
+\end{mintedbox}
+
+\textbf{Khác biệt với Bài 1:}
+\begin{itemize}
+    \item Bắt buộc dùng \emph{vòng lặp tường minh} thay vì vector hoá, vì cần kiểm tra điều kiện \texttt{if} để bỏ qua các nút vật dẫn.
+    \item Lệnh \texttt{continue} đảm bảo những nút thuộc hai thanh kim loại giữ nguyên điện thế $\pm 100\,\mathrm{V}$ trong suốt quá trình lặp -- đúng với thực tế vật lý: bề mặt vật dẫn là đẳng thế.
+    \item Đây là phiên bản \emph{Gauss--Seidel thuần} theo đúng Phương trình~\eqref{eq:GS_laplace}.
+\end{itemize}
+
+% =============================================================
+\section{Kết quả và thảo luận}
+% =============================================================
+
+\subsection{Bài 1: Hình vuông với cạnh trên ở $100\,\mathrm{V}$}
+
+\subsubsection{Thiết lập tham số}
+
+\begin{mintedbox}{python}
+L       = 100      # Canh hinh vuong (cm)
+n       = 100      # So nut luoi moi chieu
+N_max   = 100000   # So lan lap toi da
+err_max = 1e-6     # Nguong sai so
+
+u = dieukienbien(n, u_bottom=0, u_left=0, u_right=0, u_top=100)
+Gauss_Seidel(n, u, L, N_max, err_max, baitap="baiso1")
+\end{mintedbox}
+
+Điều kiện biên Dirichlet:
+\[
+    V(x,0) = V(0,y) = V(L,y) = 0\,\mathrm{V}, \qquad V(x,L) = 100\,\mathrm{V}.
+\]
+
+\subsubsection{Kết quả số}
+
+Chương trình hội tụ sau \textbf{19{,}705 vòng lặp} với $\max|\Delta V| < 10^{-6}\,\mathrm{V}$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{BTVN6/BTVN6-PDE-Thetinhdien-cmap.png}
+    \caption{Phân bố thế tĩnh điện $V(x,y)$ trong hình vuông $100\times 100$ cm với cạnh trên ở $100\,\mathrm{V}$, ba cạnh còn lại nối đất. Màu đỏ ứng với điện thế cao, màu xanh ứng với điện thế thấp.}
+    \label{fig:bai1_cmap}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{BTVN6/BTVN6-PDE-Thetinhdien-3D.png}
+        \caption{Vẽ bằng Matplotlib (Python)}
+        \label{fig:bai1_3D_mpl}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{BTVN6/BTVN6-PDE-Thetinhdien-3D-gnu.png}
+        \caption{Vẽ bằng Gnuplot}
+        \label{fig:bai1_3D_gnu}
+    \end{subfigure}
+    \caption{Mặt thế điện $V(x,y)$ của Bài 1 vẽ dạng 3D bằng hai công cụ khác nhau. Mặt có dạng dốc mượt từ đáy ($V = 0$) lên đỉnh ($V = 100$) và không có cực trị bên trong miền -- phù hợp nguyên lý cực trị cho hàm điều hòa.}
+    \label{fig:bai1_3D}
+\end{figure}
+
+\subsubsection{Biện luận}
+
+\begin{itemize}
+    \item \textbf{Tính chất giá trị cực trị (Maximum Principle):} Thế điện $V$ là hàm điều hòa trong miền nên không có cực đại/cực tiểu địa phương bên trong miền -- mọi giá trị nằm giữa $0$ và $100\,\mathrm{V}$. Hình~\ref{fig:bai1_3D} xác nhận điều này: bề mặt mượt, không có ``đỉnh'' hoặc ``đáy'' bên trong.
+
+    \item \textbf{Đối xứng phải--trái:} Bài toán đối xứng qua trục thẳng đứng $x = L/2$. Nghiệm số thể hiện rõ ràng đối xứng này trong phạm vi sai số làm tròn.
+
+    \item \textbf{Hiện tượng Gibbs tại hai góc trên:} Ở hai góc $(0, L)$ và $(L, L)$, điều kiện biên không liên tục (từ $0$ nhảy lên $100\,\mathrm{V}$). Nghiệm chính xác có tính chất không trơn tại hai điểm này, và nghiệm số thể hiện qua màu gradient sắc nét sát hai góc trên của Hình~\ref{fig:bai1_cmap}.
+
+    \item \textbf{So sánh với nghiệm giải tích:} Bài toán này có nghiệm giải tích theo chuỗi Fourier:
+    \[
+        V(x,y) = \frac{400}{\pi} \sum_{m=1,3,5,\ldots}^{\infty} \frac{1}{m}\,\frac{\sinh(m\pi y/L)}{\sinh(m\pi)}\,\sin\!\left(\frac{m\pi x}{L}\right).
+    \]
+    Kiểm chứng tại $\bigl(L/2, L/2\bigr)$: $V_{\text{giải tích}} = 25\,\mathrm{V}$; nghiệm số trong file kết quả cho $V \approx 25.0\,\mathrm{V}$, sai lệch dưới $0.1\%$ -- phù hợp rất tốt.
+
+    \item \textbf{Tốc độ hội tụ:} 19{,}705 vòng lặp cho lưới $100\times 100$ với vector hoá NumPy mất khoảng vài giây. Số này phù hợp với phân tích lý thuyết: số vòng lặp để Gauss--Seidel (hay Jacobi) giảm sai số xuống $\varepsilon$ có bậc $O(n^2 \log(1/\varepsilon))$.
+\end{itemize}
+
+\subsection{Bài 2: Hai thanh tích điện trong hộp nối đất}
+
+\subsubsection{Thiết lập tham số}
+
+\begin{mintedbox}{python}
+L          = 100    # Canh hinh vuong (cm)
+n          = 100    # So nut luoi
+u_bien     = 0      # Bon canh noi dat
+u_cao      = 100    # Thanh tren
+u_thap     = -100   # Thanh duoi
+chieudai   = 50     # Chieu dai moi thanh (cm)
+chieurong  = 30     # Khoang cach giua hai thanh (cm)
+N_max      = 100000
+err_max    = 1e-6
+
+u_bai2, start, end, thanh_on, thanh_duoi = dieukienbien_bai2(
+    n, u_bien, u_thap, u_cao, chieudai, chieurong, L)
+
+u_result = Gauss_Seidel_bai2(n, u_bai2, L, N_max, err_max,
+            baitap="baiso2", start=start, end=end,
+            thanh_o_tren=thanh_on, thanh_o_duoi=thanh_duoi)
+\end{mintedbox}
+
+Cấu hình hình học:
+\begin{itemize}
+    \item Miền: vuông $100\times 100$ cm, bốn cạnh nối đất.
+    \item Thanh trên: đặt tại $y = 65\,\mathrm{cm}$, từ $x = 25$ đến $x = 75\,\mathrm{cm}$, điện thế $+100\,\mathrm{V}$.
+    \item Thanh dưới: đặt tại $y = 35\,\mathrm{cm}$, từ $x = 25$ đến $x = 75\,\mathrm{cm}$, điện thế $-100\,\mathrm{V}$.
+    \item Khoảng cách giữa hai thanh $= 30\,\mathrm{cm}$, chiều dài mỗi thanh $= 50\,\mathrm{cm}$.
+\end{itemize}
+
+\subsubsection{Kết quả số}
+
+Chương trình hội tụ sau \textbf{3{,}009 vòng lặp} với $\max|\Delta V| < 10^{-6}\,\mathrm{V}$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{BTVN6/BTVN6-PDE-Thetinhdien-bai2-cmap.png}
+    \caption{Phân bố thế tĩnh điện cho cấu hình hai thanh song song đối cực, đặt trong hộp vuông nối đất. Đỏ: điện thế dương (gần thanh $+100\,\mathrm{V}$); xanh: điện thế âm (gần thanh $-100\,\mathrm{V}$); trắng: $V = 0$.}
+    \label{fig:bai2_cmap}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{BTVN6/BTVN6-PDE-Thetinhdien-bai2-3D.png}
+        \caption{Vẽ bằng Matplotlib (Python)}
+        \label{fig:bai2_3D_mpl}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{BTVN6/BTVN6-PDE-Thetinhdien-bai2-3D-gnu.png}
+        \caption{Vẽ bằng Gnuplot}
+        \label{fig:bai2_3D_gnu}
+    \end{subfigure}
+    \caption{Mặt thế điện $V(x,y)$ của Bài 2 dạng 3D. Có thể thấy rõ hai ``đỉnh'' (thanh $+100\,\mathrm{V}$) và hai ``đáy'' (thanh $-100\,\mathrm{V}$) nối bởi mặt nghiêng mượt giữa chúng; các cạnh đều tiến về $0$. Đối xứng phản-xứng qua mặt phẳng $V = 0$ thể hiện rõ trên cả hai phiên bản.}
+    \label{fig:bai2_3D}
+\end{figure}
+
+\subsubsection{Biện luận}
+
+\begin{itemize}
+    \item \textbf{Đối xứng phản-xứng:} Bài toán có đối xứng phản-xứng (antisymmetry) qua trục ngang giữa hộp: đổi dấu $y \leftrightarrow L - y$ dẫn đến $V \leftrightarrow -V$. Hình~\ref{fig:bai2_cmap} thể hiện rõ ràng đối xứng này: các vùng đỏ và xanh là ảnh phản-đối của nhau qua trục trung bình.
+
+    \item \textbf{Đường đẳng thế $V = 0$:} Mặt phẳng giữa hai thanh ($y = L/2 = 50\,\mathrm{cm}$) là mặt đẳng thế $V = 0$ do đối xứng phản-xứng. Điều này giống như mặt giữa của tụ điện phẳng lý tưởng, rất đặc trưng cho cấu hình ``tụ điện''.
+
+    \item \textbf{Tương tự tụ điện phẳng:} Giữa hai thanh, đường sức điện gần như song song và đều, thế giảm gần tuyến tính từ $+100$ xuống $-100\,\mathrm{V}$ khi $y$ giảm từ $65$ xuống $35\,\mathrm{cm}$. Ước lượng điện trường:
+    \[
+        E_y \approx -\frac{\Delta V}{\Delta y} = -\frac{-100 - 100}{35 - 65}\,\mathrm{V/cm} \approx 6.67\,\mathrm{V/cm}.
+    \]
+    Đây chính là điện trường của tụ điện phẳng, ``sửa'' thêm bởi hiệu ứng biên ở đầu hai thanh.
+
+    \item \textbf{Hiệu ứng biên (fringing fields):} Ngoài vùng giữa hai thanh, đường sức điện cong và lan tỏa về hộp nối đất (xem phần ``đuôi'' gradient ở hai đầu thanh trong Hình~\ref{fig:bai2_cmap}). Đây là hiện tượng fringing thường bị bỏ qua trong mô hình tụ lý tưởng nhưng xuất hiện rõ trong mô phỏng số.
+
+    \item \textbf{Tương tác với biên nối đất:} Thế điện trong vùng giữa hai thanh và hộp nhỏ hơn về biên độ so với vùng giữa hai thanh, cho thấy biên nối đất ``hút'' đường sức điện về phía mình -- phù hợp với nguyên lý hình ảnh điện tích (method of images).
+
+    \item \textbf{Tốc độ hội tụ nhanh hơn Bài 1:} Bài 2 chỉ cần 3{,}009 vòng lặp, ít hơn 6 lần so với Bài 1. Nguyên nhân: hai thanh cố định bên trong miền hoạt động như những ``điều kiện biên nội'' bổ sung, làm giảm đáng kể số bậc tự do thực sự của bài toán. Ngoài ra, cấu hình đối xứng phản-xứng giúp các thành phần Fourier dao động không đối xứng tắt rất nhanh.
+
+    \item \textbf{Ghi chú:} Bài 2 dùng vòng lặp tường minh (Gauss--Seidel thuần), thực thi chậm hơn trên mỗi vòng so với vector hoá Bài 1; tuy nhiên do số vòng lặp ít hơn nhiều nên tổng thời gian tương đương hoặc nhỉnh hơn không đáng kể.
+\end{itemize}
+
+% =============================================================
+\section{Kết luận}
+% =============================================================
+
+Bài tập đã thực hành thành công việc giải phương trình Laplace hai chiều cho bài toán thế tĩnh điện bằng phương pháp sai phân hữu hạn kết hợp lặp Gauss--Seidel. Các điểm chính rút ra:
+
+\begin{enumerate}
+    \item \textbf{Rời rạc hoá phương trình Laplace} bằng sai phân trung tâm bậc hai dẫn đến công thức năm điểm Phương trình~\eqref{eq:5point} -- biểu hiện rời rạc của tính chất trung bình của hàm điều hòa.
+
+    \item \textbf{Phương pháp Gauss--Seidel} đảm bảo hội tụ cho bài toán Laplace với biên Dirichlet. Phiên bản vector hoá bằng NumPy (Bài 1) nhanh hơn nhưng về bản chất gần Jacobi; phiên bản vòng lặp tường minh (Bài 2) là Gauss--Seidel thuần nhưng cần thiết khi phải xử lý vật dẫn bên trong miền.
+
+    \item \textbf{Kết quả số phù hợp với lý thuyết:} Bài 1 cho nghiệm so khớp chuỗi Fourier giải tích, thể hiện rõ ràng nguyên lý cực trị. Bài 2 thể hiện đúng hiện tượng tụ điện phẳng với hiệu ứng biên và mặt đẳng thế $V = 0$ ở giữa do đối xứng phản-xứng.
+
+    \item \textbf{Kỹ thuật xử lý vật dẫn nội:} Bằng cách cố định giá trị $V$ tại các nút thuộc vật dẫn trong suốt quá trình lặp, ta mô phỏng được tính chất đẳng thế của bề mặt kim loại.
+
+    \item \textbf{Hạn chế và hướng cải tiến:} Với lưới $n = 100$, Bài 1 cần gần 20 nghìn vòng lặp để hội tụ tới $\varepsilon = 10^{-6}\,\mathrm{V}$.
+\end{enumerate}
+
+\end{document}

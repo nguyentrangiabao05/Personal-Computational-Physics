@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{L}       \PYG{o}{=} \PYG{l+m+mi}{100}      \PYG{c+c1}{\PYGZsh{} Canh hinh vuong (cm)}
+\PYG{n}{n}       \PYG{o}{=} \PYG{l+m+mi}{100}      \PYG{c+c1}{\PYGZsh{} So nut luoi moi chieu}
+\PYG{n}{N\PYGZus{}max}   \PYG{o}{=} \PYG{l+m+mi}{100000}   \PYG{c+c1}{\PYGZsh{} So lan lap toi da}
+\PYG{n}{err\PYGZus{}max} \PYG{o}{=} \PYG{l+m+mf}{1e\PYGZhy{}6}     \PYG{c+c1}{\PYGZsh{} Nguong sai so}
+
+\PYG{n}{u} \PYG{o}{=} \PYG{n}{dieukienbien}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{n}{u\PYGZus{}bottom}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{u\PYGZus{}left}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{u\PYGZus{}right}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{u\PYGZus{}top}\PYG{o}{=}\PYG{l+m+mi}{100}\PYG{p}{)}
+\PYG{n}{Gauss\PYGZus{}Seidel}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{n}{u}\PYG{p}{,} \PYG{n}{L}\PYG{p}{,} \PYG{n}{N\PYGZus{}max}\PYG{p}{,} \PYG{n}{err\PYGZus{}max}\PYG{p}{,} \PYG{n}{baitap}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}baiso1\PYGZdq{}}\PYG{p}{)}
+\end{Verbatim}

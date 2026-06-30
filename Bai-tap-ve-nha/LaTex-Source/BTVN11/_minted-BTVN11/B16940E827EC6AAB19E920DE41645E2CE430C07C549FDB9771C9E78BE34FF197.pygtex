@@ -1,0 +1,32 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{khoitao\PYGZus{}psi0}\PYG{p}{(}\PYG{n}{x}\PYG{p}{):}
+    \PYG{k}{global} \PYG{n}{sigma\PYGZus{}0}\PYG{p}{,} \PYG{n}{k\PYGZus{}0}
+    \PYG{n}{psi\PYGZus{}0} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{exp}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{o}{/}\PYG{l+m+mi}{2} \PYG{o}{*} \PYG{p}{((}\PYG{n}{x}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{5}\PYG{p}{)}\PYG{o}{/}\PYG{n}{sigma\PYGZus{}0}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2} \PYG{p}{)}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{exp}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{n}{j}\PYG{o}{*}\PYG{n}{k\PYGZus{}0}\PYG{o}{*}\PYG{n}{x}\PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{psi\PYGZus{}0}
+
+\PYG{k}{def} \PYG{n+nf}{thenang}\PYG{p}{(}\PYG{n}{x}\PYG{p}{):}
+    \PYG{n}{N\PYGZus{}x} \PYG{o}{=} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{x}\PYG{p}{)}
+    \PYG{n}{V} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{(}\PYG{n}{N\PYGZus{}x}\PYG{p}{)}
+    \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{N\PYGZus{}x}\PYG{p}{):}
+        \PYG{k}{if} \PYG{n}{x}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{\PYGZlt{}=} \PYG{l+m+mi}{0} \PYG{o+ow}{or} \PYG{n}{x}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{\PYGZgt{}=} \PYG{l+m+mi}{15}\PYG{p}{:}
+            \PYG{n}{V}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{=} \PYG{l+m+mi}{0}
+        \PYG{k}{else}\PYG{p}{:}
+            \PYG{n}{V}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{=} \PYG{l+m+mi}{100}
+    \PYG{k}{return} \PYG{n}{V}
+
+\PYG{k}{def} \PYG{n+nf}{euler\PYGZus{}giai\PYGZus{}psi}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,} \PYG{n}{t}\PYG{p}{):}
+    \PYG{k}{global} \PYG{n}{hbar}\PYG{p}{,} \PYG{n}{m}\PYG{p}{,} \PYG{n}{dx}\PYG{p}{,} \PYG{n}{dt}\PYG{p}{,} \PYG{n}{N\PYGZus{}x}\PYG{p}{,} \PYG{n}{N\PYGZus{}t}
+    \PYG{n}{psi\PYGZus{}t\PYGZus{}x} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{([}\PYG{n}{N\PYGZus{}t}\PYG{p}{,}\PYG{n}{N\PYGZus{}x}\PYG{p}{],} \PYG{n}{dtype}\PYG{o}{=}\PYG{n}{np}\PYG{o}{.}\PYG{n}{complex128}\PYG{p}{)}
+    \PYG{n}{psi\PYGZus{}0} \PYG{o}{=} \PYG{n}{khoitao\PYGZus{}psi0}\PYG{p}{(}\PYG{n}{x}\PYG{p}{)}
+    \PYG{n}{V} \PYG{o}{=} \PYG{n}{thenang}\PYG{p}{(}\PYG{n}{x}\PYG{p}{)}
+
+    \PYG{n}{a} \PYG{o}{=} \PYG{l+m+mi}{1}\PYG{n}{j} \PYG{o}{*} \PYG{n}{hbar} \PYG{o}{*} \PYG{n}{dt} \PYG{o}{/} \PYG{p}{(}\PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{m}\PYG{o}{*}\PYG{n}{dx}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{)}
+    \PYG{n}{g\PYGZus{}x} \PYG{o}{=} \PYG{l+m+mi}{1} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{1}\PYG{n}{j}\PYG{o}{*}\PYG{n}{dt}\PYG{o}{/}\PYG{n}{hbar} \PYG{o}{*} \PYG{n}{V} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{1}\PYG{n}{j}\PYG{o}{*}\PYG{n}{hbar}\PYG{o}{*}\PYG{n}{dt}\PYG{o}{/}\PYG{p}{(}\PYG{n}{m}\PYG{o}{*}\PYG{n}{dx}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{)}
+
+    \PYG{n}{psi\PYGZus{}t\PYGZus{}x}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]} \PYG{o}{=} \PYG{n}{psi\PYGZus{}0}
+    \PYG{k}{for} \PYG{n}{n} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{N\PYGZus{}t}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{):}
+        \PYG{k}{for} \PYG{n}{j} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{N\PYGZus{}x}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{):}
+            \PYG{n}{psi\PYGZus{}t\PYGZus{}x}\PYG{p}{[}\PYG{n}{n}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{n}{j}\PYG{p}{]} \PYG{o}{=} \PYG{n}{g\PYGZus{}x}\PYG{p}{[}\PYG{n}{j}\PYG{p}{]} \PYG{o}{*} \PYG{n}{psi\PYGZus{}t\PYGZus{}x}\PYG{p}{[}\PYG{n}{n}\PYG{p}{,}\PYG{n}{j}\PYG{p}{]} \PYG{o}{+} \PYG{n}{a}\PYG{o}{*}\PYG{p}{(}\PYG{n}{psi\PYGZus{}t\PYGZus{}x}\PYG{p}{[}\PYG{n}{n}\PYG{p}{,}\PYG{n}{j}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{+}\PYG{n}{psi\PYGZus{}t\PYGZus{}x}\PYG{p}{[}\PYG{n}{n}\PYG{p}{,}\PYG{n}{j}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{])}
+
+    \PYG{k}{return} \PYG{n}{psi\PYGZus{}t\PYGZus{}x}
+\end{Verbatim}

@@ -1,0 +1,31 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{giaipt\PYGZus{}psi\PYGZus{}RK4}\PYG{p}{():}
+    \PYG{k}{global} \PYG{n}{N\PYGZus{}x}\PYG{p}{,} \PYG{n}{N\PYGZus{}t}\PYG{p}{,} \PYG{n}{x\PYGZus{}min}\PYG{p}{,} \PYG{n}{x\PYGZus{}max}\PYG{p}{,} \PYG{n}{t\PYGZus{}min}\PYG{p}{,} \PYG{n}{t\PYGZus{}max}\PYG{p}{,} \PYG{n}{dx}\PYG{p}{,} \PYG{n}{dt}
+
+    \PYG{n}{x}\PYG{p}{,} \PYG{n}{t}\PYG{p}{,} \PYG{n}{N\PYGZus{}x}\PYG{p}{,} \PYG{n}{N\PYGZus{}t} \PYG{o}{=} \PYG{n}{khoitao\PYGZus{}x\PYGZus{}t}\PYG{p}{(}\PYG{n}{x\PYGZus{}min}\PYG{p}{,} \PYG{n}{x\PYGZus{}max}\PYG{p}{,} \PYG{n}{t\PYGZus{}min}\PYG{p}{,} \PYG{n}{t\PYGZus{}max}\PYG{p}{,} \PYG{n}{dx}\PYG{p}{,} \PYG{n}{dt}\PYG{p}{)}
+
+    \PYG{n}{y} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{((}\PYG{n}{N\PYGZus{}t}\PYG{p}{,} \PYG{n}{N\PYGZus{}x}\PYG{p}{),} \PYG{n}{dtype}\PYG{o}{=}\PYG{n}{np}\PYG{o}{.}\PYG{n}{complex128}\PYG{p}{)}
+
+    \PYG{n}{M} \PYG{o}{=} \PYG{n}{khoitao\PYGZus{}matran\PYGZus{}M}\PYG{p}{()}
+    \PYG{n}{psi\PYGZus{}0} \PYG{o}{=} \PYG{n}{khoitao\PYGZus{}psi0}\PYG{p}{(}\PYG{n}{x}\PYG{p}{)}
+
+    \PYG{n}{psi\PYGZus{}0}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]} \PYG{o}{=} \PYG{l+m+mf}{0.0}
+    \PYG{n}{psi\PYGZus{}0}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{=} \PYG{l+m+mf}{0.0}
+
+    \PYG{n}{y}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{p}{:]} \PYG{o}{=} \PYG{n}{psi\PYGZus{}0}
+
+    \PYG{k}{for} \PYG{n}{n} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{N\PYGZus{}t} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{1}\PYG{p}{):}
+        \PYG{n}{k1} \PYG{o}{=} \PYG{n}{M} \PYG{o}{@} \PYG{n}{y}\PYG{p}{[}\PYG{n}{n}\PYG{p}{]}
+        \PYG{n}{k2} \PYG{o}{=} \PYG{n}{M} \PYG{o}{@} \PYG{p}{(}\PYG{n}{y}\PYG{p}{[}\PYG{n}{n}\PYG{p}{]} \PYG{o}{+} \PYG{l+m+mf}{0.5} \PYG{o}{*} \PYG{n}{dt} \PYG{o}{*} \PYG{n}{k1}\PYG{p}{)}
+        \PYG{n}{k3} \PYG{o}{=} \PYG{n}{M} \PYG{o}{@} \PYG{p}{(}\PYG{n}{y}\PYG{p}{[}\PYG{n}{n}\PYG{p}{]} \PYG{o}{+} \PYG{l+m+mf}{0.5} \PYG{o}{*} \PYG{n}{dt} \PYG{o}{*} \PYG{n}{k2}\PYG{p}{)}
+        \PYG{n}{k4} \PYG{o}{=} \PYG{n}{M} \PYG{o}{@} \PYG{p}{(}\PYG{n}{y}\PYG{p}{[}\PYG{n}{n}\PYG{p}{]} \PYG{o}{+} \PYG{n}{dt} \PYG{o}{*} \PYG{n}{k3}\PYG{p}{)}
+
+        \PYG{n}{y}\PYG{p}{[}\PYG{n}{n} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{=} \PYG{n}{y}\PYG{p}{[}\PYG{n}{n}\PYG{p}{]} \PYG{o}{+} \PYG{n}{dt} \PYG{o}{/} \PYG{l+m+mf}{6.0} \PYG{o}{*} \PYG{p}{(}
+            \PYG{n}{k1} \PYG{o}{+} \PYG{l+m+mf}{2.0} \PYG{o}{*} \PYG{n}{k2} \PYG{o}{+} \PYG{l+m+mf}{2.0} \PYG{o}{*} \PYG{n}{k3} \PYG{o}{+} \PYG{n}{k4}
+        \PYG{p}{)}
+
+        \PYG{n}{y}\PYG{p}{[}\PYG{n}{n} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{]} \PYG{o}{=} \PYG{l+m+mf}{0.0}
+        \PYG{n}{y}\PYG{p}{[}\PYG{n}{n} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{=} \PYG{l+m+mf}{0.0}
+
+    \PYG{k}{return} \PYG{n}{y}
+\end{Verbatim}

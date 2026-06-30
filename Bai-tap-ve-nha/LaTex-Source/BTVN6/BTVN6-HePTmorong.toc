@@ -1,0 +1,26 @@
+\contentsline {section}{\numberline {1}Giới thiệu và nội dung bài tập}{2}{section.1}%
+\contentsline {section}{\numberline {2}Cơ sở lý thuyết}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Hệ phương trình tuyến tính và tách ma trận}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Phương pháp Jacobi và ma trận lặp $T_J$}{3}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Phương pháp Gauss--Seidel và ma trận lặp $T_{GS}$}{3}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Điều kiện hội tụ: bán kính phổ $\rho (T)$}{3}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Chéo trội nghiêm ngặt: điều kiện \emph {đủ}, không phải \emph {cần}}{3}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Tiêu chuẩn dừng}{4}{subsection.2.6}%
+\contentsline {section}{\numberline {3}Phân tích chương trình}{4}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Các hàm tiện ích}{4}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Tính bán kính phổ}{4}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}Kiểm tra chéo trội}{4}{subsubsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.3}Tách ma trận $D$, $L$, $U$ và tính $T_{GS}$, $T_J$}{5}{subsubsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.2}Hàm Gauss--Seidel}{5}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Hàm Jacobi}{6}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Kết quả và thảo luận}{7}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Thực hành 1a: Hệ không chéo trội nhưng vẫn hội tụ}{7}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Câu a. Kiểm tra chéo trội nghiêm ngặt}{7}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Câu b. Ma trận $T_{GS}$ và bán kính phổ}{7}{subsubsection.4.1.2}%
+\contentsline {subsubsection}{\numberline {4.1.3}Câu c. Giải bằng Gauss--Seidel, $\varepsilon = 10^{-2}$}{7}{subsubsection.4.1.3}%
+\contentsline {subsection}{\numberline {4.2}Thực hành 1b: Phản ví dụ Jacobi--tốt-hơn--Gauss--Seidel}{8}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Câu a. Ma trận $T_J$ và bán kính phổ}{8}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2}Câu b. Giải bằng Jacobi, $\mathbf {x}_0 = \mathbf {0}$, $\varepsilon = 10^{-5}$}{9}{subsubsection.4.2.2}%
+\contentsline {subsubsection}{\numberline {4.2.3}Câu c. Chứng minh $\rho (T_{GS}) = 2$ và kiểm chứng phân kỳ}{9}{subsubsection.4.2.3}%
+\contentsline {subsubsection}{\numberline {4.2.4}Nhận xét tổng quát về hai hành vi trái ngược}{10}{subsubsection.4.2.4}%
+\contentsline {section}{\numberline {5}Kết luận}{10}{section.5}%

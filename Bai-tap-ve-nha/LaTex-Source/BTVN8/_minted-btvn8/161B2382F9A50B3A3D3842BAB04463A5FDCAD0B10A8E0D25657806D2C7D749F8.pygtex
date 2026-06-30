@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{f\PYGZus{}x\PYGZus{}bai2\PYGZus{}songdung}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,} \PYG{n}{l}\PYG{p}{):}
+    \PYG{k}{if} \PYG{n}{x} \PYG{o}{\PYGZlt{}=} \PYG{l+m+mf}{0.5}\PYG{o}{*}\PYG{n}{l}\PYG{p}{:}
+        \PYG{k}{return} \PYG{l+m+mf}{1.25}\PYG{o}{*}\PYG{n}{x}\PYG{o}{/}\PYG{n}{l}
+    \PYG{k}{else}\PYG{p}{:}
+        \PYG{k}{return} \PYG{l+m+mf}{1.25}\PYG{o}{*}\PYG{p}{(}\PYG{n}{l}\PYG{o}{\PYGZhy{}}\PYG{n}{x}\PYG{p}{)}\PYG{o}{/}\PYG{n}{l}
+\end{Verbatim}

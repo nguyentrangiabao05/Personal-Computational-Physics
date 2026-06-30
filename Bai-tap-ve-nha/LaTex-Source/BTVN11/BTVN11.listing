@@ -1,0 +1,30 @@
+def khoitao_psi0(x):
+    global sigma_0, k_0
+    psi_0 = np.exp(-1/2 * ((x-5)/sigma_0)**2 )*np.exp(1j*k_0*x)
+    return psi_0
+
+def thenang(x):
+    N_x = len(x)
+    V = np.zeros(N_x)
+    for i in range(N_x):
+        if x[i] <= 0 or x[i] >= 15:
+            V[i] = 0
+        else:
+            V[i] = 100
+    return V
+
+def euler_giai_psi(x, t):
+    global hbar, m, dx, dt, N_x, N_t
+    psi_t_x = np.zeros([N_t,N_x], dtype=np.complex128)
+    psi_0 = khoitao_psi0(x)
+    V = thenang(x)
+
+    a = 1j * hbar * dt / (2*m*dx**2)
+    g_x = 1 - 1j*dt/hbar * V - 1j*hbar*dt/(m*dx**2)
+
+    psi_t_x[0] = psi_0
+    for n in range(0, N_t-1):
+        for j in range(1, N_x-1):
+            psi_t_x[n+1,j] = g_x[j] * psi_t_x[n,j] + a*(psi_t_x[n,j+1]+psi_t_x[n,j-1])
+
+    return psi_t_x

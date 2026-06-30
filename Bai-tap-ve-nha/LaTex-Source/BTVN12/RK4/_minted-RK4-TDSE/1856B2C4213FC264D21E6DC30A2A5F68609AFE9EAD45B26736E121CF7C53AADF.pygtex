@@ -1,0 +1,28 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{sigma\PYGZus{}0} \PYG{o}{=} \PYG{l+m+mf}{0.5}
+\PYG{n}{dx} \PYG{o}{=} \PYG{l+m+mf}{0.05}
+\PYG{n}{dt} \PYG{o}{=} \PYG{l+m+mi}{1}\PYG{o}{/}\PYG{l+m+mi}{4}\PYG{o}{*}\PYG{n}{dx}\PYG{o}{**}\PYG{l+m+mi}{2}
+\PYG{n}{k\PYGZus{}0} \PYG{o}{=} \PYG{l+m+mi}{8}
+\PYG{n}{x\PYGZus{}0} \PYG{o}{=} \PYG{l+m+mi}{5}
+
+\PYG{n}{hbar} \PYG{o}{=} \PYG{l+m+mi}{1}
+\PYG{n}{m} \PYG{o}{=} \PYG{l+m+mi}{1}
+
+\PYG{n}{t\PYGZus{}min} \PYG{o}{=} \PYG{l+m+mi}{0}
+\PYG{n}{t\PYGZus{}max} \PYG{o}{=} \PYG{l+m+mf}{1.2}
+
+\PYG{n}{x\PYGZus{}min} \PYG{o}{=} \PYG{l+m+mi}{0}
+\PYG{n}{x\PYGZus{}max} \PYG{o}{=} \PYG{l+m+mi}{15}
+
+\PYG{n}{V\PYGZus{}max} \PYG{o}{=} \PYG{l+m+mi}{500}
+\PYG{n}{kiemtra\PYGZus{}CFL}\PYG{p}{(}\PYG{n}{dt}\PYG{p}{,} \PYG{n}{dx}\PYG{p}{,} \PYG{n}{V\PYGZus{}max}\PYG{p}{)}
+
+\PYG{n}{x}\PYG{p}{,} \PYG{n}{t}\PYG{p}{,} \PYG{n}{N\PYGZus{}x}\PYG{p}{,} \PYG{n}{N\PYGZus{}t} \PYG{o}{=} \PYG{n}{khoitao\PYGZus{}x\PYGZus{}t}\PYG{p}{(}\PYG{n}{x\PYGZus{}min}\PYG{p}{,} \PYG{n}{x\PYGZus{}max}\PYG{p}{,} \PYG{n}{t\PYGZus{}min}\PYG{p}{,} \PYG{n}{t\PYGZus{}max}\PYG{p}{,} \PYG{n}{dx}\PYG{p}{,} \PYG{n}{dt}\PYG{p}{)}
+\PYG{n}{x}\PYG{p}{,} \PYG{n}{t}\PYG{p}{,} \PYG{n}{N\PYGZus{}x}\PYG{p}{,} \PYG{n}{N\PYGZus{}t} \PYG{o}{=} \PYG{n}{khoitao\PYGZus{}x\PYGZus{}t}\PYG{p}{(}\PYG{n}{x\PYGZus{}min}\PYG{p}{,} \PYG{n}{x\PYGZus{}max}\PYG{p}{,} \PYG{n}{t\PYGZus{}min}\PYG{p}{,} \PYG{n}{t\PYGZus{}max}\PYG{p}{,} \PYG{n}{dx}\PYG{p}{,} \PYG{n}{dt}\PYG{p}{)}
+
+\PYG{n}{psi\PYGZus{}t\PYGZus{}x\PYGZus{}RK4} \PYG{o}{=} \PYG{n}{giaipt\PYGZus{}psi\PYGZus{}RK4}\PYG{p}{()}
+
+\PYG{n}{luu\PYGZus{}ketqua\PYGZus{}psi}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}RK4\PYGZdq{}}\PYG{p}{,}\PYG{n}{x}\PYG{p}{,}\PYG{n}{t}\PYG{p}{,}\PYG{n}{y}\PYG{o}{=}\PYG{n}{psi\PYGZus{}t\PYGZus{}x\PYGZus{}RK4}\PYG{p}{,}\PYG{n}{save\PYGZus{}every\PYGZus{}time}\PYG{o}{=}\PYG{l+m+mi}{100}\PYG{p}{)}
+
+\PYG{n}{luu\PYGZus{}file\PYGZus{}xac\PYGZus{}xuat}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}RK4\PYGZdq{}}\PYG{p}{,}\PYG{n}{x}\PYG{p}{,}\PYG{n}{t}\PYG{p}{,}\PYG{n}{y}\PYG{o}{=}\PYG{n}{psi\PYGZus{}t\PYGZus{}x\PYGZus{}RK4}\PYG{p}{,}\PYG{n}{save\PYGZus{}every\PYGZus{}time}\PYG{o}{=}\PYG{l+m+mi}{100}\PYG{p}{)}
+\end{Verbatim}

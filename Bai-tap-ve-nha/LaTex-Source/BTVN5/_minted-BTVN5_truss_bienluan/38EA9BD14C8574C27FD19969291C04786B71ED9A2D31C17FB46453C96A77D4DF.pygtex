@@ -1,0 +1,13 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{tinhtoan}\PYG{p}{(}\PYG{n}{N\PYGZus{}max}\PYG{p}{,} \PYG{n}{epsilon}\PYG{p}{,} \PYG{n}{A}\PYG{p}{,} \PYG{n}{B}\PYG{p}{,} \PYG{n}{filename}\PYG{p}{):}
+    \PYG{n}{q\PYGZus{}jacobi}\PYG{p}{,} \PYG{n}{x\PYGZus{}matrix\PYGZus{}jacobi}\PYG{p}{,} \PYG{n}{err\PYGZus{}matrix\PYGZus{}jacobi} \PYG{o}{=} \PYGZbs{}
+        \PYG{n}{Jacobi}\PYG{p}{(}\PYG{n}{N\PYGZus{}max}\PYG{p}{,} \PYG{n}{epsilon}\PYG{p}{,} \PYG{n}{A}\PYG{p}{,} \PYG{n}{B}\PYG{p}{)}
+    \PYG{n}{q\PYGZus{}gauss\PYGZus{}seidel}\PYG{p}{,} \PYG{n}{x\PYGZus{}matrix\PYGZus{}gauss\PYGZus{}seidel}\PYG{p}{,} \PYG{n}{err\PYGZus{}matrix\PYGZus{}gauss\PYGZus{}seidel} \PYG{o}{=} \PYGZbs{}
+        \PYG{n}{Gauss\PYGZus{}Seidel}\PYG{p}{(}\PYG{n}{N\PYGZus{}max}\PYG{p}{,} \PYG{n}{epsilon}\PYG{p}{,} \PYG{n}{A}\PYG{p}{,} \PYG{n}{B}\PYG{p}{)}
+    \PYG{n}{filename\PYGZus{}jacobi} \PYG{o}{=} \PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{filename}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZus{}jacobi.txt\PYGZdq{}}
+    \PYG{n}{filename\PYGZus{}gauss\PYGZus{}seidel} \PYG{o}{=} \PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{filename}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZus{}gauss\PYGZus{}seidel.txt\PYGZdq{}}
+    \PYG{n}{luu\PYGZus{}file}\PYG{p}{(}\PYG{n}{q\PYGZus{}jacobi}\PYG{p}{,} \PYG{n}{x\PYGZus{}matrix\PYGZus{}jacobi}\PYG{p}{,}
+             \PYG{n}{err\PYGZus{}matrix\PYGZus{}jacobi}\PYG{p}{,} \PYG{n}{filename\PYGZus{}jacobi}\PYG{p}{)}
+    \PYG{n}{luu\PYGZus{}file}\PYG{p}{(}\PYG{n}{q\PYGZus{}gauss\PYGZus{}seidel}\PYG{p}{,} \PYG{n}{x\PYGZus{}matrix\PYGZus{}gauss\PYGZus{}seidel}\PYG{p}{,}
+             \PYG{n}{err\PYGZus{}matrix\PYGZus{}gauss\PYGZus{}seidel}\PYG{p}{,} \PYG{n}{filename\PYGZus{}gauss\PYGZus{}seidel}\PYG{p}{)}
+\end{Verbatim}

@@ -1,0 +1,25 @@
+def Jacobi(N_max, epsilon, A, B):
+    n = len(B)
+    x_old = n * [0]
+    x_new = n * [0]
+    err_mang = n * [100]
+    err = np.max(err_mang)
+    x_matrix = []
+    err_matrix = []
+    x_matrix.append(x_old[:])
+    for q in range(N_max):
+        if err > epsilon:
+            for i in range(n):
+                tong = 0
+                for j in range(n):
+                    if i != j:
+                        tong = tong + A[i][j] * x_old[j]
+                x_new[i] = 1 / A[i][i] * (-tong + B[i])
+                err_mang[i] = np.abs(x_new[i] - x_old[i])
+            err = np.max(err_mang)
+            x_matrix.append(x_new[:])
+            err_matrix.append(err)
+            x_old[:] = x_new[:]
+        else:
+            break
+    return q, x_matrix, err_matrix

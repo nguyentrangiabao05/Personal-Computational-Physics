@@ -1,0 +1,26 @@
+sigma_0_list = [0.5, 1, 2]
+k_0_list = [2, 8, 10, -2, -8, -10]
+
+for sigma_value in sigma_0_list:
+    for k_value in k_0_list:
+        sigma_0 = sigma_value
+        k_0 = k_value
+        filename = (f"Leapfrog_Bac4_sigma={sigma_0}_k0={k_0}")
+
+        psi_t_x_bac_4 = giai_leapfrog_bac4()
+
+        luu_ketqua_psi(
+            filename,
+            x,
+            t,
+            y=psi_t_x_bac_4,
+            save_every_time=100
+        )
+
+        luu_file_xac_xuat(
+            filename,
+            x,
+            t,
+            y=psi_t_x_bac_4,
+            save_every_time=100
+        )

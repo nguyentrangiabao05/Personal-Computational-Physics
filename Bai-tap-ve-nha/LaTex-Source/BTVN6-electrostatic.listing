@@ -1,0 +1,16 @@
+L          = 100    # Canh hinh vuong (cm)
+n          = 100    # So nut luoi
+u_bien     = 0      # Bon canh noi dat
+u_cao      = 100    # Thanh tren
+u_thap     = -100   # Thanh duoi
+chieudai   = 50     # Chieu dai moi thanh (cm)
+chieurong  = 30     # Khoang cach giua hai thanh (cm)
+N_max      = 100000
+err_max    = 1e-6
+
+u_bai2, start, end, thanh_on, thanh_duoi = dieukienbien_bai2(
+    n, u_bien, u_thap, u_cao, chieudai, chieurong, L)
+
+u_result = Gauss_Seidel_bai2(n, u_bai2, L, N_max, err_max,
+            baitap="baiso2", start=start, end=end,
+            thanh_o_tren=thanh_on, thanh_o_duoi=thanh_duoi)

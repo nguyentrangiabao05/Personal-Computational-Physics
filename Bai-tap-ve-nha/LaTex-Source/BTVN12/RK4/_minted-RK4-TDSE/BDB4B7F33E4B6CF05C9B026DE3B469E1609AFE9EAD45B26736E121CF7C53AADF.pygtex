@@ -1,0 +1,21 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{khoitao\PYGZus{}matran\PYGZus{}M}\PYG{p}{():}
+    \PYG{k}{global} \PYG{n}{N\PYGZus{}x}\PYG{p}{,} \PYG{n}{N\PYGZus{}t}\PYG{p}{,} \PYG{n}{x\PYGZus{}min}\PYG{p}{,} \PYG{n}{x\PYGZus{}max}\PYG{p}{,} \PYG{n}{t\PYGZus{}min}\PYG{p}{,} \PYG{n}{t\PYGZus{}max}\PYG{p}{,} \PYG{n}{dx}\PYG{p}{,} \PYG{n}{dt}
+    \PYG{n}{g} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{(}\PYG{n}{N\PYGZus{}x}\PYG{p}{,} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{complex}\PYG{p}{)}
+    \PYG{n}{a} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{(}\PYG{n}{N\PYGZus{}x}\PYG{p}{,} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{complex}\PYG{p}{)}
+    \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{N\PYGZus{}x}\PYG{p}{):}
+        \PYG{n}{x\PYGZus{}i} \PYG{o}{=} \PYG{n}{x\PYGZus{}min} \PYG{o}{+} \PYG{n}{i}\PYG{o}{*}\PYG{n}{dx}
+        \PYG{n}{V} \PYG{o}{=} \PYG{n}{thenang}\PYG{p}{(}\PYG{n}{x\PYGZus{}i}\PYG{p}{)}
+        \PYG{n}{g}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{=} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{5}\PYG{n}{j}\PYG{o}{/}\PYG{p}{(}\PYG{l+m+mi}{4}\PYG{o}{*}\PYG{n}{dx}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{)} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{1}\PYG{n}{j}\PYG{o}{*}\PYG{n}{V}
+        \PYG{n}{a}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{=} \PYG{l+m+mi}{1}\PYG{n}{j}\PYG{o}{/}\PYG{p}{(}\PYG{l+m+mi}{24}\PYG{o}{*}\PYG{n}{dx}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{)}
+    \PYG{n}{diag} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{diag}\PYG{p}{(}\PYG{n}{g}\PYG{p}{)}
+    \PYG{n}{off\PYGZus{}diag1} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{diag}\PYG{p}{([}\PYG{l+m+mi}{16}\PYG{o}{*}\PYG{n}{a}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]]}\PYG{o}{*}\PYG{p}{(}\PYG{n}{N\PYGZus{}x}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{),} \PYG{l+m+mi}{1}\PYG{p}{)} \PYG{o}{+} \PYG{n}{np}\PYG{o}{.}\PYG{n}{diag}\PYG{p}{([}\PYG{l+m+mi}{16}\PYG{o}{*}\PYG{n}{a}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]]}\PYG{o}{*}\PYG{p}{(}\PYG{n}{N\PYGZus{}x}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{),} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)}
+    \PYG{n}{off\PYGZus{}diag2} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{diag}\PYG{p}{([}\PYG{o}{\PYGZhy{}}\PYG{n}{a}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]]}\PYG{o}{*}\PYG{p}{(}\PYG{n}{N\PYGZus{}x}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{2}\PYG{p}{),} \PYG{l+m+mi}{2}\PYG{p}{)} \PYG{o}{+} \PYG{n}{np}\PYG{o}{.}\PYG{n}{diag}\PYG{p}{([}\PYG{o}{\PYGZhy{}}\PYG{n}{a}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]]}\PYG{o}{*}\PYG{p}{(}\PYG{n}{N\PYGZus{}x}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{2}\PYG{p}{),} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{2}\PYG{p}{)}
+    \PYG{n}{M} \PYG{o}{=} \PYG{n}{diag} \PYG{o}{+} \PYG{n}{off\PYGZus{}diag1} \PYG{o}{+} \PYG{n}{off\PYGZus{}diag2}
+
+    \PYG{n}{M}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{p}{:]} \PYG{o}{=} \PYG{l+m+mi}{0}
+    \PYG{n}{M}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{p}{:]} \PYG{o}{=} \PYG{l+m+mi}{0}
+    \PYG{n}{M}\PYG{p}{[:,} \PYG{l+m+mi}{0}\PYG{p}{]} \PYG{o}{=} \PYG{l+m+mi}{0}
+    \PYG{n}{M}\PYG{p}{[:,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{=} \PYG{l+m+mi}{0}
+    \PYG{k}{return} \PYG{n}{M}
+\end{Verbatim}

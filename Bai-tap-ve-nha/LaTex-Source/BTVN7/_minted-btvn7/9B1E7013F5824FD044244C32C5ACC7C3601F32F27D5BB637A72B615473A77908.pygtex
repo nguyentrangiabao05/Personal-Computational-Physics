@@ -1,0 +1,10 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{tinhtoan}\PYG{p}{(}\PYG{n}{u}\PYG{p}{,} \PYG{n}{kappa}\PYG{p}{,} \PYG{n}{C}\PYG{p}{,} \PYG{n}{rho}\PYG{p}{,} \PYG{n}{N\PYGZus{}x}\PYG{p}{,} \PYG{n}{N\PYGZus{}time}\PYG{p}{,} \PYG{n}{l}\PYG{p}{,} \PYG{n}{t\PYGZus{}max}\PYG{p}{):}
+    \PYG{n}{eta}\PYG{p}{,} \PYG{n}{h}\PYG{p}{,} \PYG{n}{k} \PYG{o}{=} \PYG{n}{hamso}\PYG{p}{(}\PYG{n}{kappa}\PYG{p}{,} \PYG{n}{C}\PYG{p}{,} \PYG{n}{rho}\PYG{p}{,} \PYG{n}{N\PYGZus{}x}\PYG{p}{,} \PYG{n}{N\PYGZus{}time}\PYG{p}{,} \PYG{n}{l}\PYG{p}{,} \PYG{n}{t\PYGZus{}max}\PYG{p}{)}
+
+    \PYG{k}{for} \PYG{n}{j} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{N\PYGZus{}time} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{1}\PYG{p}{):}
+        \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{N\PYGZus{}x} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{1}\PYG{p}{):}
+            \PYG{n}{u}\PYG{p}{[}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{=} \PYG{p}{(}\PYG{l+m+mi}{1} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{eta}\PYG{p}{)}\PYG{o}{*}\PYG{n}{u}\PYG{p}{[}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{p}{]} \PYG{o}{+} \PYG{n}{eta}\PYG{o}{*}\PYG{p}{(}\PYG{n}{u}\PYG{p}{[}\PYG{n}{i} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{j}\PYG{p}{]} \PYG{o}{+} \PYG{n}{u}\PYG{p}{[}\PYG{n}{i} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{j}\PYG{p}{])}
+    \PYG{c+c1}{\PYGZsh{} ... ghi file .dat ...}
+    \PYG{k}{return} \PYG{n}{u}
+\end{Verbatim}

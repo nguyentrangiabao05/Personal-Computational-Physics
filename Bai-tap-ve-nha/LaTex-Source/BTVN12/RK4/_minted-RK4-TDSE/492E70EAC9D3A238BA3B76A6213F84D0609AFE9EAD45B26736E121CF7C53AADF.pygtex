@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{khoitao\PYGZus{}x\PYGZus{}t}\PYG{p}{(}\PYG{n}{x\PYGZus{}min}\PYG{p}{,} \PYG{n}{x\PYGZus{}max}\PYG{p}{,} \PYG{n}{t\PYGZus{}min}\PYG{p}{,} \PYG{n}{t\PYGZus{}max}\PYG{p}{,} \PYG{n}{dx}\PYG{p}{,} \PYG{n}{dt}\PYG{p}{):}
+    \PYG{n}{N\PYGZus{}x} \PYG{o}{=} \PYG{n+nb}{int}\PYG{p}{(}\PYG{n+nb}{round}\PYG{p}{((}\PYG{n}{x\PYGZus{}max} \PYG{o}{\PYGZhy{}} \PYG{n}{x\PYGZus{}min}\PYG{p}{)} \PYG{o}{/} \PYG{n}{dx}\PYG{p}{))} \PYG{o}{+} \PYG{l+m+mi}{1}
+    \PYG{n}{N\PYGZus{}t} \PYG{o}{=} \PYG{n+nb}{int}\PYG{p}{(}\PYG{n+nb}{round}\PYG{p}{((}\PYG{n}{t\PYGZus{}max} \PYG{o}{\PYGZhy{}} \PYG{n}{t\PYGZus{}min}\PYG{p}{)} \PYG{o}{/} \PYG{n}{dt}\PYG{p}{))} \PYG{o}{+} \PYG{l+m+mi}{1}
+    \PYG{n}{x} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{linspace}\PYG{p}{(}\PYG{n}{x\PYGZus{}min}\PYG{p}{,} \PYG{n}{x\PYGZus{}max}\PYG{p}{,} \PYG{n}{N\PYGZus{}x}\PYG{p}{)}
+    \PYG{n}{t} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{linspace}\PYG{p}{(}\PYG{n}{t\PYGZus{}min}\PYG{p}{,} \PYG{n}{t\PYGZus{}max}\PYG{p}{,} \PYG{n}{N\PYGZus{}t}\PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{x}\PYG{p}{,} \PYG{n}{t}\PYG{p}{,} \PYG{n}{N\PYGZus{}x}\PYG{p}{,} \PYG{n}{N\PYGZus{}t}
+\end{Verbatim}

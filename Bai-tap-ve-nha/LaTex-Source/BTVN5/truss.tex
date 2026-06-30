@@ -1,0 +1,102 @@
+\begin{tikzpicture}[
+    scale=1.1,
+    node dot/.style={circle, draw=blue!70!black, fill=blue!15, minimum size=22pt, font=\footnotesize\bfseries},
+    force/.style={->, >=stealth, thick},
+    member/.style={very thick, blue!60!black},
+    intforce/.style={->, >=stealth, very thick, blue!60!black},
+    dim/.style={<->, >=stealth, thin, gray!70!black},
+]
+
+% === Toạ độ các nút ===
+\coordinate (N1) at (0, 0);
+\coordinate (N2) at (3, 3);
+\coordinate (N3) at (3, 0);
+\coordinate (N4) at (8.2, 0);
+
+% === Các thanh (members) ===
+\draw[member] (N1) -- (N2);
+\draw[member] (N1) -- (N3);
+\draw[member] (N2) -- (N3);
+\draw[member] (N2) -- (N4);
+\draw[member] (N3) -- (N4);
+
+% =====================================================
+% Mũi tên chỉ chiều lực dọc thanh
+% =====================================================
+
+% --- Thanh f1: N1--N2
+\draw[intforce] ($(N1)!0.10!(N2)$) -- ($(N1)!0.42!(N2)$)
+    node[pos=0.55, above left=-1pt, font=\small, blue!70!black] {$f_1$};
+\draw[intforce] ($(N2)!0.10!(N1)$) -- ($(N2)!0.42!(N1)$)
+    node[pos=0.45, above left=-1pt, font=\small, blue!70!black] {$f_1$};
+
+% --- Thanh f2: N1--N3
+\draw[intforce] ($(N1)!0.12!(N3)$) -- ($(N1)!0.46!(N3)$)
+    node[pos=0.55, above, font=\small, blue!70!black] {$f_2$};
+\draw[intforce] ($(N3)!0.12!(N1)$) -- ($(N3)!0.46!(N1)$)
+    node[pos=0.55, below, font=\small, blue!70!black] {$f_2$};
+
+% --- Thanh f3: N3--N2
+\draw[intforce] ($(N3)!0.12!(N2)$) -- ($(N3)!0.46!(N2)$)
+    node[pos=0.55, right, font=\small, blue!70!black] {$f_3$};
+\draw[intforce] ($(N2)!0.12!(N3)$) -- ($(N2)!0.46!(N3)$)
+    node[pos=0.55, left, font=\small, blue!70!black] {$f_3$};
+
+% --- Thanh f4: N2--N4
+\draw[intforce] ($(N2)!0.10!(N4)$) -- ($(N2)!0.40!(N4)$)
+    node[pos=0.45, above, font=\small, blue!70!black] {$f_4$};
+\draw[intforce] ($(N4)!0.10!(N2)$) -- ($(N4)!0.40!(N2)$)
+    node[pos=0.45, above, font=\small, blue!70!black] {$f_4$};
+
+% --- Thanh f5: N3--N4
+\draw[intforce] ($(N3)!0.10!(N4)$) -- ($(N3)!0.42!(N4)$)
+    node[pos=0.55, below, font=\small, blue!70!black] {$f_5$};
+\draw[intforce] ($(N4)!0.10!(N3)$) -- ($(N4)!0.42!(N3)$)
+    node[pos=0.55, below, font=\small, blue!70!black] {$f_5$};
+
+% === Góc tại nút 1 ===
+\draw[thin, gray] (N1) -- ++(1.2, 0);
+\draw[thin, gray, ->] (0.8, 0) arc[start angle=0, end angle=45, radius=0.8];
+\node[font=\scriptsize, gray] at (1.1, 0.35) {$\pi/4$};
+
+% === Góc tại nút 4 ===
+\draw[thin, gray] (N4) -- ++(-1.2, 0);
+\draw[thin, gray, ->] ($(N4)+(-0.8, 0)$) arc[start angle=180, end angle=150, radius=0.8];
+\node[font=\scriptsize, gray] at ($(N4)+(-1.1, 0.3)$) {$\pi/6$};
+
+% === Khoảng cách l1 ===
+\draw[dim] ($(N3)+(0,-0.8)$) -- ($(N4)+(0,-0.8)$)
+    node[midway, below, font=\small] {$l_1$};
+
+% === Gối đỡ nút 1 (pin support) ===
+\draw[thick] ($(N1)+(-0.4,-0.35)$) -- ($(N1)+(0.4,-0.35)$);
+\foreach \x in {-0.3,-0.1,0.1,0.3} {
+    \draw[thick] ($(N1)+(\x,-0.35)$) -- ($(N1)+(\x-0.15,-0.55)$);
+}
+
+% === Gối đỡ nút 4 (roller support) ===
+\draw[thick] ($(N4)+(-0.35,-0.35)$) -- ($(N4)+(0.35,-0.35)$);
+\draw[thick] ($(N4)+(-0.2,-0.55)$) circle (0.08);
+\draw[thick] ($(N4)+(0.2,-0.55)$) circle (0.08);
+\draw[thick] ($(N4)+(-0.35,-0.63)$) -- ($(N4)+(0.35,-0.63)$);
+
+% === Phản lực ===
+\draw[force, green!50!black, very thick] (N1) -- ++(-1.3, 0)
+    node[left, font=\small] {$F_1$};
+\draw[force, green!50!black, very thick] (N1) -- ++(0, -1.3)
+    node[below, font=\small] {$F_2$};
+\draw[force, green!50!black, very thick] (N4) -- ++(0, -1.3)
+    node[below, font=\small] {$F_3$};
+
+% === Tải trọng ngoài ===
+\draw[force, red!80!black, ultra thick] (N3) -- ++(0, -1.5)
+    node[right, font=\small\bfseries] {$10^4\,\mathrm{N}$};
+
+% === Nút ===
+\node[node dot] at (N1) {1};
+\node[node dot] at (N2) {2};
+\node[node dot] at (N3) {3};
+\node[node dot] at (N4) {4};
+
+\end{tikzpicture}
+\caption{Sơ đồ hệ thanh của bài toán cột kéo, gồm bốn nút, năm thanh, ba phản lực liên kết và tải trọng tập trung $10^4~\mathrm{N}$ tại nút 3.}

@@ -1,0 +1,25 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{Gauss\PYGZus{}Seidel\PYGZus{}bai2}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{n}{u}\PYG{p}{,} \PYG{n}{L}\PYG{p}{,} \PYG{n}{N\PYGZus{}max}\PYG{p}{,} \PYG{n}{err\PYGZus{}max}\PYG{p}{,} \PYG{n}{baitap}\PYG{p}{,}
+                     \PYG{n}{start}\PYG{p}{,} \PYG{n}{end}\PYG{p}{,} \PYG{n}{thanh\PYGZus{}o\PYGZus{}tren}\PYG{p}{,} \PYG{n}{thanh\PYGZus{}o\PYGZus{}duoi}\PYG{p}{):}
+    \PYG{n}{converged} \PYG{o}{=} \PYG{k+kc}{False}
+    \PYG{k}{for} \PYG{n}{k} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{N\PYGZus{}max}\PYG{p}{):}
+        \PYG{n}{u\PYGZus{}old} \PYG{o}{=} \PYG{n}{u}\PYG{o}{.}\PYG{n}{copy}\PYG{p}{()}
+        \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{):}
+            \PYG{k}{for} \PYG{n}{j} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{):}
+                \PYG{k}{if} \PYG{n}{start} \PYG{o}{\PYGZlt{}=} \PYG{n}{i} \PYG{o}{\PYGZlt{}} \PYG{n}{end} \PYG{o+ow}{and} \PYG{p}{(}\PYG{n}{j} \PYG{o}{==} \PYG{n}{thanh\PYGZus{}o\PYGZus{}tren} \PYG{o+ow}{or} \PYG{n}{j} \PYG{o}{==} \PYG{n}{thanh\PYGZus{}o\PYGZus{}duoi}\PYG{p}{):}
+                    \PYG{k}{continue}    \PYG{c+c1}{\PYGZsh{} Bo qua nut thuoc hai thanh kim loai}
+                \PYG{n}{u}\PYG{p}{[}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{p}{]} \PYG{o}{=} \PYG{l+m+mf}{0.25} \PYG{o}{*} \PYG{p}{(}\PYG{n}{u}\PYG{p}{[}\PYG{n}{i}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{j}\PYG{p}{]} \PYG{o}{+} \PYG{n}{u}\PYG{p}{[}\PYG{n}{i}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{j}\PYG{p}{]}
+                                \PYG{o}{+} \PYG{n}{u}\PYG{p}{[}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{+} \PYG{n}{u}\PYG{p}{[}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{])}
+
+        \PYG{n}{err} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{u} \PYG{o}{\PYGZhy{}} \PYG{n}{u\PYGZus{}old}\PYG{p}{)}
+        \PYG{k}{if} \PYG{n}{np}\PYG{o}{.}\PYG{n}{max}\PYG{p}{(}\PYG{n}{err}\PYG{p}{)} \PYG{o}{\PYGZlt{}} \PYG{n}{err\PYGZus{}max}\PYG{p}{:}
+            \PYG{n}{converged} \PYG{o}{=} \PYG{k+kc}{True}
+            \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}Da hoi tu sau }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{k}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ vong lap, max\PYGZus{}err = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{np}\PYG{o}{.}\PYG{n}{max}\PYG{p}{(}\PYG{n}{err}\PYG{p}{)}\PYG{l+s+si}{:}\PYG{l+s+s2}{.2e}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+            \PYG{n}{luufile\PYGZus{}gauss\PYGZus{}seidel}\PYG{p}{(}\PYG{n}{k}\PYG{p}{,} \PYG{n}{u}\PYG{p}{,} \PYG{n}{err}\PYG{p}{,} \PYG{n}{L}\PYG{p}{,} \PYG{n}{baitap}\PYG{p}{,} \PYG{n}{final}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{)}
+            \PYG{k}{break}
+
+    \PYG{k}{if} \PYG{o+ow}{not} \PYG{n}{converged}\PYG{p}{:}
+        \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}Khong hoi tu sau }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{N\PYGZus{}max}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ vong lap, max\PYGZus{}err = }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{np}\PYG{o}{.}\PYG{n}{max}\PYG{p}{(}\PYG{n}{err}\PYG{p}{)}\PYG{l+s+si}{:}\PYG{l+s+s2}{.2e}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+        \PYG{n}{luufile\PYGZus{}gauss\PYGZus{}seidel}\PYG{p}{(}\PYG{n}{k}\PYG{p}{,} \PYG{n}{u}\PYG{p}{,} \PYG{n}{err}\PYG{p}{,} \PYG{n}{L}\PYG{p}{,} \PYG{n}{baitap}\PYG{p}{,} \PYG{n}{final}\PYG{o}{=}\PYG{k+kc}{False}\PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{u}
+\end{Verbatim}

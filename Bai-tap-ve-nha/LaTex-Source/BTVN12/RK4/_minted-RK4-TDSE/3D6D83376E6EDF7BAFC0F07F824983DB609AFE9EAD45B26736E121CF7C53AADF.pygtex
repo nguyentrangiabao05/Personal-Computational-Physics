@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{import} \PYG{n+nn}{numpy} \PYG{k}{as} \PYG{n+nn}{np}
+\PYG{k+kn}{import} \PYG{n+nn}{matplotlib.pyplot} \PYG{k}{as} \PYG{n+nn}{plt}
+
+\PYG{k}{def} \PYG{n+nf}{khoitao\PYGZus{}psi0}\PYG{p}{(}\PYG{n}{x}\PYG{p}{):}
+    \PYG{k}{global} \PYG{n}{sigma\PYGZus{}0}\PYG{p}{,} \PYG{n}{k\PYGZus{}0}\PYG{p}{,} \PYG{n}{x\PYGZus{}0}
+    \PYG{n}{psi\PYGZus{}0} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{exp}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{o}{/}\PYG{l+m+mi}{2} \PYG{o}{*} \PYG{p}{((}\PYG{n}{x}\PYG{o}{\PYGZhy{}}\PYG{n}{x\PYGZus{}0}\PYG{p}{)}\PYG{o}{/}\PYG{n}{sigma\PYGZus{}0}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2} \PYG{p}{)}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{exp}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{n}{j}\PYG{o}{*}\PYG{n}{k\PYGZus{}0}\PYG{o}{*}\PYG{n}{x}\PYG{p}{)} \PYG{o}{*} \PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{pi}\PYG{o}{*}\PYG{n}{sigma\PYGZus{}0}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{)}\PYG{o}{**}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{o}{/}\PYG{l+m+mi}{4}\PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{psi\PYGZus{}0}
+\end{Verbatim}

@@ -1,0 +1,614 @@
+% Do not alter this block (unless you're familiar with LaTeX)
+\documentclass{article}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,amsfonts, fancyhdr, color, comment, graphicx, environ}
+\usepackage{xcolor}
+\usepackage{mdframed}
+\usepackage[shortlabels]{enumitem}
+\usepackage{indentfirst}
+\usepackage{hyperref}
+\usepackage[utf8]{vietnam}
+\usepackage{listings}
+\usepackage{courier}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{multirow}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+
+\pagestyle{fancy}
+
+\newenvironment{problem}[2][Problem]
+    {\begin{mdframed}[backgroundcolor=gray!20] \textbf{#1 #2} \\}
+    {\end{mdframed}}
+
+\newenvironment{solution}
+    {\textit{Nội dung:}}
+    {}
+
+\renewcommand{\qed}{\quad\qedsymbol}
+
+% prevent line break in inline mode
+\binoppenalty=\maxdimen
+\relpenalty=\maxdimen
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Fill in the appropriate information below
+\lhead{\shortstack[l]{Họ tên: Nguyễn Trần Gia Bảo\\MSSV: 23137003}}
+\chead{\shortstack[c]{\textbf{Báo cáo bài tập về nhà}\\}}
+\rhead{\shortstack[r]{Vật lý tính toán (CP)\\GV: Thầy TS. Vũ Quang Tuyên}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ------------------------------
+% Python code style
+% ------------------------------
+\definecolor{codebg}{RGB}{245,245,245}
+\definecolor{codeframe}{RGB}{220,220,220}
+\definecolor{codecomment}{RGB}{0,128,0}
+\definecolor{codekeyword}{RGB}{0,0,180}
+\definecolor{codestring}{RGB}{163,21,21}
+
+\lstdefinestyle{mypython}{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\footnotesize\ttfamily,
+    keywordstyle=\color{codekeyword}\bfseries,
+    commentstyle=\color{codecomment},
+    stringstyle=\color{codestring},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=8pt,
+    frame=single,
+    rulecolor=\color{codeframe},
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=4,
+    showstringspaces=false,
+    captionpos=b
+}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{BÁO CÁO CODE GIẢI PHƯƠNG TRÌNH f(x)=0}}\\[0.5em]
+    {\large Môn: Vật lý tính toán\\[0.5em]Computational Physics}
+\end{center}
+
+\vspace{1em}
+
+\section{Các phương pháp giải số}
+
+Để giải gần đúng phương trình phi tuyến \(f(x)=0\) chúng ta có nhiều phương pháp số khác nhau, gồm:
+\begin{itemize}
+    \item Phương pháp chia đôi khoảng cách (Bisection),
+    \item Phương pháp điểm cố định (Fixed-point iteration),
+    \item Phương pháp Newton--Raphson,
+    \item Phương pháp dây cung (Secant).
+\end{itemize}
+
+\section{Các hàm số được khảo sát}
+
+Trong chương trình, em chọn ba hàm số sau để sử dụng để kiểm tra gồm:
+\[
+f_1(x)=e^{-x}-x^2 = 0,
+\]
+\[
+f_2(x)=x^3-\cos x = 0,
+\]
+\[
+f_3(x)=\ln(x+2)+\cosh x-3 = 0.
+\]
+
+Đạo hàm của các hàm trên lần lượt là:
+\[
+f_1'(x)=-e^{-x}-2x,
+\]
+\[
+f_2'(x)=3x^2+\sin x,
+\]
+\[
+f_3'(x)=\frac{1}{x+2}+\sinh x.
+\]
+
+\subsection{Biến đổi về dạng \(x=g(x)\) dành cho phương pháp điểm cố định}
+
+Để áp dụng phương pháp điểm cố định, ta biến đổi mỗi phương trình đã cho về dạng tương đương
+\[
+x=g(x).
+\]
+
+Với phương trình thứ nhất:
+\[
+f_1(x)=e^{-x}-x^2=0
+\]
+\[
+\Rightarrow e^{-x}=x^2
+\]
+\[
+\Rightarrow x=\sqrt{e^{-x}}=e^{-x/2}.
+\]
+
+Do đó chọn
+\[
+g_1(x)=e^{-x/2}.
+\]
+
+Với phương trình thứ hai:
+\[
+f_2(x)=x^3-\cos x=0
+\]
+\[
+\Rightarrow x^3=\cos x
+\]
+\[
+\Rightarrow x=\sqrt[3]{\cos x}.
+\]
+
+Do đó chọn
+\[
+g_2(x)=\sqrt[3]{\cos x}.
+\]
+
+Với phương trình thứ ba:
+\[
+f_3(x)=\ln(x+2)+\cosh x-3=0
+\]
+\[
+\Rightarrow \cosh x = 3-\ln(x+2)
+\]
+\[
+\Rightarrow x=\cosh^{-1}(3-\ln(x+2))
+\]
+
+Do đó chọn
+\[
+g_3(x)=\cosh^{-1}(3-\ln(x+2)).
+\]
+
+Như vậy, công thức lặp điểm cố định cho ba bài toán lần lượt là
+\[
+x_{n+1}=g_1(x_n)=e^{-x_n/2},
+\]
+\[
+x_{n+1}=g_2(x_n)=\sqrt[3]{\cos x_n},
+\]
+\[
+x_{n+1}=g_3(x_n)=\cosh^{-1}(3-\ln(x+2))
+\]
+\subsection{Khảo sát với các độ chính xác khác nhau}
+Các độ chính xác được khảo sát là:
+\[
+\mathtt{tol} \in \{10^{-5},\,10^{-10},\,10^{-15}\}.
+\]
+
+\newpage
+\section{Phân tích chương trình}
+
+% ==========================================================
+\subsection{Khối 1: Import thư viện}
+\begin{lstlisting}[style=mypython,caption={Import thư viện NumPy}]
+import numpy as np
+\end{lstlisting}
+
+\textbf{Giải thích:}
+
+Khối lệnh này nạp thư viện \texttt{NumPy} để sử dụng các hàm toán học như:
+\begin{itemize}
+    \item \texttt{np.exp(x)} cho hàm mũ \(e^x\),
+    \item \texttt{np.cos(x)} cho hàm \(\cos x\),
+    \item \texttt{np.log(x)} cho hàm logarit tự nhiên,
+    \item \texttt{np.cosh(x)} và \texttt{np.sinh(x)} cho các hàm hyperbol.
+    \item \texttt{np.arccosh(x)} cho hàm ngược của cos hyperbolic.
+\end{itemize}
+
+% ==========================================================
+\subsection{Khối 2: Hàm thống kê số vòng lặp}
+\begin{lstlisting}[style=mypython,caption={Hàm ghi thống kê số vòng lặp}]
+def thongkesovonglap(i, tol, hamso, phuongphap, stats_file):
+    with open(stats_file, "a", encoding="utf-8") as file:
+        file.write(f"{hamso.__name__:>25s}  {tol:12.3e}  {phuongphap:>25s}  {i:12d}\n")
+\end{lstlisting}
+
+\textbf{Giải thích:}
+
+Hàm này dùng để ghi kết quả tổng hợp vào tệp thống kê chung. Cụ thể:
+\begin{itemize}
+    \item \texttt{i}: số vòng lặp đã thực hiện,
+    \item \texttt{tol}: độ chính xác yêu cầu,
+    \item \texttt{hamso}: tên hàm đang xét,
+    \item \texttt{phuongphap}: tên phương pháp số,
+    \item \texttt{stats\_file}: tên tệp lưu bảng thống kê.
+\end{itemize}
+
+Lệnh \texttt{hamso.\_\_name\_\_} giúp lấy tên của hàm, ví dụ \texttt{hamso1}, \texttt{hamso2}, \texttt{hamso3}. Căn lề bằng các định dạng như \texttt{:>15s} hay \texttt{:12.3e} làm cho bảng thống kê dễ đọc hơn.
+
+% ==========================================================
+\subsection{Khối 3: Phương pháp chia đôi khoảng cách}
+\begin{lstlisting}[style=mypython,caption={Phương pháp chia đôi khoảng cách}]
+def chiadoikhoangcach(a,b,tol,N,filename,hamso,stats_file):
+    with open(f"{filename}_{hamso.__name__}_{tol}_chiadoikhoangcach.txt", "w", encoding="utf-8") as file:
+        file.write(f"Giai phuong trinh f(x) = 0 bang PP chia doi khoang cach\n")
+        file.write(f"Do chinh xac cua phep tinh la: {tol}\n")
+        file.write(f"#" * 100 + "\n")
+        file.write(f"{'i':>3s}  {'a':>12s}  {'b':>12s}  {'c':>25s}  {'f(c)':>25s}\n")
+        for i in range(0,N):
+            c = (a+b)/2
+            fa = hamso(a)
+            fc = hamso(c)
+            if fa*fc < 0:
+                b = c
+            else:
+                a = c
+            file.write(f"{i:3d}  {a:12.6f}  {b:12.6f}  {c:25.16f}  {fc:25.16e}\n")
+            if abs(fc)<tol:
+                break
+            if i == N -1:
+                file.write(f"'\n Khong tim duoc nghiem sau {N} vong lap'")
+    thongkesovonglap(i+1,tol,hamso,'Chia doi khoang cach',stats_file)
+\end{lstlisting}
+
+\textbf{Giải thích:}
+
+Phương pháp chia đôi yêu cầu ban đầu phải có đoạn \([a,b]\) sao cho \(f(a)f(b)<0\), tức là hàm đổi dấu trên đoạn đó. Mỗi vòng lặp:
+\begin{itemize}
+    \item tính trung điểm \(c=(a+b)/2\),
+    \item xét dấu của \(f(a)f(c)\),
+    \item nếu \(f(a)f(c)<0\) thì nghiệm nằm trong \([a,c]\), nên gán \(b=c\),
+    \item ngược lại nghiệm nằm trong \([c,b]\), nên gán \(a=c\).
+\end{itemize}
+
+Ưu điểm của phương pháp này là ổn định. Tuy nhiên tốc độ hội tụ chỉ là tuyến tính nên thường chậm hơn Newton và Secant.
+
+% ==========================================================
+\subsection{Khối 4: Phương pháp điểm cố định}
+\begin{lstlisting}[style=mypython,caption={Phương pháp điểm cố định}]
+def diemcodinh(tol,p0,N,filename,hamso,stats_file):
+    with open(f"{filename}_{hamso.__name__}_{tol}_diemcodinh.txt", "w", encoding="utf-8") as file:
+        file.write(f"Giai phuong trinh f(x) = 0 bang phuong phap diem co dinh\n")
+        file.write(f"Do chinh xac cua phep tinh la: {tol}\n")
+        file.write(f"#" * 100 + "\n")
+        file.write(f"{'i':>3s}  {'p':>25s}  {'g(p)':>20s}\n")
+        i = 1
+        for i in range(0,N):
+            p = hamso(p0)
+            file.write(f"{i:3d}  {p0:25.16f}  {p:25.16f}\n")
+            if abs(p - p0) < tol:
+                break
+            p0 = p
+            if i == N - 1:
+                file.write("!" * 70 + "\n" +"!" * 70 + "\n")
+                file.write(f"'\n Khong tim duoc nghiem sau {N} vong lap'")
+    thongkesovonglap(i+1,tol,hamso,'Diem co dinh',stats_file)
+\end{lstlisting}
+
+\textbf{Giải thích:}
+
+Phương pháp điểm cố định biến đổi phương trình về dạng
+\[
+x=g(x).
+\]
+
+Khi đó, từ giá trị ban đầu \(x_0\), ta xây dựng vòng lặp
+\[
+x_{n+1}=g(x_n).
+\]
+
+Phương pháp này chỉ hội tụ khi hàm lặp \(g(x)\) cần thỏa điều kiện
+\[
+|g'(x)|<1
+\]
+
+% ==========================================================
+\subsection{Khối 5: Phương pháp Newton--Raphson}
+\begin{lstlisting}[style=mypython,caption={Phương pháp Newton--Raphson}]
+def newton_raphson(tol,p0,N,filename,hamso,daoham,stats_file):
+    with open(f"{filename}_{hamso.__name__}_{tol}_newton_raphson.txt", "w", encoding="utf-8") as file:
+        file.write(f"Giai phuong trinh f(x) = 0 bang phuong phap Newton Raphson\n")
+        file.write(f"Do chinh xac cua phep tinh la: {tol}\n")
+        file.write(f"#" * 100 + "\n")
+        file.write(f"{'i':>3s}  {'p':>25s}  {'f(p)':>25s}\n")
+        i = 1
+        for i in range(0,N):
+            if daoham(p0) == 0:
+                file.write("!" * 70 + "\n" +"!" * 70 + "\n")
+                file.write(f"'\n Khong tim duoc nghiem do dao ham = 0'")
+                break
+            p = p0 - hamso(p0)/daoham(p0)
+            file.write(f"{i:3d}  {p:25.16f}  {hamso(p):25.16f}\n")
+            if abs(p - p0) < tol:
+                break
+            p0 = p
+            if i == N - 1:
+                file.write("!" * 70 + "\n" +"!" * 70 + "\n")
+                file.write(f"'\n Khong tim duoc nghiem sau {N} vong lap'")
+    thongkesovonglap(i+1,tol,hamso,'Newton-Raphson',stats_file)
+\end{lstlisting}
+
+\textbf{Giải thích:}
+
+Newton--Raphson sử dụng công thức lặp:
+\[
+x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}.
+\]
+
+Code trên thực hiện vòng lặp này:
+\begin{itemize}
+    \item kiểm tra \(f'(x_n)\neq 0\),
+    \item tính giá trị mới \(p\),
+    \item ghi lại \(p\) và \(f(p)\),
+    \item dừng khi \(|p-p_0|<\texttt{tol}\).
+\end{itemize}
+
+% ==========================================================
+\subsection{Khối 6: Phương pháp Secant}
+\begin{lstlisting}[style=mypython,caption={Cài đặt phương pháp Secant}]
+def phuongphap_secant(tol,p0,p1,N,filename,hamso,stats_file):
+    with open(f"{filename}_{hamso.__name__}_{tol}_secant.txt", "w", encoding="utf-8") as file:
+        file.write(f"Giai phuong trinh f(x) = 0 bang phuong phap Secant\n")
+        file.write(f"Do chinh xac cua phep tinh la: {tol}\n")
+        file.write(f"#" * 100 + "\n")
+        file.write(f"{'i':>3s}  {'p':>25s}  {'f(p)':>25s}\n")
+        i = 1
+        for i in range(0,N):
+            p = p1 - (hamso(p1)*(p1-p0))/(hamso(p1)-hamso(p0))
+            file.write(f"{i:3d}  {p:25.16f}  {hamso(p):25.16f}\n")
+            if abs(p - p1) < tol:
+                break
+            p0 = p1
+            p1 = p
+            if i == N - 1:
+                file.write("!" * 70 + "\n" +"!" * 70 + "\n")
+                file.write(f"'\n Khong tim duoc nghiem sau {N} vong lap'")
+    thongkesovonglap(i+1,tol,hamso,'Secant',stats_file)
+\end{lstlisting}
+
+\textbf{Giải thích:}
+
+Secant có công thức:
+\[
+x_{n+1}=x_n-\frac{f(x_n)\times (x_n-x_{n-1})}{f(x_n)-f(x_{n-1})}.
+\]
+
+Phương pháp này có thể xem là phiên bản gần đúng của Newton, trong đó đạo hàm được thay bằng sai phân hữu hạn. Vì vậy:
+\begin{itemize}
+    \item không cần tính đạo hàm,
+    \item thường hội tụ nhanh hơn chia đôi,
+    \item tốc độ hội tụ thường chậm hơn Newton nhưng nhanh hơn bậc tuyến tính.
+\end{itemize}
+
+Một lưu ý kỹ thuật là nên kiểm tra mẫu số \(\texttt{hamso(p1)-hamso(p0)}\neq 0\) để tránh lỗi chia cho 0.
+
+% ==========================================================
+\subsection{Khối 7: Định nghĩa các hàm số và đạo hàm}
+\begin{lstlisting}[style=mypython,caption={Các hàm số khảo sát và đạo hàm tương ứng}]
+def hamso1(x):
+    y = np.exp(-x) - x**2
+    return y
+
+def hamso1_daoham(x):
+    y = -np.exp(-x) -2*x
+    return y
+
+def hamso2(x):
+    y = x**3 - np.cos(x)
+    return y
+
+def hamso2_daoham(x):
+    y = 3*x**2 + np.sin(x)
+    return y
+
+def hamso3(x):
+    y = np.log(x+2) + np.cosh(x) -3
+    return y
+
+def hamso3_daoham(x):
+    y = 1/(x+2) + np.sinh(x)
+    return y
+
+def hamso1_ppdiemcodinh(x):
+    g = np.exp(-x/2)
+    return g
+def hamso2_ppdiemcodinh(x):
+    g = (np.cos(x))**(1/3)
+    return g
+def hamso3_ppdiemcodinh(x):
+    g = np.arccosh(3-np.log(x+2))
+    return g
+\end{lstlisting}
+
+\textbf{Giải thích:}
+
+Khối này định nghĩa ba bài toán cụ thể và các đạo hàm tương ứng để dùng cho phương pháp Newton--Raphson. Việc tách riêng hàm và đạo hàm làm cho chương trình có cấu trúc rõ ràng, dễ mở rộng nếu muốn thêm hàm số mới.
+
+% ==========================================================
+\subsection{Khối 8: Thiết lập tham số chạy chương trình}
+\begin{lstlisting}[style=mypython,caption={Khai báo tham số và chuẩn bị file thống kê}]
+# Phuong phap chia doi
+a1 = -20
+b1 = 20
+
+# Phuong phap Newton Raphson, diem co dinh
+a2 = 5
+
+# Phuong phap secant
+a3 = -1
+b3 = 1
+
+N = 100
+filename = 'BTVNlan1'
+filethongke = 'Thongkesovonglap'
+
+with open(filethongke, "w", encoding="utf-8") as file:
+    file.write("Thong ke so vong lap theo tung phuong phap va do chinh xac cho tung loai ham so\n")
+    file.write("#" * 100 + "\n")
+    file.write(f"{'Ham so':>25s}  {'Do chinh xac':>12s}  {'Phuong phap':>25s}  {'So vong lap':>12s}\n")
+\end{lstlisting}
+
+\textbf{Giải thích:}
+
+Các biến này được dùng để:
+\begin{itemize}
+    \item xác định khoảng đầu \([a,b]\),
+    \item đặt số vòng lặp tối đa \(N=100\),
+    \item chọn tên chung cho các tệp kết quả,
+    \item tạo tệp thống kê ban đầu với tiêu đề cột.
+\end{itemize}
+
+Tệp \texttt{Thongkesovonglap} sẽ đóng vai trò như một bảng tổng hợp toàn bộ số vòng lặp của mọi phương pháp.
+
+% ==========================================================
+\subsection{Khối 9: Tạo danh sách hàm số và độ chính xác}
+\begin{lstlisting}[style=mypython,caption={Danh sách hàm số, đạo hàm và ngưỡng sai số}]
+danhsachhamso =  [hamso1,hamso2,hamso3]
+danhsachhamso_daoham = [hamso1_daoham,hamso2_daoham,hamso3_daoham]
+danhsachhamso_diemcodinh = [hamso1_ppdiemcodinh,hamso2_ppdiemcodinh,hamso3_ppdiemcodinh]
+danhsach_tol = [1e-5,1e-10,1e-15]
+\end{lstlisting}
+
+\textbf{Giải thích:}
+
+Các danh sách này cho phép chương trình chạy tự động trên nhiều trường hợp khác nhau mà không cần viết lặp thủ công. Đây là cách tổ chức tốt vì:
+\begin{itemize}
+    \item gọn mã nguồn,
+    \item dễ thay đổi bộ dữ liệu khảo sát,
+    \item thuận tiện cho việc mở rộng báo cáo thực nghiệm.
+\end{itemize}
+
+% ==========================================================
+\subsection{Khối 10: Vòng lặp chính thực hiện tính toán}
+\begin{lstlisting}[style=mypython,caption={Vòng lặp chạy toàn bộ các phương pháp}]
+for x in range(len(danhsachhamso)):
+    for y in range(len(danhsach_tol)):
+        chiadoikhoangcach(a1,b1,danhsach_tol[y],N,filename,danhsachhamso[x],filethongke)
+        diemcodinh(danhsach_tol[y],a2,N,filename,danhsachhamso_diemcodinh[x],filethongke)
+        
+        newton_raphson(danhsach_tol[y],a2,N,filename,danhsachhamso[x],
+        
+        danhsachhamso_daoham[x],filethongke)
+        phuongphap_secant(danhsach_tol[y],a3,b3,N,filename,danhsachhamso[x],filethongke)
+\end{lstlisting}
+
+\textbf{Giải thích:}
+
+Đây là phần chạy của toàn bộ chương trình. Với mỗi hàm số và mỗi giá trị \texttt{tol}, chương trình sẽ lần lượt chạy bốn phương pháp:
+\begin{enumerate}
+    \item chia đôi khoảng cách,
+    \item điểm cố định,
+    \item Newton--Raphson,
+    \item Secant.
+\end{enumerate}
+
+Mỗi lần chạy sẽ sinh ra:
+\begin{itemize}
+    \item một tệp riêng ghi chi tiết từng bước lặp,
+    \item một dòng trong bảng thống kê tổng.
+\end{itemize}
+
+
+\section{So sánh các phương pháp đã trình bày}
+
+
+\subsection{Ảnh hưởng của độ chính xác \texttt{tol}}
+
+Khi giảm \texttt{tol} từ \(10^{-5}\) xuống \(10^{-10}\) rồi \(10^{-15}\), số vòng lặp cần thiết thường tăng lên. Tuy nhiên mức độ tăng là khác nhau:
+\begin{itemize}
+    \item \textbf{Phương pháp chia đôi khoảng cách}: số vòng lặp tăng khá đều vì sai số giảm theo cấp số nhân với cơ số \(1/2\). Đây là phương pháp chậm nhất trong nhóm các phương pháp hội tụ chắc chắn.
+    \item \textbf{Newton--Raphson}: số vòng lặp thường tăng rất ít khi yêu cầu chính xác cao hơn, do gần nghiệm thì số chữ số đúng tăng rất nhanh sau mỗi bước lặp.
+    \item \textbf{Secant}: tốc độ kém Newton một chút nhưng vẫn nhanh hơn đáng kể so với chia đôi.
+    \item \textbf{Điểm cố định}: phụ thuộc vào \(g(x)\), nếu chọn hàm \(g(x)\) tốt thì có thể hội tụ ổn; nếu chọn không phù hợp thì hội tụ rất chậm hoặc phân kỳ.
+\end{itemize}
+
+\newpage
+\subsection{Kết quả chạy}
+Sau khi chạy chương trình số vòng lặp theo từng hàm thử, độ chính xác và các phương pháp như sau:
+
+\begin{longtable}{%
+>{\centering\arraybackslash}p{0.18\textwidth}
+>{\centering\arraybackslash}p{0.18\textwidth}
+>{\raggedright\arraybackslash}p{0.44\textwidth}
+>{\centering\arraybackslash}p{0.14\textwidth}}
+\toprule
+\textbf{Hàm số} & \textbf{Độ chính xác} & \textbf{Phương pháp} & \textbf{Số vòng lặp} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Hàm số} & \textbf{Độ chính xác} & \textbf{Phương pháp} & \textbf{Số vòng lặp} \\
+\midrule
+\endhead
+
+\multirow{12}{*}{hamso1} 
+& \multirow{4}{*}{$10^{-5}$}  & Chia đôi khoảng cách & 20 \\
+&                            & Điểm cố định         & 13 \\
+&                            & Newton--Raphson      & 6  \\
+&                            & Secant               & 6  \\
+
+& \multirow{4}{*}{$10^{-10}$} & Chia đôi khoảng cách & 39 \\
+&                             & Điểm cố định         & 24 \\
+&                             & Newton--Raphson      & 7  \\
+&                             & Secant               & 7  \\
+
+& \multirow{4}{*}{$10^{-15}$} & Chia đôi khoảng cách & 48 \\
+&                             & Điểm cố định         & 35 \\
+&                             & Newton--Raphson      & 8  \\
+&                             & Secant               & 8  \\
+\midrule
+
+\multirow{12}{*}{hamso2} 
+& \multirow{4}{*}{$10^{-5}$}  & Chia đôi khoảng cách & 23 \\
+&                            & Điểm cố định         & 12 \\
+&                            & Newton--Raphson      & 8  \\
+&                            & Secant               & 7  \\
+
+& \multirow{4}{*}{$10^{-10}$} & Chia đôi khoảng cách & 39 \\
+&                             & Điểm cố định         & 22 \\
+&                             & Newton--Raphson      & 9  \\
+&                             & Secant               & 8  \\
+
+& \multirow{4}{*}{$10^{-15}$} & Chia đôi khoảng cách & 54 \\
+&                             & Điểm cố định         & 33 \\
+&                             & Newton--Raphson      & 10 \\
+&                             & Secant               & 9  \\
+\midrule
+
+\multirow{12}{*}{hamso3} 
+& \multirow{4}{*}{$10^{-5}$}  & Chia đôi khoảng cách & 21 \\
+&                            & Điểm cố định         & 10 \\
+&                            & Newton--Raphson      & 8  \\
+&                            & Secant               & 6  \\
+
+& \multirow{4}{*}{$10^{-10}$} & Chia đôi khoảng cách & 39 \\
+&                             & Điểm cố định         & 17 \\
+&                             & Newton--Raphson      & 9  \\
+&                             & Secant               & 7  \\
+
+& \multirow{4}{*}{$10^{-15}$} & Chia đôi khoảng cách & 53 \\
+&                             & Điểm cố định         & 24 \\
+&                             & Newton--Raphson      & 10 \\
+&                             & Secant               & 8  \\
+\bottomrule
+\end{longtable}
+
+\newpage
+\subsection{Kết luận so sánh}
+
+Nếu bỏ qua các trường hợp phân kỳ và xét trong điều kiện ban đầu thuận lợi, thứ tự hội tụ nhanh dần thường là:
+\[
+\text{Chia đôi} \;<\; \text{Điểm cố định} \;<\; \text{Secant} \;<\; \text{Newton--Raphson}.
+\]
+
+
+
+\end{document}

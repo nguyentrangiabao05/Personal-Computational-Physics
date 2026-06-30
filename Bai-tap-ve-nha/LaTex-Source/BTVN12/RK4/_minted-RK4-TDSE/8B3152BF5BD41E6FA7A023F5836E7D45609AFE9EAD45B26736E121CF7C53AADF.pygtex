@@ -1,0 +1,28 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{sigma\PYGZus{}0\PYGZus{}list} \PYG{o}{=} \PYG{p}{[}\PYG{l+m+mf}{0.5}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{]}
+\PYG{n}{k\PYGZus{}0\PYGZus{}list} \PYG{o}{=} \PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{l+m+mi}{8}\PYG{p}{,} \PYG{l+m+mi}{10}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{8}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{10}\PYG{p}{]}
+
+\PYG{k}{for} \PYG{n}{sigma\PYGZus{}value} \PYG{o+ow}{in} \PYG{n}{sigma\PYGZus{}0\PYGZus{}list}\PYG{p}{:}
+    \PYG{k}{for} \PYG{n}{k\PYGZus{}value} \PYG{o+ow}{in} \PYG{n}{k\PYGZus{}0\PYGZus{}list}\PYG{p}{:}
+        \PYG{n}{sigma\PYGZus{}0} \PYG{o}{=} \PYG{n}{sigma\PYGZus{}value}
+        \PYG{n}{k\PYGZus{}0} \PYG{o}{=} \PYG{n}{k\PYGZus{}value}
+        \PYG{n}{filename} \PYG{o}{=} \PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}RK4\PYGZus{}sigma=}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{sigma\PYGZus{}0}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZus{}k0=}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{k\PYGZus{}0}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+
+        \PYG{n}{psi\PYGZus{}t\PYGZus{}x\PYGZus{}bac\PYGZus{}4} \PYG{o}{=} \PYG{n}{giaipt\PYGZus{}psi\PYGZus{}RK4}\PYG{p}{()}
+
+        \PYG{n}{luu\PYGZus{}ketqua\PYGZus{}psi}\PYG{p}{(}
+            \PYG{n}{filename}\PYG{p}{,}
+            \PYG{n}{x}\PYG{p}{,}
+            \PYG{n}{t}\PYG{p}{,}
+            \PYG{n}{y}\PYG{o}{=}\PYG{n}{psi\PYGZus{}t\PYGZus{}x\PYGZus{}bac\PYGZus{}4}\PYG{p}{,}
+            \PYG{n}{save\PYGZus{}every\PYGZus{}time}\PYG{o}{=}\PYG{l+m+mi}{100}
+        \PYG{p}{)}
+
+        \PYG{n}{luu\PYGZus{}file\PYGZus{}xac\PYGZus{}xuat}\PYG{p}{(}
+            \PYG{n}{filename}\PYG{p}{,}
+            \PYG{n}{x}\PYG{p}{,}
+            \PYG{n}{t}\PYG{p}{,}
+            \PYG{n}{y}\PYG{o}{=}\PYG{n}{psi\PYGZus{}t\PYGZus{}x\PYGZus{}bac\PYGZus{}4}\PYG{p}{,}
+            \PYG{n}{save\PYGZus{}every\PYGZus{}time}\PYG{o}{=}\PYG{l+m+mi}{100}
+        \PYG{p}{)}
+\end{Verbatim}
